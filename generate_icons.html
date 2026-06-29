@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Icons</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+    .preview {
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #1e293b;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .preview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      background: #2563eb;
+    }
+    .instruction {
+      margin-top: 20px;
+      color: #94a3b8;
+      max-width: 400px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Icon Generator</h1>
+  <div class="preview" id="previewContainer"></div>
+  
+  <button id="downloadBtn">Download Icons (16, 48, 128)</button>
+
+  <p class="instruction">
+    Sau khi tải về, hãy chép 3 tệp ảnh (icon-16.png, icon-48.png, icon-128.png) vào thư mục <code>icons</code> của extension nhé!
+  </p>
+
+  <script>
+    const svgContent = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+        <defs>
+          <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1e1b4b" />
+            <stop offset="100%" stop-color="#0f172a" />
+          </linearGradient>
+          <linearGradient id="bookmarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60a5fa" />
+            <stop offset="100%" stop-color="#3b82f6" />
+          </linearGradient>
+          <linearGradient id="tabGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a78bfa" />
+            <stop offset="100%" stop-color="#8b5cf6" />
+          </linearGradient>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+          </filter>
+        </defs>
+        
+        <!-- Background Squircle -->
+        <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#bg)" filter="url(#shadow)" />
+        
+        <!-- Tab 1 -->
+        <rect x="28" y="36" width="56" height="40" rx="6" fill="url(#tabGrad)" opacity="0.6" />
+        <!-- Tab 2 -->
+        <rect x="36" y="48" width="56" height="40" rx="6" fill="#c4b5fd" opacity="0.9" />
+        
+        <!-- Bookmark Ribbon -->
+        <path d="M68 56 L100 56 L100 100 L84 88 L68 100 Z" fill="url(#bookmarkGrad)" filter="url(#shadow)" />
+      </svg>
+    `;
+
+    const sizes = [16, 48, 128];
+    const previewContainer = document.getElementById('previewContainer');
+    const images = {};
+
+    function init() {
+      // Create a blob URL for the SVG
+      const blob = new Blob([svgContent], {type: 'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+
+      const img = new Image();
+      img.onload = () => {
+        sizes.forEach(size => {
+          // Render to canvas
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          
+          // Image smoothing for best quality
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          
+          ctx.drawImage(img, 0, 0, size, size);
+          
+          // Create preview UI
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          
+          const previewImg = new Image();
+          previewImg.src = canvas.toDataURL('image/png');
+          previewImg.style.width = size + 'px';
+          previewImg.style.height = size + 'px';
+          
+          const label = document.createElement('span');
+          label.textContent = size + 'x' + size;
+          
+          item.appendChild(previewImg);
+          item.appendChild(label);
+          previewContainer.appendChild(item);
+
+          // Store for download
+          images[size] = previewImg.src;
+        });
+      };
+      img.src = url;
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      sizes.forEach(size => {
+        const a = document.createElement('a');
+        a.href = images[size];
+        a.download = 'icon-' + size + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+    });
+
+    init();
+  </script>
+</body>
+</html>

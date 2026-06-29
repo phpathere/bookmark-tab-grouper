@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="glass-container">
+    <div class="header">
+      <div class="header-left">
+        <div class="logo" aria-hidden="true">
+          👾
+        </div>
+        <h1 data-i18n="popupTitle">Bookmark Grouper</h1>
+      </div>
+      <div class="lang-switcher" id="langToggleBtn" data-active="vi" title="Switch Language">
+        <div class="lang-slider"></div>
+        <span class="lang-option" data-lang="en">EN</span>
+        <span class="lang-option" data-lang="vi">VI</span>
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="form-group">
+        <label for="folderSelect" data-i18n="selectFolderLabel">Select Folder:</label>
+        <div class="select-wrapper">
+          <select id="folderSelect">
+            <option value="" disabled selected data-i18n="defaultOption">-- Choose a folder --</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="actionBtn" class="primary-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        <span data-i18n="actionButton">Open & Group</span>
+      </button>
+
+      <div class="session-actions">
+        <button id="exportBtn" class="secondary-btn">
+          <span data-i18n="exportSession">Export Session</span>
+        </button>
+        <button id="importBtn" class="secondary-btn" style="background: #a78bfa;">
+          <span data-i18n="importSession">Import Session</span>
+        </button>
+        <input type="file" id="importFile" accept=".btg" style="display: none;">
+      </div>
+
+      <div id="statusMessage" class="status hidden"></div>
+    </div>
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

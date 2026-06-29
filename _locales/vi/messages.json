@@ -1,0 +1,46 @@
+{
+  "extName": {
+    "message": "Gộp Tab Bookmark",
+    "description": "Tên của extension"
+  },
+  "extDesc": {
+    "message": "Mở và gộp nhóm các trang đã bookmark một cách dễ dàng.",
+    "description": "Mô tả của extension"
+  },
+  "popupTitle": {
+    "message": "Gộp Tab Bookmark"
+  },
+  "selectFolderLabel": {
+    "message": "Chọn thư mục Bookmarks:"
+  },
+  "defaultOption": {
+    "message": "-- Chọn thư mục --"
+  },
+  "openGroupBtn": {
+    "message": "Mở & Nhóm Tabs"
+  },
+  "noFolderSelected": {
+    "message": "Vui lòng chọn một thư mục trước."
+  },
+  "noBookmarksFound": {
+    "message": "Không tìm thấy trang nào trong thư mục này."
+  },
+  "successMessage": {
+    "message": "Tuyệt vời! Đã mở thành công."
+  },
+  "exportSuccess": {
+    "message": "Đã lưu phiên làm việc!"
+  },
+  "importSuccess": {
+    "message": "Đã phục hồi phiên làm việc!"
+  },
+  "exportSession": {
+    "message": "Lưu phiên (Export)"
+  },
+  "importSession": {
+    "message": "Mở phiên (Import)"
+  },
+  "invalidFile": {
+    "message": "File không hợp lệ."
+  }
+}

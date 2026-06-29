@@ -1,0 +1,46 @@
+{
+  "extName": {
+    "message": "Bookmark Tab Grouper",
+    "description": "Name of the extension"
+  },
+  "extDesc": {
+    "message": "Group and open bookmarks easily with one click.",
+    "description": "Description of the extension"
+  },
+  "popupTitle": {
+    "message": "Bookmark Grouper"
+  },
+  "selectFolderLabel": {
+    "message": "Select Bookmarks Folder:"
+  },
+  "defaultOption": {
+    "message": "-- Choose a folder --"
+  },
+  "openGroupBtn": {
+    "message": "Open & Group Tabs"
+  },
+  "noFolderSelected": {
+    "message": "Please select a folder first."
+  },
+  "noBookmarksFound": {
+    "message": "No bookmarks found in this folder."
+  },
+  "successMessage": {
+    "message": "Success! Bookmarks opened."
+  },
+  "exportSuccess": {
+    "message": "Session exported successfully!"
+  },
+  "importSuccess": {
+    "message": "Session imported successfully!"
+  },
+  "exportSession": {
+    "message": "Export Session"
+  },
+  "importSession": {
+    "message": "Import Session"
+  },
+  "invalidFile": {
+    "message": "Invalid session file."
+  }
+}
