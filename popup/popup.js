@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load bookmark tree
   try {
     const tree = await chrome.bookmarks.getTree();
-    populateFolderSelect(tree[0].children, folderSelect, 0);
+    populateFolderSelect(tree[0], folderSelect);
   } catch (error) {
     showStatus(error.message, 'error');
   }
