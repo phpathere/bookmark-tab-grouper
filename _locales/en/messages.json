@@ -74,13 +74,13 @@
     "message": "Auto (System)"
   },
   "lightTheme": {
-    "message": "Light"
+    "message": "Light (Default)"
   },
   "darkTheme": {
     "message": "Dark"
   },
   "autoLang": {
-    "message": "Auto (System)"
+    "message": "Auto (Default)"
   },
   "closeBtn": {
     "message": "Close"
@@ -93,5 +93,11 @@
   },
   "groupCountTooltip": {
     "message": "Total tab groups"
+  },
+  "resetDefaultsBtn": {
+    "message": "Reset to Defaults"
+  },
+  "resetSuccess": {
+    "message": "Settings reset to default."
   }
 }

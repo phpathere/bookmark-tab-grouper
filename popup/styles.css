@@ -60,13 +60,14 @@ body {
 }
 
 .logo {
-  font-size: 24px;
-  line-height: 1;
-  text-shadow: 2px 2px 0px #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(2px 2px 0px #fff);
 }
 
 [data-theme="dark"] .logo {
-  text-shadow: 2px 2px 0px var(--border-color);
+  filter: drop-shadow(2px 2px 0px var(--border-color));
 }
 
 .stats-bar {

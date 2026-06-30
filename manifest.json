@@ -9,9 +9,7 @@
     "tabs",
     "tabGroups",
     "storage",
-    "downloads",
-    "identity",
-    "identity.email"
+    "downloads"
   ],
   "action": {
     "default_popup": "popup/index.html",

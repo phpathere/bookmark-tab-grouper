@@ -74,13 +74,13 @@
     "message": "Tự động (Hệ thống)"
   },
   "lightTheme": {
-    "message": "Sáng"
+    "message": "Sáng (Mặc định)"
   },
   "darkTheme": {
     "message": "Tối"
   },
   "autoLang": {
-    "message": "Tự động (Hệ thống)"
+    "message": "Tự động (Mặc định)"
   },
   "closeBtn": {
     "message": "Đóng"
@@ -93,5 +93,11 @@
   },
   "groupCountTooltip": {
     "message": "Tổng số Nhóm (Tab Group)"
+  },
+  "resetDefaultsBtn": {
+    "message": "Khôi phục mặc định"
+  },
+  "resetSuccess": {
+    "message": "Đã khôi phục cài đặt gốc."
   }
 }

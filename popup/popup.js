@@ -117,16 +117,19 @@ function escapeHtml(unsafe) {
 }
 
 async function getProfileName() {
-  let profileName = 'Default';
+  let profileName = 'Session';
   try {
-    if (chrome.identity && chrome.identity.getProfileUserInfo) {
-      const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
-      if (userInfo && userInfo.email) {
-        profileName = userInfo.email.split('@')[0];
-      }
+    const ua = navigator.userAgent;
+    if (ua.includes("Edg/")) profileName = "Edge";
+    else if (ua.includes("Chrome/")) profileName = "Chrome";
+    else profileName = "Browser";
+    
+    const currentWindow = await chrome.windows.getCurrent();
+    if (currentWindow && currentWindow.id) {
+      profileName += `_${currentWindow.id}`;
     }
   } catch (e) {
-    console.warn("Could not get profile info", e);
+    console.warn("Could not get window info", e);
   }
   return profileName;
 }
@@ -155,7 +158,7 @@ async function updateStatsBar() {
     const groupCountTitle = getMessage('groupCountTooltip') || 'Groups';
     
     statsBar.innerHTML = `
-      <span title="${escapeHtml(profileTitle)}">👤 ${escapeHtml(profile)}</span> 
+      <span title="${escapeHtml(profileTitle)}">🌐 ${escapeHtml(profile)}</span> 
       <span>|</span> 
       <span title="${escapeHtml(tabCountTitle)}">📄 ${tabCount}</span> 
       <span>|</span> 
@@ -207,6 +210,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         await chrome.storage.local.set({ lang: newLang });
       }
       await initLanguage();
+    });
+  }
+
+  const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+  if (resetSettingsBtn) {
+    resetSettingsBtn.addEventListener('click', async () => {
+      if (chrome.storage && chrome.storage.local) {
+        await chrome.storage.local.remove(['theme', 'lang']);
+      }
+      
+      if (themeSelect) themeSelect.value = 'light';
+      if (langSelect) langSelect.value = 'auto';
+      
+      applyTheme('light');
+      await initLanguage();
+      
+      showStatus(getMessage('resetSuccess') || 'Settings reset to default.', 'success');
+      settingsModal.classList.add('hidden');
     });
   }
 
