@@ -122,7 +122,7 @@
     "message": "Nhập phiên làm việc?"
   },
   "importConfirmSummary": {
-    "message": "Thao tác này sẽ mở $TAB_COUNT$ tab trong $WINDOW_COUNT$ cửa sổ và $GROUP_COUNT$ nhóm. Tiếp tục?"
+    "message": "Thao tác này sẽ mở {TAB_COUNT} tab trong {WINDOW_COUNT} cửa sổ và {GROUP_COUNT} nhóm. Tiếp tục?"
   },
   "confirmImportBtn": {
     "message": "Nhập"

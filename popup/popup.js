@@ -792,11 +792,11 @@ function confirmImport(summary) {
   }
 
   const template = getMessage('importConfirmSummary') ||
-    'This will open $TAB_COUNT$ tabs in $WINDOW_COUNT$ windows and $GROUP_COUNT$ groups.';
+    'This will open {TAB_COUNT} tabs in {WINDOW_COUNT} windows and {GROUP_COUNT} groups.';
   summaryEl.textContent = template
-    .replace('$TAB_COUNT$', String(summary.totalTabs))
-    .replace('$WINDOW_COUNT$', String(summary.windows.length))
-    .replace('$GROUP_COUNT$', String(summary.totalGroups));
+    .replace('{TAB_COUNT}', String(summary.totalTabs))
+    .replace('{WINDOW_COUNT}', String(summary.windows.length))
+    .replace('{GROUP_COUNT}', String(summary.totalGroups));
 
   modal.classList.remove('hidden');
   confirmBtn.focus();

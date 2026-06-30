@@ -122,7 +122,7 @@
     "message": "Import Session?"
   },
   "importConfirmSummary": {
-    "message": "This will open $TAB_COUNT$ tabs in $WINDOW_COUNT$ windows and $GROUP_COUNT$ groups. Continue?"
+    "message": "This will open {TAB_COUNT} tabs in {WINDOW_COUNT} windows and {GROUP_COUNT} groups. Continue?"
   },
   "confirmImportBtn": {
     "message": "Import"
