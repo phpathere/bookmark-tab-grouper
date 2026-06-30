@@ -87,5 +87,7 @@ This extension is built for the absolute highest tier of privacy and compliance.
 - **Offline First**: Works flawlessly even without an internet connection (excluding loading external web pages).
 
 <div align="center">
-  <i>Built with ❤️ and Neo-brutalism.</i>
+  <h3>🙏 Thank You! (Cảm Ơn!)</h3>
+  <p>Thank you so much for installing and using <b>Bookmark Tab Grouper</b>. I built this tool to solve my own productivity chaos, and I truly hope it brings a little more peace and order to your digital workspace. Have a wonderful and productive day!</p>
+  <i>— Created with ❤️ and Neo-brutalism by <b>Hoang Tat</b></i>
 </div>
