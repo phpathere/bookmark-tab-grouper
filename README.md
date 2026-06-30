@@ -54,11 +54,22 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 
 ## 🛠️ Usage (Hướng Dẫn Sử Dụng)
 
-1. **Open the Extension**: Click the 👾 icon in your Chrome toolbar.
-2. **Select a Folder**: Choose a folder from your Chrome Bookmarks using the dropdown.
-3. **Execute**: Click **Open & Group Tabs**.
-4. **Export Session**: Click **Export Session** to save your currently open tabs as a backup.
-5. **Settings**: Click the Gear icon ⚙️ to switch between Light/Dark themes or Vietnamese/English languages.
+### 1. Open & Group Bookmarks (Mở & Gộp Bookmark)
+- Click the Extension icon.
+- Select a Bookmark folder from the **Select Folder** dropdown.
+- Click the **Open & Group** button. All links inside will open and bundle into a neat, color-coded Tab Group.
+
+### 2. Auto-Group Open Tabs (Tự Động Gộp Tab Đang Mở)
+- Click the **Filter icon (Sort/Group Tabs)** on the right side of the toolbar.
+- Click **Group by Website (Nhóm theo trang web)**. The extension will scan all ungrouped tabs and group them by root domain (e.g., all `github.com` tabs go into one group).
+- Made a mistake? Click **Undo Grouping (Mặc định lại)** to revert the changes.
+
+### 3. Session Sync (Lưu & Khôi Phục Phiên)
+- **Export Session:** Click to download a `.btg` file. This securely saves your entire multi-window layout, including all tabs and groups.
+- **Import Session:** Upload a `.btg` file. The extension will automatically reconstruct your windows, tabs, and tab groups exactly as you left them, and automatically clean up any empty tabs!
+
+### 4. Settings (Cài Đặt)
+- Click the Gear icon ⚙️ to switch between **Light/Dark Auto themes** or change the language (English/Vietnamese).
 
 ---
 

@@ -12,15 +12,21 @@ Group and open bookmarks easily with one click. (Mở và gộp nhóm các trang
 
 ## Description
 
-Bookmark Tab Grouper is a lightweight, secure, and lightning-fast extension designed to boost your productivity. If you have many bookmarks organized in folders, this extension allows you to open entire folders of bookmarks at once and automatically categorizes them into neat, color-coded Chrome Tab Groups based on your folder structure.
+Bookmark Tab Grouper is a lightweight, secure, and lightning-fast extension designed to boost your productivity by organizing the chaos of browser tabs. Whether you do research, development, or online shopping, this tool automates the tedious work of managing tabs.
 
-**Features:**
-- Browse and select your bookmark folders dynamically.
-- Automatically group opened tabs using Chrome's native Tab Groups.
-- Groups are automatically named and color-coded.
-- Beautiful, modern Glassmorphism dark-mode UI.
-- Fully localized in English and Vietnamese.
-- Offline support and zero tracking (100% privacy).
+**🌟 Features:**
+- **1-Click Grouping:** Select a bookmark folder and it instantly opens all links, categorizing them into neat, color-coded Chrome Tab Groups.
+- **Group by Website:** Automatically detect and group your currently open tabs by their root domain (e.g., all `github.com` tabs go into one group).
+- **Smart Undo:** Revert auto-grouping with a single click if you change your mind.
+- **Session Sync (Export/Import):** Save your multi-window layout, tabs, and groups to an offline `.btg` file, and restore them flawlessly anytime, anywhere.
+- **Premium UI:** Neo-Brutalism design with a Dracula Dark Mode and Glassmorphism touches.
+- **100% Privacy:** No tracking, no external APIs. Everything is processed locally on your machine.
+
+**🛠️ How to Use:**
+1. Click the 👾 Extension icon in your toolbar.
+2. Select a folder from your Chrome Bookmarks and click **Open & Group**.
+3. *Alternatively*, click the 🌪️ Filter icon and choose **Group by Website** to organize your currently open tabs.
+4. Use the **Export/Import Session** buttons to backup and restore your entire workspace.
 
 ---
 
