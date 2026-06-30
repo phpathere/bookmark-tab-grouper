@@ -42,5 +42,56 @@
   },
   "invalidFile": {
     "message": "File không hợp lệ."
+  },
+  "groupByWebsite": {
+    "message": "Nhóm theo trang web"
+  },
+  "undoGroup": {
+    "message": "Mặc định lại (Undo)"
+  },
+  "groupByDomainSuccess": {
+    "message": "Đã nhóm theo trang web"
+  },
+  "noUndoAvailable": {
+    "message": "Không có hành động nào để hoàn tác"
+  },
+  "undoSuccess": {
+    "message": "Đã khôi phục trạng thái cũ"
+  },
+  "noTabsToGroup": {
+    "message": "Không có trang web nào có nhiều hơn 1 tab"
+  },
+  "settingsTitle": {
+    "message": "Cài đặt"
+  },
+  "languageLabel": {
+    "message": "Ngôn ngữ"
+  },
+  "themeLabel": {
+    "message": "Giao diện"
+  },
+  "autoTheme": {
+    "message": "Tự động (Hệ thống)"
+  },
+  "lightTheme": {
+    "message": "Sáng"
+  },
+  "darkTheme": {
+    "message": "Tối"
+  },
+  "autoLang": {
+    "message": "Tự động (Hệ thống)"
+  },
+  "closeBtn": {
+    "message": "Đóng"
+  },
+  "profileTooltip": {
+    "message": "Profile Chrome hiện tại"
+  },
+  "tabCountTooltip": {
+    "message": "Tổng số Tab đang mở"
+  },
+  "groupCountTooltip": {
+    "message": "Tổng số Nhóm (Tab Group)"
   }
 }

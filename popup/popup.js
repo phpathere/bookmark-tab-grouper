@@ -1,22 +1,39 @@
 let currentLang = 'vi';
 let translations = null;
 let bookmarkFolders = [];
+let savedTabState = null;
 const GROUP_COLORS = ['grey', 'blue', 'red', 'yellow', 'green', 'pink', 'purple', 'cyan', 'orange'];
 
 async function initLanguage() {
   try {
+    let savedLang = 'auto';
     if (chrome.storage && chrome.storage.local) {
       const data = await chrome.storage.local.get('lang');
-      currentLang = data.lang || 'vi'; 
+      savedLang = data.lang || 'auto'; 
     }
+    
+    if (savedLang === 'auto') {
+      let defaultLang = 'vi';
+      if (chrome.i18n && chrome.i18n.getUILanguage) {
+        const uiLang = chrome.i18n.getUILanguage().split('-')[0];
+        defaultLang = (uiLang === 'vi') ? 'vi' : 'en';
+      }
+      currentLang = defaultLang;
+    } else {
+      currentLang = savedLang;
+    }
+    
+    // Pre-select the dropdown
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) langSelect.value = savedLang;
+    
   } catch(e) {
     console.error("Storage get failed", e);
-    currentLang = 'vi';
+    currentLang = 'en';
   }
   
   await loadTranslations(currentLang);
   localizeHtmlPage();
-  updateLangToggleBtn();
 }
 
 async function loadTranslations(lang) {
@@ -52,36 +69,145 @@ function localizeHtmlPage() {
   });
 }
 
-function updateLangToggleBtn() {
-  const btn = document.getElementById('langToggleBtn');
-  if (btn) {
-    btn.setAttribute('data-active', currentLang);
+async function initTheme() {
+  try {
+    let savedTheme = 'light';
+    if (chrome.storage && chrome.storage.local) {
+      const data = await chrome.storage.local.get('theme');
+      savedTheme = data.theme || 'light';
+    }
+    
+    applyTheme(savedTheme);
+    
+    // Pre-select the dropdown
+    const themeSelect = document.getElementById('themeSelect');
+    if (themeSelect) themeSelect.value = savedTheme;
+    
+  } catch(e) {
+    console.error("Storage theme get failed", e);
   }
 }
 
-async function toggleLanguage() {
-  currentLang = currentLang === 'vi' ? 'en' : 'vi';
-  
-  // Safe storage set
-  try {
-    if (chrome.storage && chrome.storage.local) {
-      await chrome.storage.local.set({ lang: currentLang });
-    }
-  } catch(e) {
-    console.error("Storage set failed", e);
+function applyTheme(theme) {
+  if (theme === 'auto') {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', theme);
   }
+}
 
-  await loadTranslations(currentLang);
-  localizeHtmlPage();
-  updateLangToggleBtn();
+// Watch for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e) => {
+  if (chrome.storage && chrome.storage.local) {
+    const data = await chrome.storage.local.get('theme');
+    if (!data.theme || data.theme === 'auto') {
+      applyTheme('auto');
+    }
+  }
+});
+
+function escapeHtml(unsafe) {
+  return (unsafe || '').toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+async function getProfileName() {
+  let profileName = 'Default';
+  try {
+    if (chrome.identity && chrome.identity.getProfileUserInfo) {
+      const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+      if (userInfo && userInfo.email) {
+        profileName = userInfo.email.split('@')[0];
+      }
+    }
+  } catch (e) {
+    console.warn("Could not get profile info", e);
+  }
+  return profileName;
+}
+
+async function updateStatsBar() {
+  const statsBar = document.getElementById('statsBar');
+  if (!statsBar) return;
+  
+  try {
+    const profile = await getProfileName();
+    const tabs = await chrome.tabs.query({ currentWindow: true });
+    const tabCount = tabs.length;
+    
+    // Count unique groups
+    const groupIds = new Set();
+    for (const tab of tabs) {
+      if (tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE) {
+        groupIds.add(tab.groupId);
+      }
+    }
+    const groupCount = groupIds.size;
+    
+    // Format: profile | tabCount | groupCount
+    const profileTitle = getMessage('profileTooltip') || 'Profile';
+    const tabCountTitle = getMessage('tabCountTooltip') || 'Tabs';
+    const groupCountTitle = getMessage('groupCountTooltip') || 'Groups';
+    
+    statsBar.innerHTML = `
+      <span title="${escapeHtml(profileTitle)}">👤 ${escapeHtml(profile)}</span> 
+      <span>|</span> 
+      <span title="${escapeHtml(tabCountTitle)}">📄 ${tabCount}</span> 
+      <span>|</span> 
+      <span title="${escapeHtml(groupCountTitle)}">🗂️ ${groupCount}</span>
+    `;
+  } catch (e) {
+    console.warn("Failed to update stats bar", e);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initLanguage();
+  await initTheme();
+  await updateStatsBar();
 
-  const langToggleBtn = document.getElementById('langToggleBtn');
-  if (langToggleBtn) {
-    langToggleBtn.addEventListener('click', toggleLanguage);
+  // Settings Modal Logic
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsModal = document.getElementById('settingsModal');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+  
+  if (settingsBtn && settingsModal) {
+    settingsBtn.addEventListener('click', () => {
+      settingsModal.classList.remove('hidden');
+    });
+  }
+  
+  if (closeSettingsBtn && settingsModal) {
+    closeSettingsBtn.addEventListener('click', () => {
+      settingsModal.classList.add('hidden');
+    });
+  }
+  
+  const themeSelect = document.getElementById('themeSelect');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', async (e) => {
+      const newTheme = e.target.value;
+      if (chrome.storage && chrome.storage.local) {
+        await chrome.storage.local.set({ theme: newTheme });
+      }
+      applyTheme(newTheme);
+    });
+  }
+
+  const langSelect = document.getElementById('langSelect');
+  if (langSelect) {
+    langSelect.addEventListener('change', async (e) => {
+      const newLang = e.target.value;
+      if (chrome.storage && chrome.storage.local) {
+        await chrome.storage.local.set({ lang: newLang });
+      }
+      await initLanguage();
+    });
   }
 
   const folderSelect = document.getElementById('folderSelect');
@@ -90,13 +216,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load bookmark tree
   try {
     const tree = await chrome.bookmarks.getTree();
-    populateFolderSelect(tree[0], folderSelect);
+    populateFolderSelect(tree[0].children, folderSelect, 0);
   } catch (error) {
     showStatus(error.message, 'error');
   }
 
+  // Reveal body after rendering to prevent FOUC
+  document.body.style.visibility = 'visible';
+
   // Handle action button click
   actionBtn.addEventListener('click', handleOpenAndGroup);
+
+  // Handle Sort Dropdown
+  const sortMenuBtn = document.getElementById('sortMenuBtn');
+  const sortDropdown = document.getElementById('sortDropdown');
+  if (sortMenuBtn && sortDropdown) {
+    sortMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sortDropdown.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => {
+      sortDropdown.classList.add('hidden');
+    });
+  }
+
+  const groupByDomainBtn = document.getElementById('groupByDomainBtn');
+  if (groupByDomainBtn) {
+    groupByDomainBtn.addEventListener('click', handleGroupByDomain);
+  }
+
+  const undoGroupBtn = document.getElementById('undoGroupBtn');
+  if (undoGroupBtn) {
+    undoGroupBtn.addEventListener('click', handleUndoGroupByDomain);
+  }
 
   // Handle Export/Import
   document.getElementById('exportBtn').addEventListener('click', handleExport);
@@ -104,6 +256,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('importFile').click();
   });
   document.getElementById('importFile').addEventListener('change', handleFileImport);
+  
+  // Hide export button if there's nothing to export
+  try {
+    const tabs = await chrome.tabs.query({ currentWindow: true });
+    const exportBtn = document.getElementById('exportBtn');
+    
+    let hasExportableData = false;
+    const hasGroup = tabs.some(t => t.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE);
+    
+    if (tabs.length > 1) {
+      hasExportableData = true;
+    } else if (tabs.length === 1) {
+      const url = tabs[0].url;
+      if (url && !url.startsWith('chrome://') && !url.startsWith('edge://') && url !== 'about:blank') {
+        hasExportableData = true;
+      }
+    }
+    
+    if (!hasExportableData && !hasGroup) {
+      exportBtn.style.display = 'none';
+    }
+  } catch(e) {
+    console.warn("Could not check tabs on load", e);
+  }
 });
 
 // Recursively find and populate bookmark folders
@@ -188,7 +364,7 @@ async function handleOpenAndGroup() {
         await chrome.tabGroups.update(groupId, {
           title: parentNode.title || 'Group',
           color: color,
-          collapsed: false
+          collapsed: true
         });
       }
     }
@@ -215,7 +391,7 @@ async function handleOpenAndGroup() {
           await chrome.tabGroups.update(groupId, {
             title: groupNode.title || 'Group',
             color: color,
-            collapsed: false
+            collapsed: true
           });
         }
       }
@@ -225,6 +401,7 @@ async function handleOpenAndGroup() {
       showStatus(getMessage('noBookmarksFound'), 'error');
     } else {
       showStatus(getMessage('successMessage'), 'success');
+      updateStatsBar();
     }
   } catch (error) {
     showStatus(error.message, 'error');
@@ -254,6 +431,100 @@ function showStatus(message, type) {
   setTimeout(() => {
     statusEl.classList.add('hidden');
   }, 3000);
+}
+
+async function handleGroupByDomain() {
+  try {
+    const allTabs = await chrome.tabs.query({ currentWindow: true });
+    const ungroupedTabs = allTabs.filter(t => t.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE);
+    
+    // Group by domain
+    const domainMap = {};
+    for (const tab of ungroupedTabs) {
+      if (!tab.url) continue;
+      try {
+        const urlObj = new URL(tab.url);
+        if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+          let hostname = urlObj.hostname;
+          const parts = hostname.split('.');
+          let rootDomain = hostname;
+          let groupName;
+          
+          if (parts.length > 1 && !isNaN(parts[parts.length - 1])) {
+             // IP address
+             groupName = hostname; 
+          } else {
+             if (parts.length > 2) {
+                const twoPartTLDs = ['co.uk', 'com.vn', 'co.jp', 'com.au', 'co.in', 'net.vn', 'org.vn', 'edu.vn', 'gov.vn'];
+                const tld = parts.slice(-2).join('.');
+                if (twoPartTLDs.includes(tld)) {
+                  rootDomain = parts.slice(-3).join('.');
+                } else {
+                  rootDomain = parts.slice(-2).join('.');
+                }
+             } else {
+                rootDomain = hostname;
+             }
+             groupName = rootDomain.split('.')[0];
+             groupName = groupName.charAt(0).toUpperCase() + groupName.slice(1);
+          }
+
+          if (!domainMap[groupName]) domainMap[groupName] = [];
+          domainMap[groupName].push(tab.id);
+        }
+      } catch(e) {}
+    }
+
+    let colorIndex = 0;
+    let createdGroups = 0;
+    let newlyGroupedTabIds = [];
+    for (const domain in domainMap) {
+      const tabIds = domainMap[domain];
+      if (tabIds.length > 1) { // Only group if > 1 tab
+        newlyGroupedTabIds = newlyGroupedTabIds.concat(tabIds);
+        const groupId = await chrome.tabs.group({ tabIds });
+        const color = GROUP_COLORS[colorIndex % GROUP_COLORS.length];
+        colorIndex++;
+        await chrome.tabGroups.update(groupId, {
+          title: domain,
+          color: color,
+          collapsed: true
+        });
+        createdGroups++;
+      }
+    }
+    
+    if (createdGroups === 0) {
+      showStatus(getMessage('noTabsToGroup') || 'Không có trang web nào có nhiều hơn 1 tab', 'success');
+    } else {
+      // Save state for undo
+      savedTabState = { newlyGroupedTabIds };
+      showStatus(getMessage('groupByDomainSuccess') || 'Đã nhóm theo trang web', 'success');
+      updateStatsBar();
+    }
+  } catch (error) {
+    showStatus(error.message, 'error');
+  }
+}
+
+async function handleUndoGroupByDomain() {
+  if (!savedTabState || !savedTabState.newlyGroupedTabIds) {
+    showStatus(getMessage('noUndoAvailable') || 'Không có hành động nào để hoàn tác', 'error');
+    return;
+  }
+  
+  try {
+    const tabIdsToUngroup = savedTabState.newlyGroupedTabIds;
+    if (tabIdsToUngroup.length > 0) {
+      await chrome.tabs.ungroup(tabIdsToUngroup);
+    }
+    
+    savedTabState = null; // Clear state after undo
+    showStatus(getMessage('undoSuccess') || 'Đã khôi phục trạng thái cũ', 'success');
+    updateStatsBar();
+  } catch(error) {
+    showStatus(error.message, 'error');
+  }
 }
 
 async function handleExport() {
@@ -305,14 +576,45 @@ async function handleExport() {
     
     // Encode data to proprietary format
     const encodedData = btoa(encodeURIComponent(JSON.stringify(exportData)));
-    const blob = new Blob([encodedData], { type: 'text/plain' });
+    const blob = new Blob([encodedData], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Session_${new Date().toISOString().slice(0,10)}.btg`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // Helpers for file name
+    const removeAccents = (str) => {
+      return str.normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+                .replace(/[^a-zA-Z0-9]/g, '_');
+    };
+    
+    const getBrowserName = () => {
+      const ua = navigator.userAgent;
+      if (ua.includes("Edg/")) return "Edge";
+      if (ua.includes("Chrome/")) return "Chrome";
+      return "Browser";
+    };
+    
+    let profileName = await getProfileName();
+    profileName = removeAccents(profileName);
+    
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const dateStr = `${dd}_${mm}_${yyyy}_${hh}_${min}_${ss}`;
+    
+    const filename = `tabgroupexport/Session_${getBrowserName()}_${profileName}_${dateStr}.btg`;
+    
+    chrome.downloads.download({
+      url: url,
+      filename: filename,
+      saveAs: false
+    }, () => {
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    });
     
     showStatus(getMessage('exportSuccess'), 'success');
   } catch (error) {
@@ -372,7 +674,7 @@ async function handleFileImport(event) {
           await chrome.tabGroups.update(groupId, {
             title: group.title || 'Group',
             color: group.color || 'grey',
-            collapsed: false
+            collapsed: true
           });
         }
       }

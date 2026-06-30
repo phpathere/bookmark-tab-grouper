@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body style="visibility: hidden;">
   <div class="glass-container">
     <div class="header">
       <div class="header-left">
@@ -14,14 +14,27 @@
         </div>
         <h1 data-i18n="popupTitle">Bookmark Grouper</h1>
       </div>
-      <div class="lang-switcher" id="langToggleBtn" data-active="vi" title="Switch Language">
-        <div class="lang-slider"></div>
-        <span class="lang-option" data-lang="en">EN</span>
-        <span class="lang-option" data-lang="vi">VI</span>
+      <div class="settings-btn" id="settingsBtn" title="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       </div>
     </div>
     
+    <div id="statsBar" class="stats-bar">
+      <!-- Injected via JS -->
+    </div>
+    
     <div class="content">
+      <div class="toolbar-right">
+        <div class="dropdown-container">
+          <button id="sortMenuBtn" class="icon-btn" title="Sort/Group Tabs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+          </button>
+          <div id="sortDropdown" class="dropdown-content hidden">
+            <button id="groupByDomainBtn" class="dropdown-item" data-i18n="groupByWebsite">Nhóm theo trang web</button>
+            <button id="undoGroupBtn" class="dropdown-item" data-i18n="undoGroup">Mặc định lại (Undo)</button>
+          </div>
+        </div>
+      </div>
       <div class="form-group">
         <label for="folderSelect" data-i18n="selectFolderLabel">Select Folder:</label>
         <div class="select-wrapper">
@@ -49,6 +62,40 @@
       <div id="statusMessage" class="status hidden"></div>
     </div>
   </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal-content">
+      <h2 data-i18n="settingsTitle">Settings</h2>
+      
+      <div class="form-group">
+        <label for="themeSelect" data-i18n="themeLabel">Theme:</label>
+        <div class="select-wrapper">
+          <select id="themeSelect">
+            <option value="auto" data-i18n="autoTheme">Auto (System)</option>
+            <option value="light" data-i18n="lightTheme">Light</option>
+            <option value="dark" data-i18n="darkTheme">Dark</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="langSelect" data-i18n="languageLabel">Language:</label>
+        <div class="select-wrapper">
+          <select id="langSelect">
+            <option value="auto" data-i18n="autoLang">Auto (System)</option>
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="closeSettingsBtn" class="primary-btn">
+        <span data-i18n="closeBtn">Close</span>
+      </button>
+    </div>
+  </div>
+
   <script src="popup.js" type="module"></script>
 </body>
 </html>

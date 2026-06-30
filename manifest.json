@@ -8,7 +8,10 @@
     "bookmarks",
     "tabs",
     "tabGroups",
-    "storage"
+    "storage",
+    "downloads",
+    "identity",
+    "identity.email"
   ],
   "action": {
     "default_popup": "popup/index.html",

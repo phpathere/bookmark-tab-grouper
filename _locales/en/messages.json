@@ -42,5 +42,56 @@
   },
   "invalidFile": {
     "message": "Invalid session file."
+  },
+  "groupByWebsite": {
+    "message": "Group by Website"
+  },
+  "undoGroup": {
+    "message": "Undo Grouping"
+  },
+  "groupByDomainSuccess": {
+    "message": "Grouped tabs by website successfully"
+  },
+  "noUndoAvailable": {
+    "message": "No action to undo"
+  },
+  "undoSuccess": {
+    "message": "Restored previous state"
+  },
+  "noTabsToGroup": {
+    "message": "No websites with more than 1 tab"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "languageLabel": {
+    "message": "Language"
+  },
+  "themeLabel": {
+    "message": "Theme"
+  },
+  "autoTheme": {
+    "message": "Auto (System)"
+  },
+  "lightTheme": {
+    "message": "Light"
+  },
+  "darkTheme": {
+    "message": "Dark"
+  },
+  "autoLang": {
+    "message": "Auto (System)"
+  },
+  "closeBtn": {
+    "message": "Close"
+  },
+  "profileTooltip": {
+    "message": "Current Chrome Profile"
+  },
+  "tabCountTooltip": {
+    "message": "Total open tabs"
+  },
+  "groupCountTooltip": {
+    "message": "Total tab groups"
   }
 }
