@@ -723,27 +723,21 @@ async function handleFileImport(event) {
       
       const currentWin = await chrome.windows.getCurrent({ populate: true });
       const currentTabs = currentWin.tabs || [];
-      const isCurrentWinEmpty = currentTabs.length === 1 && 
-        (currentTabs[0].url === "chrome://newtab/" || currentTabs[0].url === "" || currentTabs[0].pendingUrl === "chrome://newtab/");
+      // An empty window has exactly 1 tab, and it's not a normal website (e.g. new tab page)
+      const isCurrentWinEmpty = currentTabs.length === 1 && !isValidUrl(currentTabs[0].url);
       let usedCurrentWin = false;
       
       for (const winData of windowsToRestore) {
         let winId;
-        let tabIdToRemove = null;
+        const createdTabIds = new Set();
         
         if (isCurrentWinEmpty && !usedCurrentWin) {
           winId = currentWin.id;
           usedCurrentWin = true;
-          tabIdToRemove = currentTabs[0].id;
         } else {
           // Create without focus to prevent subsequent windows from stealing focus
           const newWin = await chrome.windows.create({ focused: false });
           winId = newWin.id;
-          // Chrome.windows.create doesn't populate tabs, so we must query them
-          const newWinTabs = await chrome.tabs.query({ windowId: winId });
-          if (newWinTabs && newWinTabs.length > 0) {
-            tabIdToRemove = newWinTabs[0].id;
-          }
         }
         
         if (winData.is_focused) {
@@ -764,6 +758,7 @@ async function handleFileImport(event) {
               
               const tab = await chrome.tabs.create({ url: url, windowId: winId, active: isActive });
               tabIds.push(tab.id);
+              createdTabIds.add(tab.id);
             }
             
             if (typeof chrome.tabGroups !== 'undefined' && tabIds.length > 0) {
@@ -783,18 +778,20 @@ async function handleFileImport(event) {
             const isActive = (!hasActivated && url === activeUrl);
             if (isActive) hasActivated = true;
             
-            await chrome.tabs.create({ url: url, windowId: winId, active: isActive });
+            await chrome.tabs.create({ url: url, windowId: winId, active: isActive }).then(t => createdTabIds.add(t.id));
           }
         }
         
-        // Clean up the exact initial tab instead of guessing by URL
-        if (tabIdToRemove !== null) {
-          const allTabs = await chrome.tabs.query({ windowId: winId });
-          if (allTabs.length > 1) {
-            try {
-              await chrome.tabs.remove(tabIdToRemove);
-            } catch (e) {
-              // Ignore if it was already removed
+        // Clean up the exact initial tab(s) by removing anything we didn't just create
+        const allTabs = await chrome.tabs.query({ windowId: winId });
+        if (allTabs.length > createdTabIds.size && createdTabIds.size > 0) {
+          for (const t of allTabs) {
+            if (!createdTabIds.has(t.id)) {
+              try {
+                await chrome.tabs.remove(t.id);
+              } catch (e) {
+                // Ignore if it was already removed
+              }
             }
           }
         }
