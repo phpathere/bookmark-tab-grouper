@@ -107,14 +107,6 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', asy
   }
 });
 
-function escapeHtml(unsafe) {
-  return (unsafe || '').toString()
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
 async function getProfileName() {
   let profileName = 'Session';
@@ -227,16 +219,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const folderSelect = document.getElementById('folderSelect');
   const actionBtn = document.getElementById('actionBtn');
   
-  // Load bookmark tree
-  try {
-    const tree = await chrome.bookmarks.getTree();
-    populateFolderSelect(tree[0], folderSelect);
-  } catch (error) {
-    showStatus(error.message, 'error');
-  }
-
-  // Reveal body after rendering to prevent FOUC
+  // Reveal body immediately to prevent FOUC (Hanging UI)
   document.body.style.visibility = 'visible';
+  
+  // Set loading state
+  folderSelect.innerHTML = '<option disabled selected>Loading...</option>';
+
+  // Load bookmark tree asynchronously without blocking UI
+  chrome.bookmarks.getTree().then(tree => {
+    folderSelect.innerHTML = '<option value="" disabled selected data-i18n="defaultOption">-- Choose a folder --</option>';
+    populateFolderSelect(tree[0], folderSelect);
+    localizeHtmlPage(); // Re-localize the default option
+  }).catch(error => {
+    showStatus(error.message, 'error');
+  });
 
   // Handle action button click
   actionBtn.addEventListener('click', handleOpenAndGroup);
