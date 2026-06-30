@@ -3,6 +3,14 @@ let translations = null;
 let bookmarkFolders = [];
 let savedTabState = null;
 const GROUP_COLORS = ['grey', 'blue', 'red', 'yellow', 'green', 'pink', 'purple', 'cyan', 'orange'];
+const IMPORT_LIMITS = {
+  maxFileBytes: 1024 * 1024,
+  maxWindows: 10,
+  maxGroupsPerWindow: 50,
+  maxTabs: 300,
+  maxUrlLength: 2048,
+  maxTitleLength: 80
+};
 
 async function initLanguage() {
   try {
@@ -52,6 +60,20 @@ function getMessage(key) {
     return translations[key].message;
   }
   return chrome.i18n.getMessage(key); // Fallback
+}
+
+function createOption(value, text, options = {}) {
+  const option = document.createElement('option');
+  option.value = value;
+  option.textContent = text;
+  if (options.disabled) option.disabled = true;
+  if (options.selected) option.selected = true;
+  if (options.i18nKey) option.dataset.i18n = options.i18nKey;
+  return option;
+}
+
+function replaceChildrenWithOption(selectElement, option) {
+  selectElement.replaceChildren(option);
 }
 
 function localizeHtmlPage() {
@@ -144,11 +166,15 @@ async function updateStatsBar() {
     }
     const groupCount = groupIds.size;
     
-    // Format: Current: tabCount tab | groupCount group
     const isEn = getMessage('defaultOption') === '-- Choose a folder --';
     const prefix = isEn ? 'Current' : 'Hiện tại';
-    
-    statsBar.innerHTML = `${prefix}: ${tabCount} tab <span style="opacity:0.5; margin:0 4px;">|</span> ${groupCount} group`;
+
+    const leadingText = document.createTextNode(`${prefix}: ${tabCount} tab `);
+    const separator = document.createElement('span');
+    separator.className = 'stats-separator';
+    separator.textContent = '|';
+    const trailingText = document.createTextNode(` ${groupCount} group`);
+    statsBar.replaceChildren(leadingText, separator, trailingText);
   } catch (e) {
     console.warn("Failed to update stats bar", e);
   }
@@ -223,11 +249,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.body.style.visibility = 'visible';
   
   // Set loading state
-  folderSelect.innerHTML = '<option disabled selected>Loading...</option>';
+  replaceChildrenWithOption(folderSelect, createOption('', 'Loading...', { disabled: true, selected: true }));
 
   // Load bookmark tree asynchronously without blocking UI
   chrome.bookmarks.getTree().then(tree => {
-    folderSelect.innerHTML = '<option value="" disabled selected data-i18n="defaultOption">-- Choose a folder --</option>';
+    replaceChildrenWithOption(folderSelect, createOption('', '-- Choose a folder --', {
+      disabled: true,
+      selected: true,
+      i18nKey: 'defaultOption'
+    }));
     populateFolderSelect(tree[0], folderSelect);
     localizeHtmlPage(); // Re-localize the default option
   }).catch(error => {
@@ -244,9 +274,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     sortMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       sortDropdown.classList.toggle('hidden');
+      sortMenuBtn.setAttribute('aria-expanded', String(!sortDropdown.classList.contains('hidden')));
     });
     document.addEventListener('click', () => {
       sortDropdown.classList.add('hidden');
+      sortMenuBtn.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -677,50 +709,150 @@ async function handleExport() {
   }
 }
 
+function normalizeImportData(data) {
+  if (!data || data.generator !== "Bookmark Tab Grouper") {
+    throw new Error(getMessage('invalidFile'));
+  }
+
+  const isValidUrl = (url) => {
+    try {
+      if (typeof url !== 'string' || url.length > IMPORT_LIMITS.maxUrlLength) return false;
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch(_) {
+      return false;
+    }
+  };
+
+  const rawWindows = (data.version === "2.0" && Array.isArray(data.windows))
+    ? data.windows
+    : [{
+      is_focused: true,
+      groups: data.groups || [],
+      ungrouped_tabs: data.ungrouped_tabs || []
+    }];
+
+  if (rawWindows.length === 0 || rawWindows.length > IMPORT_LIMITS.maxWindows) {
+    throw new Error(getMessage('importTooManyWindows') || `Too many windows. Maximum: ${IMPORT_LIMITS.maxWindows}.`);
+  }
+
+  let totalTabs = 0;
+  const sanitizedWindows = rawWindows.map((winData, windowIndex) => {
+    const rawGroups = Array.isArray(winData.groups) ? winData.groups : [];
+    if (rawGroups.length > IMPORT_LIMITS.maxGroupsPerWindow) {
+      throw new Error(getMessage('importTooManyGroups') || `Too many groups in one window. Maximum: ${IMPORT_LIMITS.maxGroupsPerWindow}.`);
+    }
+
+    const groups = rawGroups.map(group => {
+      const tabs = Array.isArray(group.tabs) ? group.tabs.filter(isValidUrl) : [];
+      totalTabs += tabs.length;
+      const safeTitle = typeof group.title === 'string'
+        ? group.title.slice(0, IMPORT_LIMITS.maxTitleLength)
+        : 'Group';
+      const safeColor = GROUP_COLORS.includes(group.color) ? group.color : 'grey';
+      return { title: safeTitle || 'Group', color: safeColor, tabs };
+    }).filter(group => group.tabs.length > 0);
+
+    const ungroupedTabs = Array.isArray(winData.ungrouped_tabs)
+      ? winData.ungrouped_tabs.filter(isValidUrl)
+      : [];
+    totalTabs += ungroupedTabs.length;
+
+    return {
+      is_focused: Boolean(winData.is_focused || windowIndex === 0),
+      groups,
+      ungrouped_tabs: ungroupedTabs
+    };
+  }).filter(winData => winData.groups.length > 0 || winData.ungrouped_tabs.length > 0);
+
+  if (sanitizedWindows.length === 0 || totalTabs === 0) {
+    throw new Error(getMessage('noBookmarksFound'));
+  }
+
+  if (totalTabs > IMPORT_LIMITS.maxTabs) {
+    throw new Error(getMessage('importTooManyTabs') || `Too many tabs. Maximum: ${IMPORT_LIMITS.maxTabs}.`);
+  }
+
+  return {
+    active_tab_url: isValidUrl(data.active_tab_url) ? data.active_tab_url : null,
+    windows: sanitizedWindows,
+    totalTabs,
+    totalGroups: sanitizedWindows.reduce((sum, winData) => sum + winData.groups.length, 0)
+  };
+}
+
+function confirmImport(summary) {
+  const modal = document.getElementById('importConfirmModal');
+  const summaryEl = document.getElementById('importConfirmSummary');
+  const confirmBtn = document.getElementById('confirmImportBtn');
+  const cancelBtn = document.getElementById('cancelImportBtn');
+
+  if (!modal || !summaryEl || !confirmBtn || !cancelBtn) {
+    return Promise.resolve(false);
+  }
+
+  const template = getMessage('importConfirmSummary') ||
+    'This will open $TAB_COUNT$ tabs in $WINDOW_COUNT$ windows and $GROUP_COUNT$ groups.';
+  summaryEl.textContent = template
+    .replace('$TAB_COUNT$', String(summary.totalTabs))
+    .replace('$WINDOW_COUNT$', String(summary.windows.length))
+    .replace('$GROUP_COUNT$', String(summary.totalGroups));
+
+  modal.classList.remove('hidden');
+  confirmBtn.focus();
+
+  return new Promise(resolve => {
+    const cleanup = (result) => {
+      modal.classList.add('hidden');
+      confirmBtn.removeEventListener('click', onConfirm);
+      cancelBtn.removeEventListener('click', onCancel);
+      document.removeEventListener('keydown', onKeydown);
+      resolve(result);
+    };
+
+    const onConfirm = () => cleanup(true);
+    const onCancel = () => cleanup(false);
+    const onKeydown = (event) => {
+      if (event.key === 'Escape') cleanup(false);
+    };
+
+    confirmBtn.addEventListener('click', onConfirm);
+    cancelBtn.addEventListener('click', onCancel);
+    document.addEventListener('keydown', onKeydown);
+  });
+}
+
 async function handleFileImport(event) {
   const file = event.target.files[0];
   if (!file) return;
+
+  if (file.size > IMPORT_LIMITS.maxFileBytes) {
+    showStatus(getMessage('importFileTooLarge') || 'Import file is too large.', 'error');
+    event.target.value = '';
+    return;
+  }
   
   const reader = new FileReader();
   reader.onload = async (e) => {
     try {
-      // Decode from proprietary format
       const decodedStr = decodeURIComponent(atob(e.target.result));
-      const data = JSON.parse(decodedStr);
-      
-      if (data.generator !== "Bookmark Tab Grouper") {
-        throw new Error(getMessage('invalidFile'));
+      const importData = normalizeImportData(JSON.parse(decodedStr));
+      const confirmed = await confirmImport(importData);
+      if (!confirmed) {
+        showStatus(getMessage('importCancelled') || 'Import cancelled.', 'success');
+        return;
       }
-      
-      const isValidUrl = (url) => {
-        try {
-          const parsed = new URL(url);
-          return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-        } catch(_) {
-          return false;
-        }
-      };
 
-      const activeUrl = data.active_tab_url;
+      const activeUrl = importData.active_tab_url;
       let hasActivated = false;
-      
-      let windowsToRestore = [];
-      if (data.version === "2.0" && data.windows) {
-        windowsToRestore = data.windows;
-      } else {
-        windowsToRestore = [{
-          is_focused: true,
-          groups: data.groups || [],
-          ungrouped_tabs: data.ungrouped_tabs || []
-        }];
-      }
+      const windowsToRestore = importData.windows;
       
       let targetWindowId = null;
       
       const currentWin = await chrome.windows.getCurrent({ populate: true });
       const currentTabs = currentWin.tabs || [];
       // An empty window has exactly 1 tab, and it's not a normal website (e.g. new tab page)
-      const isCurrentWinEmpty = currentTabs.length === 1 && !isValidUrl(currentTabs[0].url);
+      const isCurrentWinEmpty = currentTabs.length === 1 && !currentTabs[0].url?.startsWith('http');
       let usedCurrentWin = false;
       
       for (const winData of windowsToRestore) {
@@ -742,13 +874,8 @@ async function handleFileImport(event) {
         
         if (winData.groups && Array.isArray(winData.groups)) {
           for (const group of winData.groups) {
-            if (!group.tabs || !Array.isArray(group.tabs)) continue;
-            
-            const validUrls = group.tabs.filter(isValidUrl);
-            if (validUrls.length === 0) continue;
-            
             const tabIds = [];
-            for (const url of validUrls) {
+            for (const url of group.tabs) {
               const isActive = (!hasActivated && url === activeUrl);
               if (isActive) hasActivated = true;
               
@@ -769,8 +896,7 @@ async function handleFileImport(event) {
         }
         
         if (winData.ungrouped_tabs && Array.isArray(winData.ungrouped_tabs)) {
-          const validUrls = winData.ungrouped_tabs.filter(isValidUrl);
-          for (const url of validUrls) {
+          for (const url of winData.ungrouped_tabs) {
             const isActive = (!hasActivated && url === activeUrl);
             if (isActive) hasActivated = true;
             

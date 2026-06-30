@@ -104,7 +104,7 @@
     "message": "Cảm ơn bạn! 🙏"
   },
   "welcomeP1": {
-    "message": "Cảm ơn bạn đã tin tưởng và cài đặt <b>Bookmark Tab Grouper</b>."
+    "message": "Cảm ơn bạn đã tin tưởng và cài đặt Bookmark Tab Grouper."
   },
   "welcomeP2": {
     "message": "Tôi tạo ra công cụ này với mong muốn dẹp bỏ sự hỗn loạn của hàng tá tab trình duyệt, giúp bạn có một môi trường làm việc ngăn nắp, gọn gàng và tập trung hơn."
@@ -117,5 +117,32 @@
   },
   "welcomeStartBtn": {
     "message": "Bắt đầu sử dụng"
+  },
+  "importConfirmTitle": {
+    "message": "Nhập phiên làm việc?"
+  },
+  "importConfirmSummary": {
+    "message": "Thao tác này sẽ mở $TAB_COUNT$ tab trong $WINDOW_COUNT$ cửa sổ và $GROUP_COUNT$ nhóm. Tiếp tục?"
+  },
+  "confirmImportBtn": {
+    "message": "Nhập"
+  },
+  "cancelBtn": {
+    "message": "Hủy"
+  },
+  "importCancelled": {
+    "message": "Đã hủy nhập phiên."
+  },
+  "importFileTooLarge": {
+    "message": "File nhập quá lớn."
+  },
+  "importTooManyWindows": {
+    "message": "File phiên có quá nhiều cửa sổ."
+  },
+  "importTooManyGroups": {
+    "message": "File phiên có quá nhiều nhóm."
+  },
+  "importTooManyTabs": {
+    "message": "File phiên có quá nhiều tab."
   }
 }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Bookmark Tab Grouper</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .policy-card {
+      background: #ffffff;
+    }
+
+    .policy-card h1,
+    .policy-card h2 {
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .policy-card h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .policy-card h2 {
+      border-bottom: 3px dashed #000000;
+      font-size: 1.25rem;
+      margin-top: 28px;
+      padding-bottom: 6px;
+    }
+
+    .policy-card p,
+    .policy-card li {
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .policy-card ul {
+      margin-left: 24px;
+      margin-top: 10px;
+    }
+
+    .policy-meta {
+      font-weight: 700;
+      opacity: 0.75;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <article class="card policy-card">
+      <h1>Privacy Policy</h1>
+      <p class="policy-meta">Bookmark Tab Grouper - Effective date: 2026-07-01</p>
+
+      <p>Bookmark Tab Grouper is designed to work locally in the browser. It does not collect, sell, rent, transmit, or share personal data with external servers.</p>
+
+      <h2>Data Handled Locally</h2>
+      <p>The extension may access the following browser data only to provide its features:</p>
+      <ul>
+        <li>Bookmarks: read to list bookmark folders and open selected bookmark URLs.</li>
+        <li>Open tabs and tab groups: read to group tabs by website and export or restore sessions.</li>
+        <li>Session export files: created locally as .btg files containing window, tab, URL, group title, group color, active-tab, and timestamp information.</li>
+        <li>Session import files: read locally when the user selects a .btg file.</li>
+        <li>Settings: theme and language preference stored in chrome.storage.local.</li>
+      </ul>
+
+      <h2>Data Collection and Sharing</h2>
+      <p>The extension does not send bookmark data, tab URLs, browsing activity, session files, settings, analytics, telemetry, identifiers, or profile information to any external service.</p>
+
+      <h2>Permissions</h2>
+      <ul>
+        <li>bookmarks: read bookmark folders and URLs selected by the user.</li>
+        <li>tabs: create tabs, inspect current tab URLs for grouping/export, and restore imported sessions.</li>
+        <li>tabGroups: create, name, color, collapse, and ungroup Chrome tab groups.</li>
+        <li>storage: save local language and theme settings.</li>
+        <li>downloads: save a user-requested .btg session export file.</li>
+      </ul>
+
+      <h2>User Control</h2>
+      <p>Session export files are saved only after the user clicks Export Session. Session import files are read only after the user chooses a file and confirms the import summary.</p>
+      <p>Users can remove extension settings by using the reset button in the extension settings screen or by uninstalling the extension.</p>
+
+      <h2>Contact</h2>
+      <p>For privacy questions, contact the developer through the support channel listed on the Chrome Web Store listing.</p>
+
+      <div class="nav-links">
+        <a class="btn" href="/">Back to Home</a>
+        <a class="btn" href="https://github.com/phpathere/bookmark-tab-grouper">GitHub</a>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

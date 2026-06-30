@@ -92,6 +92,11 @@ body {
   display: none;
 }
 
+.stats-separator {
+  margin: 0 4px;
+  opacity: 0.5;
+}
+
 h1 {
   font-size: 14px;
   font-weight: 800;
@@ -112,6 +117,7 @@ h1 {
   width: 26px;
   height: 26px;
   cursor: pointer;
+  padding: 0;
   box-shadow: 2px 2px 0px var(--border-color);
   transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
 }
@@ -404,4 +410,27 @@ select option {
   border-bottom: 3px dashed var(--border-color);
   padding-bottom: 8px;
   margin-bottom: 16px;
+}
+
+.modal-summary {
+  background: var(--element-bg);
+  border: 3px solid var(--border-color);
+  box-shadow: 3px 3px 0px var(--border-color);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.5;
+  margin: 0 0 16px;
+  padding: 10px;
+  white-space: pre-line;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions .primary-btn,
+.modal-actions .secondary-btn {
+  flex: 1;
 }

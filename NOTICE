@@ -1,0 +1,16 @@
+Bookmark Tab Grouper
+Copyright (c) 2026 Hoang Tat
+
+This project is licensed under the MIT License. See LICENSE.
+
+Third-party notices:
+
+- Lucide icons
+  The settings, sort, and external-link SVG paths in the popup UI are from
+  Lucide, licensed under the ISC License.
+  Source: https://lucide.dev
+  License: https://github.com/lucide-icons/lucide/blob/main/LICENSE
+
+The Chrome Web Store release package does not include remote JavaScript,
+remote CSS, Google Fonts, analytics SDKs, or bundled third-party package
+managers/dependencies.

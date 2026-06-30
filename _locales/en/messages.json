@@ -104,7 +104,7 @@
     "message": "Thank You! 🙏"
   },
   "welcomeP1": {
-    "message": "Thank you for installing <b>Bookmark Tab Grouper</b>."
+    "message": "Thank you for installing Bookmark Tab Grouper."
   },
   "welcomeP2": {
     "message": "I created this tool to help you organize the chaos of browser tabs, providing a clean, tidy, and focused workspace."
@@ -117,5 +117,32 @@
   },
   "welcomeStartBtn": {
     "message": "Start Using"
+  },
+  "importConfirmTitle": {
+    "message": "Import Session?"
+  },
+  "importConfirmSummary": {
+    "message": "This will open $TAB_COUNT$ tabs in $WINDOW_COUNT$ windows and $GROUP_COUNT$ groups. Continue?"
+  },
+  "confirmImportBtn": {
+    "message": "Import"
+  },
+  "cancelBtn": {
+    "message": "Cancel"
+  },
+  "importCancelled": {
+    "message": "Import cancelled."
+  },
+  "importFileTooLarge": {
+    "message": "Import file is too large."
+  },
+  "importTooManyWindows": {
+    "message": "Too many windows in this session file."
+  },
+  "importTooManyGroups": {
+    "message": "Too many groups in this session file."
+  },
+  "importTooManyTabs": {
+    "message": "Too many tabs in this session file."
   }
 }

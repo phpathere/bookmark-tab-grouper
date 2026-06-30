@@ -37,7 +37,7 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 | ↩️ **Smart Undo** | Made a mistake? Click "Undo" to instantly restore tabs to their original ungrouped state. |
 | 💾 **Session Export/Import** | Save your current workspace (all tabs and groups) to an offline `.btg` file. Restore it anywhere. |
 | 🎨 **Premium UI** | Stunning Neo-Brutalism design with Dracula Dark Mode. Built-in smart hover effects and animations. |
-| 🛡️ **100% Privacy** | No tracking. No analytics. No PII (Personally Identifiable Information). Everything works completely offline. |
+| 🛡️ **Local-first Privacy** | No tracking, no analytics, and no external APIs. Bookmark, tab, and session data stay local. |
 
 ---
 
@@ -80,11 +80,21 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 
 ---
 
-## 🔒 100% Offline & Private (Bảo Mật Tuyệt Đối)
-This extension is built for the absolute highest tier of privacy and compliance. **It does NOT collect, track, store, or transmit ANY of your data, browsing history, or bookmarks.** 
-- **Zero External APIs**: Everything is processed locally on your machine.
-- **No PII Collection**: We do not request `identity` or `email` permissions.
-- **Offline First**: Works flawlessly even without an internet connection (excluding loading external web pages).
+## 🔒 Local-First & Private (Bảo Mật Cục Bộ)
+This extension does **not** collect, track, sell, transmit, or share your bookmark data, tab URLs, session exports, analytics, or telemetry with external servers.
+- **Zero External APIs in the Extension Package**: Runtime extension features are processed locally.
+- **No PII Collection**: The extension does not request `identity` or `email` permissions.
+- **Local Settings Only**: Theme and language are stored in `chrome.storage.local`.
+- **User-Controlled Session Files**: Exported `.btg` files may contain tab URLs and group metadata. Import is gated by validation and a confirmation summary.
+
+## 📦 Release Build
+Build the Chrome Web Store ZIP with:
+
+```sh
+sh scripts/build-release.sh
+```
+
+Upload `dist/bookmark-tab-grouper-1.0.0.zip`. The release script excludes repository-only docs, generators, tests, `.DS_Store`, and fails if remote script/font references are found in the packaged extension.
 
 <div align="center">
   <h3>🙏 Thank You! (Cảm Ơn!)</h3>
