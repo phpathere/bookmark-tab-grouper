@@ -5,7 +5,7 @@
   
   **Organize chaos into beautifully color-coded tab groups in one click.**
   <br><br>
-  <img src="docs/tabgroup_hero.png" alt="Bookmark Tab Grouper Auto-Grouping Magic" width="100%" style="border-radius: 8px;">
+  <img src="docs/tabgroup_hero.jpg" alt="Bookmark Tab Grouper Auto-Grouping Magic" width="100%" style="border-radius: 8px;">
   
   [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Pending-blue?style=for-the-badge&logo=googlechrome)](#)
   [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](#)
@@ -61,14 +61,14 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 - Select a Bookmark folder from the **Select Folder** dropdown.
 - Click the **Open & Group** button. All links inside will open and bundle into a neat, color-coded Tab Group.
 
-<p align="center"><img src="docs/tabgroup_main_ui.png" alt="Main UI" width="600"></p>
+<p align="center"><img src="docs/tabgroup_main_ui.jpg" alt="Main UI" width="600"></p>
 
 ### 2. Auto-Group Open Tabs (Tự Động Gộp Tab Đang Mở)
 - Click the **Filter icon (Sort/Group Tabs)** on the right side of the toolbar.
 - Click **Group by Website (Nhóm theo trang web)**. The extension will scan all ungrouped tabs and group them by root domain (e.g., all `github.com` tabs go into one group).
 - Made a mistake? Click **Undo Grouping (Mặc định lại)** to revert the changes.
 
-<p align="center"><img src="docs/tab_sort_by_domain.png" alt="Sort by Website Feature" width="600"></p>
+<p align="center"><img src="docs/tab_sort_by_domain.jpg" alt="Sort by Website Feature" width="600"></p>
 
 ### 3. Session Sync (Lưu & Khôi Phục Phiên)
 - **Export Session:** Click to download a `.btg` file. This securely saves your entire multi-window layout, including all tabs and groups.
