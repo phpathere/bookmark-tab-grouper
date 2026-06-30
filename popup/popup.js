@@ -152,18 +152,11 @@ async function updateStatsBar() {
     }
     const groupCount = groupIds.size;
     
-    // Format: profile | tabCount | groupCount
-    const profileTitle = getMessage('profileTooltip') || 'Profile';
-    const tabCountTitle = getMessage('tabCountTooltip') || 'Tabs';
-    const groupCountTitle = getMessage('groupCountTooltip') || 'Groups';
+    // Format: Current: tabCount tab | groupCount group
+    const isEn = getMessage('defaultOption') === '-- Choose a folder --';
+    const prefix = isEn ? 'Current' : 'Hiện tại';
     
-    statsBar.innerHTML = `
-      <span title="${escapeHtml(profileTitle)}">🌐 ${escapeHtml(profile)}</span> 
-      <span>|</span> 
-      <span title="${escapeHtml(tabCountTitle)}">📄 ${tabCount}</span> 
-      <span>|</span> 
-      <span title="${escapeHtml(groupCountTitle)}">🗂️ ${groupCount}</span>
-    `;
+    statsBar.innerHTML = `${prefix}: ${tabCount} tab <span style="opacity:0.5; margin:0 4px;">|</span> ${groupCount} group`;
   } catch (e) {
     console.warn("Failed to update stats bar", e);
   }
