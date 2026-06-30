@@ -721,10 +721,23 @@ async function handleFileImport(event) {
       
       let targetWindowId = null;
       
+      const currentWin = await chrome.windows.getCurrent({ populate: true });
+      const currentTabs = currentWin.tabs || [];
+      const isCurrentWinEmpty = currentTabs.length === 1 && 
+        (currentTabs[0].url === "chrome://newtab/" || currentTabs[0].url === "" || currentTabs[0].pendingUrl === "chrome://newtab/");
+      let usedCurrentWin = false;
+      
       for (const winData of windowsToRestore) {
-        // Create without focus to prevent subsequent windows from stealing focus
-        const newWin = await chrome.windows.create({ focused: false });
-        const winId = newWin.id;
+        let winId;
+        
+        if (isCurrentWinEmpty && !usedCurrentWin) {
+          winId = currentWin.id;
+          usedCurrentWin = true;
+        } else {
+          // Create without focus to prevent subsequent windows from stealing focus
+          const newWin = await chrome.windows.create({ focused: false });
+          winId = newWin.id;
+        }
         
         if (winData.is_focused) {
           targetWindowId = winId;
@@ -767,10 +780,13 @@ async function handleFileImport(event) {
           }
         }
         
-        // Clean up the default empty tab that comes with new window
+        // Clean up any default empty tab
         const allTabs = await chrome.tabs.query({ windowId: winId });
-        if (allTabs.length > 1 && allTabs[0].url === "chrome://newtab/") {
-          chrome.tabs.remove(allTabs[0].id);
+        const emptyTabs = allTabs.filter(t => t.url === "chrome://newtab/" || t.url === "" || t.pendingUrl === "chrome://newtab/");
+        if (allTabs.length > emptyTabs.length) {
+          for (const t of emptyTabs) {
+            await chrome.tabs.remove(t.id);
+          }
         }
       }
       
