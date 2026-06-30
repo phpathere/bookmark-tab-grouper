@@ -307,7 +307,14 @@ function populateFolderSelect(node, selectElement, depth = 0) {
   }
 
   if (node.children) {
-    node.children.forEach(child => {
+    // Sort children alphabetically for aesthetics
+    const sortedChildren = [...node.children].sort((a, b) => {
+      const titleA = (a.title || '').toLowerCase();
+      const titleB = (b.title || '').toLowerCase();
+      return titleA.localeCompare(titleB);
+    });
+    
+    sortedChildren.forEach(child => {
       populateFolderSelect(child, selectElement, node.id === "0" ? depth : depth + 1);
     });
   }
