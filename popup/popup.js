@@ -739,8 +739,10 @@ async function handleFileImport(event) {
           // Create without focus to prevent subsequent windows from stealing focus
           const newWin = await chrome.windows.create({ focused: false });
           winId = newWin.id;
-          if (newWin.tabs && newWin.tabs.length > 0) {
-            tabIdToRemove = newWin.tabs[0].id;
+          // Chrome.windows.create doesn't populate tabs, so we must query them
+          const newWinTabs = await chrome.tabs.query({ windowId: winId });
+          if (newWinTabs && newWinTabs.length > 0) {
+            tabIdToRemove = newWinTabs[0].id;
           }
         }
         
