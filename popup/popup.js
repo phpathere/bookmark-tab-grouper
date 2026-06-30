@@ -709,9 +709,16 @@ async function handleFileImport(event) {
         }];
       }
       
+      let targetWindowId = null;
+      
       for (const winData of windowsToRestore) {
-        const newWin = await chrome.windows.create({ focused: winData.is_focused });
+        // Create without focus to prevent subsequent windows from stealing focus
+        const newWin = await chrome.windows.create({ focused: false });
         const winId = newWin.id;
+        
+        if (winData.is_focused) {
+          targetWindowId = winId;
+        }
         
         if (winData.groups && Array.isArray(winData.groups)) {
           for (const group of winData.groups) {
@@ -755,6 +762,11 @@ async function handleFileImport(event) {
         if (allTabs.length > 1 && allTabs[0].url === "chrome://newtab/") {
           chrome.tabs.remove(allTabs[0].id);
         }
+      }
+      
+      // Finally, focus the correct window after everything is created
+      if (targetWindowId !== null) {
+        await chrome.windows.update(targetWindowId, { focused: true });
       }
       
       showStatus(getMessage('importSuccess'), 'success');
