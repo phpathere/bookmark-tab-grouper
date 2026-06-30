@@ -568,6 +568,14 @@ async function handleExport() {
   try {
     const windows = await chrome.windows.getAll({ populate: true });
     
+    let lastFocusedWinId = null;
+    try {
+      const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+      if (lastFocused) lastFocusedWinId = lastFocused.id;
+    } catch (e) {
+      // fallback if getLastFocused fails
+    }
+    
     const exportData = {
       version: "2.0",
       generator: "Bookmark Tab Grouper",
@@ -583,7 +591,8 @@ async function handleExport() {
       const ungrouped = [];
       
       for (const tab of win.tabs) {
-        if (tab.active && win.focused) {
+        const isThisWindowFocused = lastFocusedWinId !== null ? (win.id === lastFocusedWinId) : win.focused;
+        if (tab.active && isThisWindowFocused) {
           exportData.active_tab_url = tab.url;
         }
         
@@ -597,8 +606,9 @@ async function handleExport() {
         }
       }
       
+      const isThisWindowFocused = lastFocusedWinId !== null ? (win.id === lastFocusedWinId) : win.focused;
       const winData = {
-        is_focused: win.focused,
+        is_focused: isThisWindowFocused,
         groups: [],
         ungrouped_tabs: ungrouped
       };
