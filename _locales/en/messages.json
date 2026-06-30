@@ -99,5 +99,23 @@
   },
   "resetSuccess": {
     "message": "Settings reset to default."
+  },
+  "welcomeTitle": {
+    "message": "Thank You! 🙏"
+  },
+  "welcomeP1": {
+    "message": "Thank you for installing <b>Bookmark Tab Grouper</b>."
+  },
+  "welcomeP2": {
+    "message": "I created this tool to help you organize the chaos of browser tabs, providing a clean, tidy, and focused workspace."
+  },
+  "welcomeP3": {
+    "message": "Have a productive and energetic day! ⚡"
+  },
+  "welcomeAuthor": {
+    "message": "— Author: Hoang Tat"
+  },
+  "welcomeStartBtn": {
+    "message": "Start Using"
   }
 }

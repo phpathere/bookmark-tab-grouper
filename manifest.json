@@ -4,7 +4,7 @@
   "description": "__MSG_extDesc__",
   "version": "1.0.0",
   "minimum_chrome_version": "89",
-  "default_locale": "vi",
+  "default_locale": "en",
   "permissions": [
     "bookmarks",
     "tabs",

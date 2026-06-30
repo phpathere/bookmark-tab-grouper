@@ -99,5 +99,23 @@
   },
   "resetSuccess": {
     "message": "Đã khôi phục cài đặt gốc."
+  },
+  "welcomeTitle": {
+    "message": "Cảm ơn bạn! 🙏"
+  },
+  "welcomeP1": {
+    "message": "Cảm ơn bạn đã tin tưởng và cài đặt <b>Bookmark Tab Grouper</b>."
+  },
+  "welcomeP2": {
+    "message": "Tôi tạo ra công cụ này với mong muốn dẹp bỏ sự hỗn loạn của hàng tá tab trình duyệt, giúp bạn có một môi trường làm việc ngăn nắp, gọn gàng và tập trung hơn."
+  },
+  "welcomeP3": {
+    "message": "Chúc bạn một ngày làm việc thật hiệu quả và tràn đầy năng lượng! ⚡"
+  },
+  "welcomeAuthor": {
+    "message": "— Tác giả: Hoang Tat"
+  },
+  "welcomeStartBtn": {
+    "message": "Bắt đầu sử dụng"
   }
 }
