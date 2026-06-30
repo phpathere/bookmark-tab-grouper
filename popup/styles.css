@@ -175,6 +175,11 @@ select:focus-visible, select:active {
   box-shadow: 2px 2px 0px var(--border-color);
 }
 
+select:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
 select option {
   font-weight: bold;
 }
@@ -207,6 +212,11 @@ select option {
 .primary-btn:active {
   transform: translate(4px, 4px);
   box-shadow: 0px 0px 0px var(--border-color);
+}
+
+.primary-btn:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .primary-btn svg {
@@ -246,6 +256,11 @@ select option {
 .secondary-btn:active {
   transform: translate(4px, 4px);
   box-shadow: 0px 0px 0px var(--border-color);
+}
+
+.secondary-btn:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .status {
@@ -308,6 +323,11 @@ select option {
 .icon-btn:active {
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0px var(--border-color);
+}
+
+.icon-btn:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .dropdown-content {
