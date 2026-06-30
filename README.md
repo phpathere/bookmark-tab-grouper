@@ -70,8 +70,9 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 
 <p align="center"><img src="docs/tab_sort_by_domain.jpg" alt="Sort by Website Feature" width="600"></p>
 
-### 3. Session Sync (Lưu & Khôi Phục Phiên)
-- **Export Session:** Click to download a `.btg` file. This securely saves your entire multi-window layout, including all tabs and groups.
+### 3. Session Sync & Team Sharing (Đồng Bộ & Chia Sẻ Phiên)
+- **Export Session:** Click to download a `.btg` file (automatically saved to your browser's default `Downloads` folder). This securely saves your entire multi-window layout, including all tabs and groups.
+  - *🤝 Pro Tip for Teams/Teachers:* You can send this `.btg` file to your colleagues or students. When they import it, they will instantly have the exact same workspace environment and websites opened without having to send dozens of links!
 - **Import Session:** Upload a `.btg` file. The extension will automatically reconstruct your windows, tabs, and tab groups exactly as you left them, and automatically clean up any empty tabs!
 
 ### 4. Settings (Cài Đặt)
@@ -79,11 +80,11 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 
 ---
 
-## 🔒 Privacy & Architecture
-This extension is built for the absolute highest tier of privacy and compliance:
-- **Zero External APIs**: No data ever leaves your computer.
+## 🔒 100% Offline & Private (Bảo Mật Tuyệt Đối)
+This extension is built for the absolute highest tier of privacy and compliance. **It does NOT collect, track, store, or transmit ANY of your data, browsing history, or bookmarks.** 
+- **Zero External APIs**: Everything is processed locally on your machine.
 - **No PII Collection**: We do not request `identity` or `email` permissions.
-- **Royalty-Free Assets**: 100% custom-designed vector SVGs ensure absolute Intellectual Property compliance.
+- **Offline First**: Works flawlessly even without an internet connection (excluding loading external web pages).
 
 <div align="center">
   <i>Built with ❤️ and Neo-brutalism.</i>
