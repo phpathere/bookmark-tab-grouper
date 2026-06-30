@@ -1,0 +1,73 @@
+<div align="center">
+  <img src="icons/icon-128.png" alt="Logo" width="128" height="128">
+  
+  # Bookmark Tab Grouper 👾
+  
+  **Organize chaos into beautifully color-coded tab groups in one click.**
+  
+  [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Pending-blue?style=for-the-badge&logo=googlechrome)](#)
+  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](#)
+  [![Offline First](https://img.shields.io/badge/Privacy-100%25_Offline-success?style=for-the-badge)](#)
+</div>
+
+---
+
+## 😫 The Pain (Nỗi Đau)
+If you do research, development, or shopping, you probably suffer from:
+- **Tab Overload**: Having 50+ tabs open, making the browser laggy and tabs unreadable.
+- **Context Switching**: Trying to find that one specific documentation tab hidden among YouTube and Twitter tabs.
+- **Lost Work**: Accidentally closing a window and losing an entire session of meticulously opened tabs.
+- **Manual Grouping is Tedious**: Chrome's native Tab Groups are great, but manually right-clicking and naming groups for dozens of tabs is exhausting.
+
+## 💡 The Solution (Giải Pháp)
+**Bookmark Tab Grouper** automates the tedious work. Just organize your links in Chrome Bookmarks (e.g., a folder named "Project Research"), open the extension, select the folder, and click **Open & Group**. 
+
+BAM! 💥 The extension opens all those links and automatically bundles them into a neat, color-coded Chrome Tab Group named exactly after your bookmark folder.
+
+---
+
+## ✨ Features (Tính Năng Chính)
+
+| Feature | Description |
+| :--- | :--- |
+| 🗂️ **1-Click Grouping** | Select a bookmark folder and instantly open all links inside a neatly named Tab Group. |
+| 🌐 **Group by Domain** | Automatically detect and group tabs belonging to the same website (e.g., all `github.com` tabs). |
+| ↩️ **Smart Undo** | Made a mistake? Click "Undo" to instantly restore tabs to their original ungrouped state. |
+| 💾 **Session Export/Import** | Save your current workspace (all tabs and groups) to an offline `.btg` file. Restore it anywhere. |
+| 🎨 **Premium UI** | Stunning Neo-Brutalism design with Dracula Dark Mode. Built-in smart hover effects and animations. |
+| 🛡️ **100% Privacy** | No tracking. No analytics. No PII (Personally Identifiable Information). Everything works completely offline. |
+
+---
+
+## 🚀 Installation (Cài Đặt)
+
+### Method 1: Chrome Web Store (Coming Soon)
+- Click [here](#) to download directly from the Chrome Web Store.
+
+### Method 2: Developer Mode (Local)
+1. Download or clone this repository.
+2. Open Chrome and navigate to `chrome://extensions/`.
+3. Enable **Developer mode** in the top right corner.
+4. Click **Load unpacked** and select the folder containing this extension.
+
+---
+
+## 🛠️ Usage (Hướng Dẫn Sử Dụng)
+
+1. **Open the Extension**: Click the 👾 icon in your Chrome toolbar.
+2. **Select a Folder**: Choose a folder from your Chrome Bookmarks using the dropdown.
+3. **Execute**: Click **Open & Group Tabs**.
+4. **Export Session**: Click **Export Session** to save your currently open tabs as a backup.
+5. **Settings**: Click the Gear icon ⚙️ to switch between Light/Dark themes or Vietnamese/English languages.
+
+---
+
+## 🔒 Privacy & Architecture
+This extension is built for the absolute highest tier of privacy and compliance:
+- **Zero External APIs**: No data ever leaves your computer.
+- **No PII Collection**: We do not request `identity` or `email` permissions.
+- **Royalty-Free Assets**: 100% custom-designed vector SVGs ensure absolute Intellectual Property compliance.
+
+<div align="center">
+  <i>Built with ❤️ and Neo-brutalism.</i>
+</div>

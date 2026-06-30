@@ -3,52 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hoang Tat | Developer Portfolio</title>
+  <title>Bookmark Tab Grouper 👾</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Specific overrides for the landing page */
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+    .hero p { font-size: 1.2rem; color: #444; }
+    
+    .section-title { font-size: 2rem; border-bottom: 4px solid #1c1917; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px;}
+    
+    .pain-points, .solutions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) {
+      .pain-points, .solutions { grid-template-columns: 1fr; }
+    }
+    
+    .pain-card {
+      background: #fef08a; /* yellow */
+      border: 3px solid #1c1917;
+      padding: 20px;
+      box-shadow: 4px 4px 0px #1c1917;
+    }
+    
+    .solution-card {
+      background: #86efac; /* green */
+      border: 3px solid #1c1917;
+      padding: 20px;
+      box-shadow: 4px 4px 0px #1c1917;
+    }
+    
+    .btn-large {
+      display: inline-block;
+      background: #fb7185;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 15px 30px;
+      border: 4px solid #1c1917;
+      box-shadow: 6px 6px 0px #1c1917;
+      text-decoration: none;
+      margin-top: 30px;
+      transition: all 0.2s ease;
+    }
+    .btn-large:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 4px 4px 0px #1c1917;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <header class="header card">
-      <h1>Hi, I build cool stuff 🚀</h1>
-      <p>I'm an independent developer crafting extensions, apps, and fun tools.</p>
+    <header class="header card hero" style="background: #d1fae5;">
+      <div style="font-size: 4rem; margin-bottom: 20px;">👾</div>
+      <h1>Bookmark Tab Grouper</h1>
+      <p>Organize chaos into beautifully color-coded tab groups in <b>one click</b>.</p>
+      <a href="#" class="btn-large">Get it on Chrome Web Store</a>
     </header>
 
-    <section class="projects">
-      <h2>Featured Projects</h2>
-      
-      <div class="card project-card">
-        <div class="project-icon">👾</div>
-        <div class="project-info">
-          <h3>Bookmark Tab Grouper</h3>
-          <p>A smart Chrome Extension that automatically organizes your chaotic browser tabs into color-coded groups based on your bookmark folders. Save, share, and restore sessions effortlessly.</p>
-          <div class="tags">
-            <span class="tag">JavaScript</span>
-            <span class="tag">Chrome Extension</span>
-          </div>
-          <a href="#" class="btn">View on Chrome Web Store</a>
+    <section>
+      <h2 class="section-title">😫 Nỗi Đau (The Pain)</h2>
+      <p style="margin-bottom: 20px; font-size: 1.1rem;">Bạn có đang rơi vào những tình trạng này mỗi ngày?</p>
+      <div class="pain-points">
+        <div class="pain-card">
+          <h3 style="margin-top:0">🤯 Tab Overload</h3>
+          <p>Mở 50+ tabs cùng lúc khiến trình duyệt giật lag, rối mắt và không thể tìm thấy tab cần thiết.</p>
+        </div>
+        <div class="pain-card">
+          <h3 style="margin-top:0">🔄 Context Switching</h3>
+          <p>Mất quá nhiều thời gian để tìm lại tab tài liệu cũ nằm xen kẽ giữa các tab giải trí (YouTube, Facebook).</p>
+        </div>
+        <div class="pain-card">
+          <h3 style="margin-top:0">😩 Phân loại thủ công</h3>
+          <p>Tính năng Tab Group của Chrome rất hay, nhưng việc bấm chuột phải chọn từng tab và gõ tên nhóm thủ công là một cực hình.</p>
+        </div>
+        <div class="pain-card">
+          <h3 style="margin-top:0">💥 Mất phiên làm việc</h3>
+          <p>Lỡ tay tắt nhầm cửa sổ trình duyệt và toàn bộ 30 tabs đang nghiên cứu dở dang biến mất không dấu vết.</p>
         </div>
       </div>
-      
     </section>
 
-    <footer class="footer card">
-      <div class="social-links">
-        <a href="https://github.com/phpathere" target="_blank" aria-label="GitHub" class="social-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 8 18v4"/><path d="M12 18v4"/><path d="M12 18H8"/></svg>
-        </a>
-        <a href="https://x.com/0x0bytejoy" target="_blank" aria-label="X (Twitter)" class="social-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-        </a>
-        <a href="https://www.facebook.com/Stateful" target="_blank" aria-label="Facebook" class="social-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/phantathoang/" target="_blank" aria-label="Instagram" class="social-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-        </a>
+    <section>
+      <h2 class="section-title">💡 Giải Pháp (The Solution)</h2>
+      <p style="margin-bottom: 20px; font-size: 1.1rem;"><b>Bookmark Tab Grouper</b> sinh ra để tự động hoá toàn bộ rắc rối trên!</p>
+      <div class="solutions">
+        <div class="solution-card">
+          <h3 style="margin-top:0">🗂️ 1-Click Grouping</h3>
+          <p>Chỉ cần gom link vào Bookmark của Chrome (ví dụ thư mục "Dự Án A"). Mở Extension, chọn thư mục đó và click "Open". Tất cả link sẽ tự động mở và gom gọn vào một Tab Group mang tên "Dự Án A"!</p>
+        </div>
+        <div class="solution-card">
+          <h3 style="margin-top:0">🌐 Auto-Group theo Website</h3>
+          <p>Click 1 nút duy nhất để nhóm tất cả các tab đang mở lộn xộn theo từng trang web (ví dụ: nhóm toàn bộ các tab Github vào 1 group).</p>
+        </div>
+        <div class="solution-card">
+          <h3 style="margin-top:0">💾 Backup & Restore Session</h3>
+          <p>Lưu lại toàn bộ cửa sổ làm việc hiện tại thành 1 file <code>.btg</code> cực nhẹ và bảo mật (Offline 100%). Bạn có thể đem qua máy tính khác hoặc phục hồi lại phiên làm việc bất cứ lúc nào!</p>
+        </div>
+        <div class="solution-card" style="background: #ff79c6; color: #fff;">
+          <h3 style="margin-top:0">🛡️ Bảo Mật Tuyệt Đối</h3>
+          <p>Không chứa bất kỳ API bên thứ 3 nào. Không thu thập email, không gửi dữ liệu ra ngoài. Mọi thứ hoạt động Offline trực tiếp trên máy của bạn.</p>
+        </div>
       </div>
-      <p style="margin-top: 15px; font-weight: 700;">© 2026 Hoang Tat. Built with ❤️ and Neo-brutalism.</p>
+    </section>
+
+    <footer class="footer card" style="margin-top: 40px; text-align: center;">
+      <p style="font-weight: 700;">© 2026 Bookmark Tab Grouper. Built with ❤️ and Neo-brutalism.</p>
+      <p style="margin-top: 10px;">
+        <a href="https://github.com/phpathere" target="_blank" style="color: #1c1917; font-weight:bold;">GitHub</a> |
+        <a href="https://x.com/0x0bytejoy" target="_blank" style="color: #1c1917; font-weight:bold;">Twitter</a>
+      </p>
     </footer>
   </div>
 </body>
