@@ -1,8 +1,8 @@
-# Privacy Policy for Bookmark Tab Grouper
+# Privacy Policy for Tab Bookmark Grouper
 
 Effective date: 2026-07-01
 
-Bookmark Tab Grouper is designed to work locally in the browser. It does not collect, sell, rent, transmit, or share personal data with external servers.
+Tab Bookmark Grouper is designed to work locally in the browser. It does not collect, sell, rent, transmit, or share personal data with external servers.
 
 ## Data Handled Locally
 
@@ -34,4 +34,4 @@ Users can remove extension settings by using the reset button in the extension s
 
 ## Contact
 
-For privacy questions, contact the developer through the support channel listed on the Chrome Web Store listing.
+For privacy questions, contact: phpathere@gmail.com.

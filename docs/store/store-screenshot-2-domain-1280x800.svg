@@ -1,0 +1,87 @@
+<svg width="1280" height="800" viewBox="0 0 1280 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Tab Bookmark Grouper domain grouping screenshot</title>
+  <desc id="desc">A professional store screenshot showing tabs grouped by domain and sorted alphabetically, with the extension button changed to undo mode.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#99f6e4"/>
+      <stop offset="0.5" stop-color="#93c5fd"/>
+      <stop offset="1" stop-color="#f0abfc"/>
+    </linearGradient>
+    <filter id="hardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="10" dy="12" stdDeviation="0" flood-color="#1c1917" flood-opacity="1"/>
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="url(#bg)"/>
+  <circle cx="1138" cy="128" r="96" fill="#fde68a" opacity="0.62"/>
+  <circle cx="132" cy="660" r="154" fill="#111827" opacity="0.12"/>
+
+  <g transform="translate(78 86)">
+    <text x="0" y="58" font-family="Arial, sans-serif" font-size="52" font-weight="900" fill="#1c1917">Group tabs</text>
+    <text x="0" y="114" font-family="Arial, sans-serif" font-size="52" font-weight="900" fill="#1c1917">by domain</text>
+    <rect x="0" y="146" width="360" height="8" fill="#1c1917"/>
+    <text x="0" y="202" font-family="Courier New, monospace" font-size="25" font-weight="700" fill="#334155">Related tabs stay together.</text>
+    <text x="0" y="238" font-family="Courier New, monospace" font-size="25" font-weight="700" fill="#334155">Sorted alphabetically.</text>
+
+    <g transform="translate(0 292)">
+      <rect x="0" y="0" width="440" height="82" rx="12" fill="#ffffff" stroke="#1c1917" stroke-width="5"/>
+      <circle cx="44" cy="41" r="14" fill="#fb7185" stroke="#1c1917" stroke-width="4"/>
+      <text x="84" y="50" font-family="Courier New, monospace" font-size="24" font-weight="900" fill="#1c1917">alpha.dev</text>
+      <rect x="292" y="20" width="102" height="42" rx="10" fill="#fb7185" stroke="#1c1917" stroke-width="4"/>
+      <text x="343" y="48" text-anchor="middle" font-family="Courier New, monospace" font-size="17" font-weight="900" fill="#ffffff">3 tabs</text>
+    </g>
+    <g transform="translate(0 392)">
+      <rect x="0" y="0" width="440" height="82" rx="12" fill="#ffffff" stroke="#1c1917" stroke-width="5"/>
+      <circle cx="44" cy="41" r="14" fill="#38bdf8" stroke="#1c1917" stroke-width="4"/>
+      <text x="84" y="50" font-family="Courier New, monospace" font-size="24" font-weight="900" fill="#1c1917">market.io</text>
+      <rect x="292" y="20" width="102" height="42" rx="10" fill="#38bdf8" stroke="#1c1917" stroke-width="4"/>
+      <text x="343" y="48" text-anchor="middle" font-family="Courier New, monospace" font-size="17" font-weight="900" fill="#1c1917">4 tabs</text>
+    </g>
+    <g transform="translate(0 492)">
+      <rect x="0" y="0" width="440" height="82" rx="12" fill="#ffffff" stroke="#1c1917" stroke-width="5"/>
+      <circle cx="44" cy="41" r="14" fill="#a78bfa" stroke="#1c1917" stroke-width="4"/>
+      <text x="84" y="50" font-family="Courier New, monospace" font-size="24" font-weight="900" fill="#1c1917">research.app</text>
+      <rect x="292" y="20" width="102" height="42" rx="10" fill="#a78bfa" stroke="#1c1917" stroke-width="4"/>
+      <text x="343" y="48" text-anchor="middle" font-family="Courier New, monospace" font-size="17" font-weight="900" fill="#1c1917">5 tabs</text>
+    </g>
+  </g>
+
+  <g transform="translate(558 92)" filter="url(#hardShadow)">
+    <rect x="0" y="0" width="642" height="470" rx="10" fill="#f8fafc" stroke="#1c1917" stroke-width="6"/>
+    <rect x="0" y="0" width="642" height="74" rx="10" fill="#4b263b" stroke="#1c1917" stroke-width="6"/>
+    <circle cx="34" cy="36" r="10" fill="#fb7185"/>
+    <circle cx="68" cy="36" r="10" fill="#facc15"/>
+    <circle cx="102" cy="36" r="10" fill="#22c55e"/>
+    <g transform="translate(142 18)">
+      <rect x="0" y="0" width="124" height="38" rx="10" fill="#fb7185"/>
+      <text x="62" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#ffffff">alpha.dev</text>
+      <rect x="138" y="0" width="122" height="38" rx="10" fill="#38bdf8"/>
+      <text x="199" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#1c1917">market.io</text>
+      <rect x="274" y="0" width="148" height="38" rx="10" fill="#a78bfa"/>
+      <text x="348" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#1c1917">research.app</text>
+    </g>
+    <rect x="32" y="104" width="578" height="54" rx="27" fill="#ffffff" stroke="#1c1917" stroke-width="5"/>
+    <text x="66" y="139" font-family="Courier New, monospace" font-size="23" font-weight="900" fill="#334155">chrome://tabs organized</text>
+    <g transform="translate(48 206)">
+      <rect x="0" y="0" width="150" height="86" rx="12" fill="#fb7185" stroke="#1c1917" stroke-width="5"/>
+      <rect x="24" y="24" width="102" height="14" rx="7" fill="#ffffff"/>
+      <rect x="24" y="52" width="72" height="10" rx="5" fill="#7f1d1d" opacity="0.45"/>
+      <rect x="178" y="0" width="150" height="86" rx="12" fill="#38bdf8" stroke="#1c1917" stroke-width="5"/>
+      <rect x="202" y="24" width="102" height="14" rx="7" fill="#ffffff"/>
+      <rect x="202" y="52" width="72" height="10" rx="5" fill="#075985" opacity="0.45"/>
+      <rect x="356" y="0" width="150" height="86" rx="12" fill="#a78bfa" stroke="#1c1917" stroke-width="5"/>
+      <rect x="380" y="24" width="102" height="14" rx="7" fill="#ffffff"/>
+      <rect x="380" y="52" width="72" height="10" rx="5" fill="#4c1d95" opacity="0.45"/>
+    </g>
+  </g>
+
+  <g transform="translate(766 442)" filter="url(#hardShadow)">
+    <rect x="0" y="0" width="352" height="250" rx="8" fill="#d1fae5" stroke="#1c1917" stroke-width="6"/>
+    <rect x="32" y="34" width="288" height="48" fill="#ffffff" stroke="#1c1917" stroke-width="5"/>
+    <text x="176" y="65" text-anchor="middle" font-family="Courier New, monospace" font-size="18" font-weight="900" fill="#1c1917">Current: 12 tab | 3 group</text>
+    <rect x="32" y="112" width="288" height="68" fill="#facc15" stroke="#1c1917" stroke-width="5"/>
+    <text x="176" y="153" text-anchor="middle" font-family="Courier New, monospace" font-size="20" font-weight="900" fill="#1c1917">UNDO GROUP BY DOMAIN</text>
+    <text x="176" y="216" text-anchor="middle" font-family="Courier New, monospace" font-size="19" font-weight="900" fill="#334155">Offline by design</text>
+  </g>
+</svg>

@@ -1,15 +1,15 @@
 <div align="center">
   <img src="icons/icon-128.png" alt="Logo" width="128" height="128">
   
-  # Bookmark Tab Grouper 👾
+  # Tab Bookmark Grouper 👾
   
-  **Organize chaos into beautifully color-coded tab groups in one click.**
+  **Open bookmarks into clear, color-coded tab groups in one click.**
   <br><br>
-  <img src="docs/tabgroup_hero.jpg" alt="Bookmark Tab Grouper Auto-Grouping Magic" width="100%" style="border-radius: 8px;">
+  <img src="docs/store/store-marquee-1400x560.png" alt="Tab Bookmark Grouper promotional banner" width="100%" style="border-radius: 8px;">
   
   [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Pending-blue?style=for-the-badge&logo=googlechrome)](#)
   [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](#)
-  [![Offline First](https://img.shields.io/badge/Privacy-100%25_Offline-success?style=for-the-badge)](#)
+  [![Offline First](https://img.shields.io/badge/Privacy-Offline_First-success?style=for-the-badge)](#)
 </div>
 
 ---
@@ -22,9 +22,9 @@ If you do research, development, or shopping, you probably suffer from:
 - **Manual Grouping is Tedious**: Chrome's native Tab Groups are great, but manually right-clicking and naming groups for dozens of tabs is exhausting.
 
 ## 💡 The Solution (Giải Pháp)
-**Bookmark Tab Grouper** automates the tedious work. Just organize your links in Chrome Bookmarks (e.g., a folder named "Project Research"), open the extension, select the folder, and click **Open & Group**. 
+**Tab Bookmark Grouper** automates the tedious work. Just organize your links in Chrome Bookmarks (e.g., a folder named "Project Research"), open the extension, select the folder, and click **Open & Group**. 
 
-BAM! 💥 The extension opens all those links and automatically bundles them into a neat, color-coded Chrome Tab Group named exactly after your bookmark folder.
+The extension opens those links and bundles them into a neat, color-coded Chrome Tab Group named after your bookmark folder.
 
 ---
 
@@ -36,7 +36,7 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 | 🌐 **Group by Domain** | Automatically detect and group tabs belonging to the same website (e.g., all `github.com` tabs). |
 | ↩️ **Smart Undo** | Made a mistake? Click "Undo" to instantly restore tabs to their original ungrouped state. |
 | 💾 **Session Export/Import** | Save your current workspace (all tabs and groups) to an offline `.btg` file. Restore it anywhere. |
-| 🎨 **Premium UI** | Stunning Neo-Brutalism design with Dracula Dark Mode. Built-in smart hover effects and animations. |
+| 🎨 **Focused UI** | Neo-Brutalism-inspired design with dark mode, clear controls, and keyboard-accessible interactions. |
 | 🛡️ **Local-first Privacy** | No tracking, no analytics, and no external APIs. Bookmark, tab, and session data stay local. |
 
 ---
@@ -61,26 +61,26 @@ BAM! 💥 The extension opens all those links and automatically bundles them int
 - Select a Bookmark folder from the **Select Folder** dropdown.
 - Click the **Open & Group** button. All links inside will open and bundle into a neat, color-coded Tab Group.
 
-<p align="center"><img src="docs/tabgroup_main_ui.jpg" alt="Main UI" width="600"></p>
+<p align="center"><img src="docs/store/store-screenshot-1-main-1280x800.png" alt="Main UI" width="600"></p>
 
 ### 2. Auto-Group Open Tabs (Tự Động Gộp Tab Đang Mở)
 - Click the **Filter icon (Sort/Group Tabs)** on the right side of the toolbar.
 - Click **Group by Website (Nhóm theo trang web)**. The extension will scan all ungrouped tabs and group them by root domain (e.g., all `github.com` tabs go into one group).
-- Made a mistake? Click **Undo Grouping (Mặc định lại)** to revert the changes.
+- Made a mistake? Click **Undo Grouping (Hoàn tác nhóm)** to revert the changes.
 
-<p align="center"><img src="docs/tab_sort_by_domain.jpg" alt="Sort by Website Feature" width="600"></p>
+<p align="center"><img src="docs/store/store-screenshot-2-domain-1280x800.png" alt="Group by Domain Feature" width="600"></p>
 
 ### 3. Session Sync & Team Sharing (Đồng Bộ & Chia Sẻ Phiên)
-- **Export Session:** Click to download a `.btg` file (automatically saved to your browser's default `Downloads` folder). This securely saves your entire multi-window layout, including all tabs and groups.
-  - *🤝 Pro Tip for Teams/Teachers:* You can send this `.btg` file to your colleagues or students. When they import it, they will instantly have the exact same workspace environment and websites opened without having to send dozens of links!
-- **Import Session:** Upload a `.btg` file. The extension will automatically reconstruct your windows, tabs, and tab groups exactly as you left them, and automatically clean up any empty tabs!
+- **Export Session:** Click to download a `.btg` file (automatically saved to your browser's default `Downloads` folder). This saves supported windows, tabs, and groups locally.
+  - *🤝 Pro Tip for Teams/Teachers:* You can send this `.btg` file to colleagues or students so they can restore supported workspace tabs without manually sharing dozens of links.
+- **Import Session:** Upload a `.btg` file. The extension restores supported windows, tabs, and tab groups, reports partial failures, and cleans up empty startup tabs when safe.
 
 ### 4. Settings (Cài Đặt)
 - Click the Gear icon ⚙️ to switch between **Light/Dark Auto themes** or change the language (English/Vietnamese).
 
 ---
 
-## 🔒 Local-First & Private (Bảo Mật Cục Bộ)
+## 🔒 Local-First & Private (Bảo mật cục bộ)
 This extension does **not** collect, track, sell, transmit, or share your bookmark data, tab URLs, session exports, analytics, or telemetry with external servers.
 - **Zero External APIs in the Extension Package**: Runtime extension features are processed locally.
 - **No PII Collection**: The extension does not request `identity` or `email` permissions.
@@ -94,10 +94,10 @@ Build the Chrome Web Store ZIP with:
 sh scripts/build-release.sh
 ```
 
-Upload `dist/bookmark-tab-grouper-1.0.0.zip`. The release script excludes repository-only docs, generators, tests, `.DS_Store`, and fails if remote script/font references are found in the packaged extension.
+Upload `dist/bookmark-tab-grouper-<version>.zip`. The release script reads the version from `manifest.json`, excludes repository-only docs, generators, tests, `.DS_Store`, and fails if remote script/font references are found in the packaged extension.
 
 <div align="center">
   <h3>🙏 Thank You! (Cảm Ơn!)</h3>
-  <p>Thank you so much for installing and using <b>Bookmark Tab Grouper</b>. I built this tool to solve my own productivity chaos, and I truly hope it brings a little more peace and order to your digital workspace. Have a wonderful and productive day!</p>
+  <p>Thank you so much for installing and using <b>Tab Bookmark Grouper</b>. I built this tool to solve my own productivity chaos, and I truly hope it brings a little more peace and order to your digital workspace. Have a wonderful and productive day!</p>
   <i>— Created with ❤️ and Neo-brutalism by <b>Hoang Tat</b></i>
 </div>

@@ -3,179 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookmark Tab Grouper 👾</title>
+  <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
+  <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
-  <style>
-    /* Specific overrides for the landing page */
-    .hero { text-align: center; margin-bottom: 40px; position: relative; }
-    .hero h1 { font-size: 3rem; margin-bottom: 10px; }
-    .hero p { font-size: 1.2rem; color: #444; }
-    
-    .section-title { font-size: 2rem; border-bottom: 4px solid #1c1917; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px;}
-    
-    .pain-points, .solutions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 600px) {
-      .pain-points, .solutions { grid-template-columns: 1fr; }
-    }
-    
-    .pain-card {
-      background: #ffffff; /* stark white for clean contrast against yellow bg */
-      border: 3px solid #1c1917;
-      padding: 20px;
-      box-shadow: 4px 4px 0px #1c1917;
-    }
-    
-    .solution-card {
-      border: 3px solid #1c1917;
-      padding: 20px;
-      box-shadow: 4px 4px 0px #1c1917;
-    }
-    
-    .solutions .solution-card:nth-child(1) { background: #a7f3d0; } /* Mint Green */
-    .solutions .solution-card:nth-child(2) { background: #bae6fd; } /* Sky Blue */
-    .solutions .solution-card:nth-child(3) { background: #e9d5ff; } /* Lavender */
-    .solutions .solution-card:nth-child(4) { background: #fecaca; } /* Soft Coral */
-    
-    .btn-large {
-      display: inline-block;
-      background: #fb7185;
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 15px 30px;
-      border: 4px solid #1c1917;
-      box-shadow: 6px 6px 0px #1c1917;
-      text-decoration: none;
-      margin-top: 30px;
-      transition: all 0.2s ease;
-    }
-    .btn-large:hover {
-      transform: translate(2px, 2px);
-      box-shadow: 4px 4px 0px #1c1917;
-    }
-    
-    /* Language Toggle Styles */
-    .lang-toggle { position: absolute; top: 20px; right: 20px; font-weight: bold; }
-    .lang-toggle button { background: none; border: 2px solid transparent; cursor: pointer; font-family: inherit; font-size: 1rem; padding: 4px 8px; transition: all 0.2s; font-weight: bold; color: #1c1917;}
-    .lang-toggle button.active { border-color: #1c1917; background: #86efac; box-shadow: 2px 2px 0px #1c1917; }
-    
-    body.lang-en .vi { display: none !important; }
-    body.lang-vi .en { display: none !important; }
-  </style>
 </head>
-<body class="lang-vi">
-  <div class="container">
-    <header class="header card hero" style="background: #d1fae5;">
-      <div class="lang-toggle">
-        <button id="btn-vi" class="active">VI</button> | <button id="btn-en">EN</button>
-      </div>
-      <div style="font-size: 4rem; margin-bottom: 20px; margin-top: 20px;">👾</div>
-      <h1>Bookmark Tab Grouper</h1>
-      <p class="vi">Tổ chức sự hỗn loạn thành các nhóm thẻ được tô màu đẹp mắt chỉ trong <b>1 cú click</b>.</p>
-      <p class="en">Organize chaos into beautifully color-coded tab groups in <b>one click</b>.</p>
-      
-      <div style="margin: 40px 0;">
-        <img src="tabgroup_hero.jpg" alt="Bookmark Tab Grouper Magic" style="max-width: 100%; border: 4px solid #1c1917; border-radius: 8px; box-shadow: 8px 8px 0px #1c1917;">
-      </div>
-      
-      <a href="#" class="btn-large vi">Tải trên Chrome Web Store</a>
-      <a href="#" class="btn-large en">Get it on Chrome Web Store</a>
-    </header>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <section>
-      <h2 class="section-title vi">😫 Nỗi Đau</h2>
-      <h2 class="section-title en">😫 The Pain</h2>
-      
-      <p class="vi" style="margin-bottom: 20px; font-size: 1.1rem;">Bạn có đang rơi vào những tình trạng này mỗi ngày?</p>
-      <p class="en" style="margin-bottom: 20px; font-size: 1.1rem;">Do you suffer from these every day?</p>
-      
-      <div class="pain-points">
-        <div class="pain-card">
-          <h3 style="margin-top:0">🤯 Tab Overload</h3>
-          <p class="vi">Mở 50+ tabs cùng lúc khiến trình duyệt giật lag, rối mắt và không thể tìm thấy tab cần thiết.</p>
-          <p class="en">Having 50+ tabs open, making the browser laggy and making it impossible to find what you need.</p>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Tab Bookmark Grouper home">
+        <img src="favicon.png" width="32" height="32" alt="">
+        <span>Tab Bookmark Grouper</span>
+      </a>
+      <div class="nav-actions">
+        <a href="#features">Features</a>
+        <a href="#privacy">Privacy</a>
+        <a href="privacy.html">Policy</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="top" class="hero-section">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Chrome Extension · MV3 · Local-first</p>
+          <h1>Open bookmarks into organized tab groups.</h1>
+          <p class="hero-text">
+            Tab Bookmark Grouper turns a bookmark folder into a clean Chrome tab group,
+            groups messy open tabs by domain, and exports supported sessions to local files.
+          </p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button primary" href="#install">Get the extension</a>
+            <a class="button secondary" href="privacy.html">Read privacy policy</a>
+          </div>
+          <dl class="hero-stats" aria-label="Extension highlights">
+            <div>
+              <dt>1-click</dt>
+              <dd>bookmark grouping</dd>
+            </div>
+            <div>
+              <dt>Local</dt>
+              <dd>no external servers</dd>
+            </div>
+            <div>
+              <dt>Undo</dt>
+              <dd>domain grouping</dd>
+            </div>
+          </dl>
         </div>
-        <div class="pain-card">
-          <h3 style="margin-top:0">🔄 Context Switching</h3>
-          <p class="vi">Mất quá nhiều thời gian để tìm lại tab tài liệu cũ nằm xen kẽ giữa các tab giải trí (YouTube, Facebook).</p>
-          <p class="en">Losing too much time trying to find that one specific documentation tab hidden among YouTube and Twitter tabs.</p>
+        <div class="hero-media">
+          <img src="store/store-screenshot-1-main-1280x800.png" alt="Tab Bookmark Grouper popup showing the Group by Domain and Open & Group Tabs controls.">
         </div>
-        <div class="pain-card">
-          <h3 style="margin-top:0">😩 <span class="vi">Phân loại thủ công</span><span class="en">Manual Grouping</span></h3>
-          <p class="vi">Tính năng Tab Group của Chrome rất hay, nhưng việc bấm chuột phải chọn từng tab và gõ tên nhóm thủ công là một cực hình.</p>
-          <p class="en">Chrome's native Tab Groups are great, but manually right-clicking and naming groups for dozens of tabs is exhausting.</p>
+      </div>
+    </section>
+
+    <section class="strip" aria-label="Core workflow">
+      <div class="strip-inner">
+        <span>Select folder</span>
+        <span>Open tabs</span>
+        <span>Create group</span>
+        <span>Stay focused</span>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Built for tab-heavy work</p>
+        <h2>Everything useful, nothing noisy.</h2>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card pink">
+          <span class="feature-number">01</span>
+          <h3>Open and group bookmark folders</h3>
+          <p>Select one Chrome bookmark folder and open its links as a named, color-coded tab group.</p>
+        </article>
+        <article class="feature-card blue">
+          <span class="feature-number">02</span>
+          <h3>Group current tabs by domain</h3>
+          <p>Collect related tabs from the same root domain, merge with existing matching groups, and sort groups alphabetically.</p>
+        </article>
+        <article class="feature-card violet">
+          <span class="feature-number">03</span>
+          <h3>Undo domain grouping</h3>
+          <p>Try grouping without fear. The button switches to undo mode after grouping so you can reverse the latest grouping pass.</p>
+        </article>
+        <article class="feature-card mint">
+          <span class="feature-number">04</span>
+          <h3>Export and import supported sessions</h3>
+          <p>Save supported windows, tabs, and tab groups to a local BTG file and restore them later with validation.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <div class="showcase-copy">
+        <p class="eyebrow">Domain grouping</p>
+        <h2>Groups first. Loose tabs last.</h2>
+        <p>
+          Domain grouping keeps related tabs together, sorts tab groups alphabetically,
+          and leaves standalone tabs at the end so the browser tab strip is easier to scan.
+        </p>
+      </div>
+      <div class="showcase-media">
+        <img src="store/store-screenshot-2-domain-1280x800.png" alt="Example of tabs grouped by domain with standalone tabs kept separate.">
+      </div>
+    </section>
+
+    <section id="privacy" class="section privacy-section">
+      <div class="section-heading">
+        <p class="eyebrow">Privacy model</p>
+        <h2>Offline by design.</h2>
+      </div>
+      <div class="privacy-grid">
+        <div>
+          <h3>No external servers</h3>
+          <p>Bookmark, tab, and session data are processed on your device.</p>
         </div>
-        <div class="pain-card">
-          <h3 style="margin-top:0">💥 <span class="vi">Đồng bộ phiên làm việc</span><span class="en">Workspace Syncing</span></h3>
-          <p class="vi">Đồng bộ môi trường làm việc giữa nhiều máy, hoặc chuẩn bị nhanh các tài nguyên cho một khoá học/buổi thực hành mà không tốn thời gian setup.</p>
-          <p class="en">Struggling to sync your workspace across devices, or wasting time manually sharing and setting up tabs for classes and workshops.</p>
+        <div>
+          <h3>No analytics</h3>
+          <p>The extension package does not include tracking SDKs or telemetry code.</p>
+        </div>
+        <div>
+          <h3>User-controlled files</h3>
+          <p>Session exports are created only when you choose to download a BTG file.</p>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2 class="section-title vi">💡 Giải Pháp</h2>
-      <h2 class="section-title en">💡 The Solution</h2>
-      
-      <p class="vi" style="margin-bottom: 20px; font-size: 1.1rem;"><b>Bookmark Tab Grouper</b> sinh ra để tự động hoá toàn bộ rắc rối trên!</p>
-      <p class="en" style="margin-bottom: 20px; font-size: 1.1rem;"><b>Bookmark Tab Grouper</b> is built to automate all of these away!</p>
-      
-      <div class="solutions">
-        <div class="solution-card">
-          <h3 style="margin-top:0">🗂️ 1-Click Grouping</h3>
-          <p class="vi">Chỉ cần gom link vào Bookmark của Chrome (ví dụ thư mục "Dự Án A"). Mở Extension, chọn thư mục đó và click "Open". Tất cả link sẽ tự động mở và gom gọn vào một Tab Group mang tên "Dự Án A"!</p>
-          <p class="en">Organize your links in Chrome Bookmarks. Open the extension, select the folder, and click "Open". All links will automatically open and group into a neatly named Tab Group!</p>
-        </div>
-        <div class="solution-card">
-          <h3 style="margin-top:0">🌐 Auto-Group <span class="vi">theo Website</span><span class="en">by Website</span></h3>
-          <p class="vi">Click 1 nút duy nhất để nhóm tất cả các tab đang mở lộn xộn theo từng trang web (ví dụ: nhóm toàn bộ các tab Github vào 1 group).</p>
-          <p class="en">Group all your messy open tabs by their website domain with a single click (e.g., bundle all Github tabs into one group).</p>
-        </div>
-        <div class="solution-card">
-          <h3 style="margin-top:0">💾 Backup & Restore Session</h3>
-          <p class="vi">Lưu lại toàn bộ cửa sổ làm việc hiện tại thành 1 file <code>.btg</code> cực nhẹ và bảo mật (Offline 100%). Bạn có thể đem qua máy tính khác hoặc phục hồi lại phiên làm việc bất cứ lúc nào!</p>
-          <p class="en">Save your entire active window to a lightweight <code>.btg</code> file (100% offline). Restore your session anytime or transfer it to another computer!</p>
-        </div>
-        <div class="solution-card">
-          <h3 style="margin-top:0">🛡️ <span class="vi">Bảo Mật Tuyệt Đối</span><span class="en">100% Privacy</span></h3>
-          <p class="vi">Không chứa bất kỳ API bên thứ 3 nào. Không thu thập email, không gửi dữ liệu ra ngoài. Mọi thứ hoạt động Offline trực tiếp trên máy của bạn.</p>
-          <p class="en">Zero external APIs. No PII or email collection. No data leaves your machine. Everything runs completely offline.</p>
-        </div>
+    <section id="install" class="install-section">
+      <div>
+        <p class="eyebrow">Install</p>
+        <h2>Ready for your Chrome workspace.</h2>
+        <p>
+          Use the Chrome Web Store listing when available, or load the unpacked extension from the project source during development.
+        </p>
       </div>
-
-      <div style="margin-top: 60px; text-align: center;">
-        <h3 class="vi" style="font-size: 1.8rem; margin-bottom: 30px;">🖥️ Trải Nghiệm Giao Diện Tối Giản</h3>
-        <h3 class="en" style="font-size: 1.8rem; margin-bottom: 30px;">🖥️ Minimalist UI Experience</h3>
-        
-        <img src="tabgroup_main_ui.jpg" alt="Main UI" style="max-width: 100%; width: 600px; border: 4px solid #1c1917; box-shadow: 6px 6px 0px #1c1917; margin-bottom: 40px; border-radius: 8px;">
-        <br>
-        <img src="tab_sort_by_domain.jpg" alt="Sort by Domain" style="max-width: 100%; width: 600px; border: 4px solid #1c1917; box-shadow: 6px 6px 0px #1c1917; border-radius: 8px;">
+      <div class="install-actions">
+        <a class="button primary" href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a>
+        <a class="button secondary" href="https://github.com/phpathere" rel="noopener">View GitHub</a>
       </div>
     </section>
+  </main>
 
-    <footer class="footer card" style="margin-top: 40px; text-align: center; background: #1c1917; color: #ffffff;">
-      <p style="font-weight: 700;">© 2026 Bookmark Tab Grouper. Built with ❤️ and Neo-brutalism.</p>
-      <p style="margin-top: 10px;">
-        <a href="https://github.com/phpathere" target="_blank" style="color: #67e8f9; font-weight:bold;">GitHub</a> |
-        <a href="https://x.com/0x0bytejoy" target="_blank" style="color: #67e8f9; font-weight:bold;">Twitter</a> |
-        <a href="privacy.html" style="color: #67e8f9; font-weight:bold;">Privacy Policy</a>
-      </p>
-    </footer>
-  </div>
-
-  <script>
-    document.getElementById('btn-vi').addEventListener('click', () => {
-      document.body.className = 'lang-vi';
-      document.getElementById('btn-vi').classList.add('active');
-      document.getElementById('btn-en').classList.remove('active');
-    });
-    document.getElementById('btn-en').addEventListener('click', () => {
-      document.body.className = 'lang-en';
-      document.getElementById('btn-en').classList.add('active');
-      document.getElementById('btn-vi').classList.remove('active');
-    });
-  </script>
+  <footer class="site-footer">
+    <p>© 2026 Tab Bookmark Grouper. Built by Hoang Tat.</p>
+    <div>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="https://github.com/phpathere" rel="noopener">GitHub</a>
+      <a href="https://x.com/0x0bytejoy" rel="noopener">Twitter</a>
+    </div>
+  </footer>
 </body>
 </html>
