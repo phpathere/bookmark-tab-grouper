@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Gộp Tab Bookmark",
+    "message": "Tab Bookmark Grouper",
     "description": "Tên của extension"
   },
   "extDesc": {
@@ -8,7 +8,7 @@
     "description": "Mô tả của extension"
   },
   "popupTitle": {
-    "message": "Gộp Tab Bookmark"
+    "message": "Tab Bookmark Grouper"
   },
   "selectFolderLabel": {
     "message": "Chọn thư mục Bookmarks:"
@@ -17,7 +17,7 @@
     "message": "-- Chọn thư mục --"
   },
   "openGroupBtn": {
-    "message": "Mở & Nhóm Tabs"
+    "message": "Mở & nhóm tab"
   },
   "noFolderSelected": {
     "message": "Vui lòng chọn một thư mục trước."
@@ -44,13 +44,19 @@
     "message": "File không hợp lệ."
   },
   "groupByWebsite": {
-    "message": "Nhóm theo trang web"
+    "message": "Nhóm theo domain"
+  },
+  "undoGroupByWebsite": {
+    "message": "Hoàn tác nhóm theo domain"
   },
   "undoGroup": {
-    "message": "Mặc định lại (Undo)"
+    "message": "Hoàn tác nhóm"
   },
   "groupByDomainSuccess": {
-    "message": "Đã nhóm theo trang web"
+    "message": "Đã nhóm theo domain"
+  },
+  "groupSortWarning": {
+    "message": "Đã nhóm tab, nhưng chưa sắp xếp được các nhóm."
   },
   "noUndoAvailable": {
     "message": "Không có hành động nào để hoàn tác"
@@ -104,7 +110,7 @@
     "message": "Cảm ơn bạn! 🙏"
   },
   "welcomeP1": {
-    "message": "Cảm ơn bạn đã tin tưởng và cài đặt Bookmark Tab Grouper."
+    "message": "Cảm ơn bạn đã tin tưởng và cài đặt Tab Bookmark Grouper."
   },
   "welcomeP2": {
     "message": "Tôi tạo ra công cụ này với mong muốn dẹp bỏ sự hỗn loạn của hàng tá tab trình duyệt, giúp bạn có một môi trường làm việc ngăn nắp, gọn gàng và tập trung hơn."
@@ -144,5 +150,11 @@
   },
   "importTooManyTabs": {
     "message": "File phiên có quá nhiều tab."
+  },
+  "importPartialSuccess": {
+    "message": "Đã nhập {IMPORTED}/{TOTAL} tab; {FAILED} tab lỗi."
+  },
+  "importGroupPartialWarning": {
+    "message": "Một số nhóm tab chưa khôi phục được."
   }
 }

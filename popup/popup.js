@@ -1,16 +1,23 @@
+import {
+  GROUP_COLORS,
+  IMPORT_LIMITS,
+  formatImportResult,
+  getDomainGroupName,
+  isOpenableBookmarkUrl,
+  isWebUrl,
+  normalizeImportData,
+  openTabInWindow,
+  rememberReusableEmptyTab,
+  restoreImportedSession
+} from './session-utils.js';
+
 let currentLang = 'vi';
 let translations = null;
 let bookmarkFolders = [];
 let savedTabState = null;
-const GROUP_COLORS = ['grey', 'blue', 'red', 'yellow', 'green', 'pink', 'purple', 'cyan', 'orange'];
-const IMPORT_LIMITS = {
-  maxFileBytes: 1024 * 1024,
-  maxWindows: 10,
-  maxGroupsPerWindow: 50,
-  maxTabs: 300,
-  maxUrlLength: 2048,
-  maxTitleLength: 80
-};
+let statusHideTimer = null;
+let activeModal = null;
+let modalReturnFocus = null;
 
 async function initLanguage() {
   try {
@@ -74,6 +81,36 @@ function createOption(value, text, options = {}) {
 
 function replaceChildrenWithOption(selectElement, option) {
   selectElement.replaceChildren(option);
+}
+
+function getFocusableElements(container) {
+  return Array.from(container.querySelectorAll([
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(','))).filter(element => element.offsetParent !== null || element === document.activeElement);
+}
+
+function openModal(modal, initialFocus = null) {
+  if (!modal) return;
+  activeModal = modal;
+  modalReturnFocus = document.activeElement;
+  modal.classList.remove('hidden');
+  const focusTarget = initialFocus || getFocusableElements(modal)[0] || modal;
+  focusTarget.focus();
+}
+
+function closeModal(modal = activeModal) {
+  if (!modal) return;
+  modal.classList.add('hidden');
+  activeModal = null;
+  if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') {
+    modalReturnFocus.focus();
+  }
+  modalReturnFocus = null;
 }
 
 function localizeHtmlPage() {
@@ -192,15 +229,43 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   if (settingsBtn && settingsModal) {
     settingsBtn.addEventListener('click', () => {
-      settingsModal.classList.remove('hidden');
+      openModal(settingsModal, closeSettingsBtn);
     });
   }
   
   if (closeSettingsBtn && settingsModal) {
     closeSettingsBtn.addEventListener('click', () => {
-      settingsModal.classList.add('hidden');
+      closeModal(settingsModal);
     });
   }
+
+  document.addEventListener('keydown', (event) => {
+    if (!activeModal) return;
+
+    if (event.key === 'Escape' && activeModal === settingsModal) {
+      event.preventDefault();
+      closeModal(settingsModal);
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+    const focusable = getFocusableElements(activeModal);
+    if (focusable.length === 0) {
+      event.preventDefault();
+      activeModal.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
   
   const themeSelect = document.getElementById('themeSelect');
   if (themeSelect) {
@@ -238,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await initLanguage();
       
       showStatus(getMessage('resetSuccess') || 'Settings reset to default.', 'success');
-      settingsModal.classList.add('hidden');
+      closeModal(settingsModal);
     });
   }
 
@@ -267,29 +332,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Handle action button click
   actionBtn.addEventListener('click', handleOpenAndGroup);
 
-  // Handle Sort Dropdown
-  const sortMenuBtn = document.getElementById('sortMenuBtn');
-  const sortDropdown = document.getElementById('sortDropdown');
-  if (sortMenuBtn && sortDropdown) {
-    sortMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      sortDropdown.classList.toggle('hidden');
-      sortMenuBtn.setAttribute('aria-expanded', String(!sortDropdown.classList.contains('hidden')));
-    });
-    document.addEventListener('click', () => {
-      sortDropdown.classList.add('hidden');
-      sortMenuBtn.setAttribute('aria-expanded', 'false');
-    });
-  }
-
   const groupByDomainBtn = document.getElementById('groupByDomainBtn');
   if (groupByDomainBtn) {
-    groupByDomainBtn.addEventListener('click', handleGroupByDomain);
-  }
-
-  const undoGroupBtn = document.getElementById('undoGroupBtn');
-  if (undoGroupBtn) {
-    undoGroupBtn.addEventListener('click', handleUndoGroupByDomain);
+    updateGroupByDomainButton();
+    groupByDomainBtn.addEventListener('click', async () => {
+      if (savedTabState?.newlyGroupedTabIds?.length) {
+        await handleUndoGroupByDomain();
+      } else {
+        await handleGroupByDomain();
+      }
+    });
   }
 
   // Handle Export/Import
@@ -372,15 +424,9 @@ async function handleOpenAndGroup() {
     const parentNode = subTrees[0];
     let hasOpenedAny = false;
     let colorIndex = 0;
-
-    const isValidUrl = (url) => {
-      try {
-        const parsed = new URL(url);
-        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-      } catch(_) {
-        return false;
-      }
-    };
+    const currentWin = await chrome.windows.getCurrent({ populate: true });
+    const reusableEmptyTabIds = new Map();
+    await rememberReusableEmptyTab(currentWin.id, reusableEmptyTabIds, currentWin);
 
     // Phân loại: Link trực tiếp và Thư mục con
     const directLinks = [];
@@ -388,7 +434,7 @@ async function handleOpenAndGroup() {
     
     if (parentNode.children) {
       for (const child of parentNode.children) {
-        if (child.url && isValidUrl(child.url)) {
+        if (child.url && isOpenableBookmarkUrl(child.url)) {
           directLinks.push(child);
         } else if (child.children && child.children.length > 0) {
           subFolders.push(child);
@@ -402,7 +448,11 @@ async function handleOpenAndGroup() {
       if (typeof chrome.tabGroups !== 'undefined') {
         const tabIds = [];
         for (const link of directLinks) {
-          const tab = await chrome.tabs.create({ url: link.url, active: false });
+          const tab = await openTabInWindow(link.url, {
+            windowId: currentWin.id,
+            active: false,
+            reusableEmptyTabIds
+          });
           tabIds.push(tab.id);
         }
 
@@ -426,7 +476,7 @@ async function handleOpenAndGroup() {
 
     // Xử lý các thư mục con
     for (const groupNode of subFolders) {
-      const links = extractAllLinks(groupNode).filter(link => isValidUrl(link.url));
+      const links = extractAllLinks(groupNode).filter(link => isOpenableBookmarkUrl(link.url));
       
       if (links.length > 0) {
         hasOpenedAny = true;
@@ -434,7 +484,11 @@ async function handleOpenAndGroup() {
         if (typeof chrome.tabGroups !== 'undefined') {
           const tabIds = [];
           for (const link of links) {
-            const tab = await chrome.tabs.create({ url: link.url, active: false });
+            const tab = await openTabInWindow(link.url, {
+              windowId: currentWin.id,
+              active: false,
+              reusableEmptyTabIds
+            });
             tabIds.push(tab.id);
           }
 
@@ -484,88 +538,207 @@ function extractAllLinks(node) {
   return links;
 }
 
-function showStatus(message, type) {
+function showStatus(message, type, options = {}) {
   const statusEl = document.getElementById('statusMessage');
+  if (!statusEl) return;
+  if (statusHideTimer) {
+    clearTimeout(statusHideTimer);
+    statusHideTimer = null;
+  }
   statusEl.textContent = message;
   statusEl.className = `status ${type}`;
-  
-  setTimeout(() => {
+  statusEl.setAttribute('aria-live', type === 'error' || type === 'warning' ? 'assertive' : 'polite');
+
+  if (options.persist) return;
+
+  statusHideTimer = setTimeout(() => {
     statusEl.classList.add('hidden');
-  }, 3000);
+    statusHideTimer = null;
+  }, type === 'success' ? 5000 : 12000);
+}
+
+function updateGroupByDomainButton() {
+  const groupByDomainBtn = document.getElementById('groupByDomainBtn');
+  if (!groupByDomainBtn) return;
+
+  const hasUndo = Boolean(savedTabState?.newlyGroupedTabIds?.length);
+  groupByDomainBtn.textContent = hasUndo
+    ? (getMessage('undoGroupByWebsite') || 'Undo Group by Domain')
+    : (getMessage('groupByWebsite') || 'Group by Domain');
+  groupByDomainBtn.classList.toggle('undo-mode', hasUndo);
+  groupByDomainBtn.setAttribute('aria-pressed', String(hasUndo));
 }
 
 async function handleGroupByDomain() {
   try {
     const allTabs = await chrome.tabs.query({ currentWindow: true });
-    const ungroupedTabs = allTabs.filter(t => t.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE);
-    
-    // Group by domain
-    const domainMap = {};
-    for (const tab of ungroupedTabs) {
-      if (!tab.url) continue;
-      try {
-        const urlObj = new URL(tab.url);
-        if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
-          let hostname = urlObj.hostname;
-          const parts = hostname.split('.');
-          let rootDomain = hostname;
-          let groupName;
-          
-          if (parts.length > 1 && !isNaN(parts[parts.length - 1])) {
-             // IP address
-             groupName = hostname; 
-          } else {
-             if (parts.length > 2) {
-                const twoPartTLDs = ['co.uk', 'com.vn', 'co.jp', 'com.au', 'co.in', 'net.vn', 'org.vn', 'edu.vn', 'gov.vn'];
-                const tld = parts.slice(-2).join('.');
-                if (twoPartTLDs.includes(tld)) {
-                  rootDomain = parts.slice(-3).join('.');
-                } else {
-                  rootDomain = parts.slice(-2).join('.');
-                }
-             } else {
-                rootDomain = hostname;
-             }
-             groupName = rootDomain.split('.')[0];
-             groupName = groupName.charAt(0).toUpperCase() + groupName.slice(1);
-          }
+    const existingGroupsByTitle = new Map();
 
-          if (!domainMap[groupName]) domainMap[groupName] = [];
-          domainMap[groupName].push(tab.id);
+    if (typeof chrome.tabGroups !== 'undefined') {
+      const seenGroupIds = new Set();
+      for (const tab of allTabs) {
+        if (tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE || seenGroupIds.has(tab.groupId)) continue;
+        seenGroupIds.add(tab.groupId);
+        try {
+          const groupInfo = await chrome.tabGroups.get(tab.groupId);
+          const title = normalizeGroupTitle(groupInfo.title);
+          if (title) {
+            if (!existingGroupsByTitle.has(title)) {
+              existingGroupsByTitle.set(title, []);
+            }
+            existingGroupsByTitle.get(title).push(tab.groupId);
+          }
+        } catch (_) {
+          // The group may disappear while the popup is open; skip and continue.
         }
-      } catch(e) {}
+      }
+    }
+
+    const domainMap = new Map();
+    for (const tab of allTabs) {
+      if (tab.pinned || !tab.url || !isWebUrl(tab.url)) continue;
+      const groupName = getDomainGroupName(tab.url);
+      if (!groupName) continue;
+      const key = normalizeGroupTitle(groupName);
+      if (!domainMap.has(key)) {
+        const existingGroupIds = existingGroupsByTitle.get(key) || [];
+        domainMap.set(key, {
+          title: groupName,
+          ungroupedTabIds: [],
+          groupedTabs: [],
+          existingGroupIds,
+          targetGroupId: existingGroupIds[0] || null
+        });
+      }
+
+      const domainEntry = domainMap.get(key);
+      if (tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE) {
+        domainEntry.ungroupedTabIds.push(tab.id);
+      } else {
+        domainEntry.groupedTabs.push({ id: tab.id, groupId: tab.groupId });
+        if (!domainEntry.targetGroupId) {
+          domainEntry.targetGroupId = tab.groupId;
+        }
+      }
     }
 
     let colorIndex = 0;
-    let createdGroups = 0;
+    let changedGroups = 0;
     let newlyGroupedTabIds = [];
-    for (const domain in domainMap) {
-      const tabIds = domainMap[domain];
-      if (tabIds.length > 1) { // Only group if > 1 tab
-        newlyGroupedTabIds = newlyGroupedTabIds.concat(tabIds);
-        const groupId = await chrome.tabs.group({ tabIds });
+    for (const domainEntry of domainMap.values()) {
+      const totalDomainTabs = domainEntry.ungroupedTabIds.length + domainEntry.groupedTabs.length;
+      const hasDuplicateGroups = new Set(domainEntry.existingGroupIds).size > 1;
+      if (totalDomainTabs <= 1 || (domainEntry.ungroupedTabIds.length === 0 && !hasDuplicateGroups)) continue;
+
+      newlyGroupedTabIds = newlyGroupedTabIds.concat(domainEntry.ungroupedTabIds);
+      const tabIdsToGroup = hasDuplicateGroups
+        ? domainEntry.ungroupedTabIds.concat(
+          domainEntry.groupedTabs
+            .filter(tab => tab.groupId !== domainEntry.targetGroupId)
+            .map(tab => tab.id)
+        )
+        : domainEntry.ungroupedTabIds;
+      if (tabIdsToGroup.length === 0) continue;
+      const groupOptions = { tabIds: tabIdsToGroup };
+      if (domainEntry.targetGroupId) {
+        groupOptions.groupId = domainEntry.targetGroupId;
+      }
+      const groupId = await chrome.tabs.group(groupOptions);
+
+      if (!domainEntry.targetGroupId) {
         const color = GROUP_COLORS[colorIndex % GROUP_COLORS.length];
         colorIndex++;
         await chrome.tabGroups.update(groupId, {
-          title: domain,
+          title: domainEntry.title,
           color: color,
           collapsed: true
         });
-        createdGroups++;
       }
+      changedGroups++;
     }
     
-    if (createdGroups === 0) {
+    if (changedGroups === 0) {
+      await organizeCurrentWindowGroupsAlphabetically();
       showStatus(getMessage('noTabsToGroup') || 'Không có trang web nào có nhiều hơn 1 tab', 'success');
+      updateGroupByDomainButton();
     } else {
       // Save state for undo
       savedTabState = { newlyGroupedTabIds };
-      showStatus(getMessage('groupByDomainSuccess') || 'Đã nhóm theo trang web', 'success');
+      try {
+        await organizeCurrentWindowGroupsAlphabetically();
+        showStatus(getMessage('groupByDomainSuccess') || 'Đã nhóm theo trang web', 'success');
+      } catch (sortError) {
+        showStatus(getMessage('groupSortWarning') || 'Grouped tabs, but could not sort groups.', 'warning');
+      }
+      updateGroupByDomainButton();
       updateStatsBar();
     }
   } catch (error) {
     showStatus(error.message, 'error');
   }
+}
+
+async function organizeCurrentWindowGroupsAlphabetically() {
+  if (typeof chrome.tabGroups === 'undefined') return;
+
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+  const groupTabsMap = new Map();
+  const pinnedTabs = tabs
+    .filter(tab => tab.pinned)
+    .sort((a, b) => a.index - b.index);
+
+  for (const tab of tabs) {
+    if (tab.pinned || tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE) continue;
+    if (!groupTabsMap.has(tab.groupId)) {
+      groupTabsMap.set(tab.groupId, []);
+    }
+    groupTabsMap.get(tab.groupId).push(tab);
+  }
+
+  const groups = [];
+  for (const [groupId, groupTabs] of groupTabsMap.entries()) {
+    try {
+      const groupInfo = await chrome.tabGroups.get(groupId);
+      groups.push({
+        id: groupId,
+        title: groupInfo.title || '',
+        tabIds: groupTabs
+          .sort((a, b) => a.index - b.index)
+          .map(tab => tab.id)
+      });
+    } catch (_) {
+      // If a group disappears while sorting, skip it and continue.
+    }
+  }
+
+  groups.sort((a, b) => {
+    const titleCompare = a.title.localeCompare(b.title, undefined, { sensitivity: 'base' });
+    return titleCompare || a.id - b.id;
+  });
+
+  let targetIndex = pinnedTabs.length;
+  for (const group of groups) {
+    if (group.tabIds.length === 0) continue;
+    if (typeof chrome.tabGroups.move === 'function') {
+      await chrome.tabGroups.move(group.id, { index: targetIndex });
+    } else {
+      await chrome.tabs.move(group.tabIds, { index: targetIndex });
+    }
+    targetIndex += group.tabIds.length;
+  }
+
+  const refreshedTabs = await chrome.tabs.query({ currentWindow: true });
+  const refreshedUngroupedTabs = refreshedTabs
+    .filter(tab => !tab.pinned && tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE)
+    .sort((a, b) => a.index - b.index);
+
+  if (refreshedUngroupedTabs.length > 0) {
+    await chrome.tabs.move(refreshedUngroupedTabs.map(tab => tab.id), { index: targetIndex });
+  }
+}
+
+function normalizeGroupTitle(title) {
+  return String(title || '').trim().toLowerCase();
 }
 
 async function handleUndoGroupByDomain() {
@@ -582,6 +755,7 @@ async function handleUndoGroupByDomain() {
     
     savedTabState = null; // Clear state after undo
     showStatus(getMessage('undoSuccess') || 'Đã khôi phục trạng thái cũ', 'success');
+    updateGroupByDomainButton();
     updateStatsBar();
   } catch(error) {
     showStatus(error.message, 'error');
@@ -709,78 +883,6 @@ async function handleExport() {
   }
 }
 
-function normalizeImportData(data) {
-  if (!data || data.generator !== "Bookmark Tab Grouper") {
-    throw new Error(getMessage('invalidFile'));
-  }
-
-  const isValidUrl = (url) => {
-    try {
-      if (typeof url !== 'string' || url.length > IMPORT_LIMITS.maxUrlLength) return false;
-      const parsed = new URL(url);
-      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-    } catch(_) {
-      return false;
-    }
-  };
-
-  const rawWindows = (data.version === "2.0" && Array.isArray(data.windows))
-    ? data.windows
-    : [{
-      is_focused: true,
-      groups: data.groups || [],
-      ungrouped_tabs: data.ungrouped_tabs || []
-    }];
-
-  if (rawWindows.length === 0 || rawWindows.length > IMPORT_LIMITS.maxWindows) {
-    throw new Error(getMessage('importTooManyWindows') || `Too many windows. Maximum: ${IMPORT_LIMITS.maxWindows}.`);
-  }
-
-  let totalTabs = 0;
-  const sanitizedWindows = rawWindows.map((winData, windowIndex) => {
-    const rawGroups = Array.isArray(winData.groups) ? winData.groups : [];
-    if (rawGroups.length > IMPORT_LIMITS.maxGroupsPerWindow) {
-      throw new Error(getMessage('importTooManyGroups') || `Too many groups in one window. Maximum: ${IMPORT_LIMITS.maxGroupsPerWindow}.`);
-    }
-
-    const groups = rawGroups.map(group => {
-      const tabs = Array.isArray(group.tabs) ? group.tabs.filter(isValidUrl) : [];
-      totalTabs += tabs.length;
-      const safeTitle = typeof group.title === 'string'
-        ? group.title.slice(0, IMPORT_LIMITS.maxTitleLength)
-        : 'Group';
-      const safeColor = GROUP_COLORS.includes(group.color) ? group.color : 'grey';
-      return { title: safeTitle || 'Group', color: safeColor, tabs };
-    }).filter(group => group.tabs.length > 0);
-
-    const ungroupedTabs = Array.isArray(winData.ungrouped_tabs)
-      ? winData.ungrouped_tabs.filter(isValidUrl)
-      : [];
-    totalTabs += ungroupedTabs.length;
-
-    return {
-      is_focused: Boolean(winData.is_focused || windowIndex === 0),
-      groups,
-      ungrouped_tabs: ungroupedTabs
-    };
-  }).filter(winData => winData.groups.length > 0 || winData.ungrouped_tabs.length > 0);
-
-  if (sanitizedWindows.length === 0 || totalTabs === 0) {
-    throw new Error(getMessage('noBookmarksFound'));
-  }
-
-  if (totalTabs > IMPORT_LIMITS.maxTabs) {
-    throw new Error(getMessage('importTooManyTabs') || `Too many tabs. Maximum: ${IMPORT_LIMITS.maxTabs}.`);
-  }
-
-  return {
-    active_tab_url: isValidUrl(data.active_tab_url) ? data.active_tab_url : null,
-    windows: sanitizedWindows,
-    totalTabs,
-    totalGroups: sanitizedWindows.reduce((sum, winData) => sum + winData.groups.length, 0)
-  };
-}
-
 function confirmImport(summary) {
   const modal = document.getElementById('importConfirmModal');
   const summaryEl = document.getElementById('importConfirmSummary');
@@ -798,12 +900,11 @@ function confirmImport(summary) {
     .replace('{WINDOW_COUNT}', String(summary.windows.length))
     .replace('{GROUP_COUNT}', String(summary.totalGroups));
 
-  modal.classList.remove('hidden');
-  confirmBtn.focus();
+  openModal(modal, confirmBtn);
 
   return new Promise(resolve => {
     const cleanup = (result) => {
-      modal.classList.add('hidden');
+      closeModal(modal);
       confirmBtn.removeEventListener('click', onConfirm);
       cancelBtn.removeEventListener('click', onCancel);
       document.removeEventListener('keydown', onKeydown);
@@ -836,97 +937,19 @@ async function handleFileImport(event) {
   reader.onload = async (e) => {
     try {
       const decodedStr = decodeURIComponent(atob(e.target.result));
-      const importData = normalizeImportData(JSON.parse(decodedStr));
+      const importData = normalizeImportData(JSON.parse(decodedStr), getMessage);
       const confirmed = await confirmImport(importData);
       if (!confirmed) {
         showStatus(getMessage('importCancelled') || 'Import cancelled.', 'success');
         return;
       }
 
-      const activeUrl = importData.active_tab_url;
-      let hasActivated = false;
-      const windowsToRestore = importData.windows;
-      
-      let targetWindowId = null;
-      
-      const currentWin = await chrome.windows.getCurrent({ populate: true });
-      const currentTabs = currentWin.tabs || [];
-      // An empty window has exactly 1 tab, and it's not a normal website (e.g. new tab page)
-      const isCurrentWinEmpty = currentTabs.length === 1 && !currentTabs[0].url?.startsWith('http');
-      let usedCurrentWin = false;
-      
-      for (const winData of windowsToRestore) {
-        let winId;
-        const createdTabIds = new Set();
-        
-        if (isCurrentWinEmpty && !usedCurrentWin) {
-          winId = currentWin.id;
-          usedCurrentWin = true;
-        } else {
-          // Create without focus to prevent subsequent windows from stealing focus
-          const newWin = await chrome.windows.create({ focused: false });
-          winId = newWin.id;
-        }
-        
-        if (winData.is_focused) {
-          targetWindowId = winId;
-        }
-        
-        if (winData.groups && Array.isArray(winData.groups)) {
-          for (const group of winData.groups) {
-            const tabIds = [];
-            for (const url of group.tabs) {
-              const isActive = (!hasActivated && url === activeUrl);
-              if (isActive) hasActivated = true;
-              
-              const tab = await chrome.tabs.create({ url: url, windowId: winId, active: isActive });
-              tabIds.push(tab.id);
-              createdTabIds.add(tab.id);
-            }
-            
-            if (typeof chrome.tabGroups !== 'undefined' && tabIds.length > 0) {
-              const groupId = await chrome.tabs.group({ tabIds, createProperties: { windowId: winId } });
-              await chrome.tabGroups.update(groupId, {
-                title: group.title || 'Group',
-                color: group.color || 'grey',
-                collapsed: true
-              });
-            }
-          }
-        }
-        
-        if (winData.ungrouped_tabs && Array.isArray(winData.ungrouped_tabs)) {
-          for (const url of winData.ungrouped_tabs) {
-            const isActive = (!hasActivated && url === activeUrl);
-            if (isActive) hasActivated = true;
-            
-            await chrome.tabs.create({ url: url, windowId: winId, active: isActive }).then(t => createdTabIds.add(t.id));
-          }
-        }
-        
-        // Clean up the exact initial tab(s) by removing anything we didn't just create
-        const allTabs = await chrome.tabs.query({ windowId: winId });
-        if (allTabs.length > createdTabIds.size && createdTabIds.size > 0) {
-          for (const t of allTabs) {
-            if (!createdTabIds.has(t.id)) {
-              try {
-                await chrome.tabs.remove(t.id);
-              } catch (e) {
-                // Ignore if it was already removed
-              }
-            }
-          }
-        }
-      }
-      
-      // Finally, focus the correct window after everything is created
-      if (targetWindowId !== null) {
-        await chrome.windows.update(targetWindowId, { focused: true });
-      }
-      
-      showStatus(getMessage('importSuccess'), 'success');
+      const result = await restoreImportedSession(importData, { chromeApi: chrome, logger: console });
+      const statusType = result.failedTabs > 0 || result.failures.length > 0 ? 'warning' : 'success';
+      showStatus(formatImportResult(result, getMessage), statusType, { persist: statusType !== 'success' });
+      updateStatsBar();
     } catch(err) {
-      showStatus(getMessage('invalidFile') + " " + err.message, 'error');
+      showStatus(`${getMessage('invalidFile')} ${err.message}`, 'error', { persist: true });
     }
   };
   reader.readAsText(file);

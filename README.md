@@ -96,6 +96,8 @@ sh scripts/build-release.sh
 
 Upload `dist/bookmark-tab-grouper-<version>.zip`. The release script reads the version from `manifest.json`, excludes repository-only docs, generators, tests, `.DS_Store`, and fails if remote script/font references are found in the packaged extension.
 
+Release history is documented in [CHANGELOG.md](CHANGELOG.md). Update it before uploading a new Chrome Web Store package so each version has clear user-facing notes.
+
 <div align="center">
   <h3>🙏 Thank You! (Cảm Ơn!)</h3>
   <p>Thank you so much for installing and using <b>Tab Bookmark Grouper</b>. I built this tool to solve my own productivity chaos, and I truly hope it brings a little more peace and order to your digital workspace. Have a wonderful and productive day!</p>
