@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Bookmark Grouper How To Use Screenshot</title>
+  <style>
+    :root {
+      --ink: #1c1917;
+      --paper: #fffdf7;
+      --mint: #d1fae5;
+      --cyan: #67e8f9;
+      --blue: #38bdf8;
+      --pink: #fb7185;
+      --violet: #a78bfa;
+      --yellow: #fef08a;
+      --green: #86efac;
+      --white: #ffffff;
+      --shadow: 8px 8px 0 var(--ink);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1280px;
+      height: 800px;
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 9% 14%, rgba(254, 240, 138, 0.95) 0 88px, transparent 90px),
+        linear-gradient(135deg, #d1fae5 0%, #67e8f9 56%, #a78bfa 100%);
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .canvas {
+      width: 1280px;
+      height: 800px;
+      padding: 52px 62px;
+      position: relative;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .brand img {
+      width: 78px;
+      height: 78px;
+      image-rendering: pixelated;
+      border: 5px solid var(--ink);
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .brand-copy {
+      font-size: 28px;
+      line-height: 1.05;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-left: 18px;
+      padding: 10px 15px;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transform: rotate(-1deg);
+    }
+
+    h1 {
+      width: 680px;
+      margin: 0 0 16px;
+      font-size: 66px;
+      line-height: 0.98;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      width: 620px;
+      margin: 0 0 34px;
+      color: #334155;
+      font-size: 25px;
+      line-height: 1.28;
+      font-weight: 800;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      position: absolute;
+      left: 62px;
+      right: 62px;
+      bottom: 54px;
+    }
+
+    .step {
+      min-height: 226px;
+      border: 5px solid var(--ink);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: 22px 20px;
+      position: relative;
+    }
+
+    .step:nth-child(1) {
+      background: #bae6fd;
+    }
+
+    .step:nth-child(2) {
+      background: #fecdd3;
+    }
+
+    .step:nth-child(3) {
+      background: #ddd6fe;
+    }
+
+    .step:nth-child(4) {
+      background: #bbf7d0;
+    }
+
+    .num {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 16px;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .step h2 {
+      margin: 0 0 12px;
+      font-size: 25px;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .step p {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.24;
+      font-weight: 800;
+    }
+
+    .arrow {
+      position: absolute;
+      right: -23px;
+      top: 100px;
+      z-index: 2;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .preview {
+      position: absolute;
+      right: 70px;
+      top: 88px;
+      width: 438px;
+      height: 395px;
+      border: 5px solid var(--ink);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      transform: rotate(1deg);
+    }
+
+    .browser-tabs {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 26px;
+      padding-bottom: 14px;
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .tab-pill {
+      min-width: 88px;
+      padding: 8px 10px;
+      border: 3px solid var(--ink);
+      background: #e0f2fe;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .tab-pill:nth-child(2) {
+      background: #fecdd3;
+    }
+
+    .tab-pill:nth-child(3) {
+      background: #ddd6fe;
+    }
+
+    .popup-card {
+      width: 245px;
+      margin-left: auto;
+      border: 5px solid var(--ink);
+      background: var(--mint);
+      box-shadow: 7px 7px 0 var(--ink);
+      padding: 16px;
+    }
+
+    .popup-title {
+      margin-bottom: 14px;
+      padding-bottom: 11px;
+      border-bottom: 4px dashed var(--ink);
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .fake-control {
+      margin-bottom: 12px;
+      border: 3px solid var(--ink);
+      background: var(--white);
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .fake-button {
+      border: 3px solid var(--ink);
+      background: var(--pink);
+      color: var(--white);
+      padding: 12px 10px;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .note {
+      position: absolute;
+      right: 86px;
+      top: 520px;
+      width: 405px;
+      border: 5px solid var(--ink);
+      background: var(--green);
+      box-shadow: 7px 7px 0 var(--ink);
+      padding: 20px 24px;
+      font-size: 22px;
+      line-height: 1.22;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <div class="brand">
+      <img src="../../icons/icon-128.png" alt="">
+      <div class="brand-copy">Tab Bookmark<br>Grouper</div>
+      <div class="tag">How to use</div>
+    </div>
+
+    <h1>From bookmarks to tab groups.</h1>
+    <p class="lead">
+      A simple workflow for research, learning, shopping, and any browser session with too many tabs.
+    </p>
+
+    <section class="preview" aria-label="Extension preview">
+      <div class="browser-tabs">
+        <div class="tab-pill">Research</div>
+        <div class="tab-pill">Docs</div>
+        <div class="tab-pill">Tools</div>
+      </div>
+      <div class="popup-card">
+        <div class="popup-title">Tab Bookmark Grouper</div>
+        <div class="fake-control">Group by Domain</div>
+        <div class="fake-control">-- Choose a folder --</div>
+        <div class="fake-button">Open & Group Tabs</div>
+      </div>
+    </section>
+
+    <div class="note">
+      Offline by design. Bookmark, tab, and session data stay on your device.
+    </div>
+
+    <section class="steps" aria-label="Usage steps">
+      <article class="step">
+        <div class="num">1</div>
+        <h2>Choose a bookmark folder</h2>
+        <p>Select a saved Chrome bookmark folder from the popup.</p>
+        <div class="arrow" aria-hidden="true">→</div>
+      </article>
+      <article class="step">
+        <div class="num">2</div>
+        <h2>Open and group tabs</h2>
+        <p>Click once to open supported URLs into a named tab group.</p>
+        <div class="arrow" aria-hidden="true">→</div>
+      </article>
+      <article class="step">
+        <div class="num">3</div>
+        <h2>Group by domain</h2>
+        <p>Sort current tabs by website. Groups first, loose tabs last.</p>
+        <div class="arrow" aria-hidden="true">→</div>
+      </article>
+      <article class="step">
+        <div class="num">4</div>
+        <h2>Export or import sessions</h2>
+        <p>Save supported sessions locally and restore them when needed.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
