@@ -99,6 +99,38 @@ a {
   text-decoration: none;
 }
 
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: 4px 4px 0 var(--line);
+  padding: 5px 8px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.language-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  padding: 3px 4px;
+}
+
+.language-switch button[aria-pressed="true"] {
+  background: var(--yellow);
+}
+
+.language-switch button:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
 .nav-actions a:focus-visible,
 .button:focus-visible {
   outline: 4px solid var(--blue);
@@ -463,9 +495,15 @@ h3 {
 
   .nav-actions {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     gap: 12px;
     font-size: 0.9rem;
+  }
+
+  .language-switch {
+    width: 100%;
+    justify-content: center;
   }
 
   h1 {

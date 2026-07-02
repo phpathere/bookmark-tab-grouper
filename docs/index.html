@@ -18,10 +18,15 @@
         <span>Tab Bookmark Grouper</span>
       </a>
       <div class="nav-actions">
-        <a href="#features">Features</a>
-        <a href="#privacy">Privacy</a>
-        <a href="privacy.html">Policy</a>
-        <a href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+        <a href="#features" data-i18n="navFeatures">Features</a>
+        <a href="#privacy" data-i18n="navPrivacy">Privacy</a>
+        <a href="privacy.html" data-i18n="navPolicy">Policy</a>
+        <a href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener" data-i18n="navChangelog">Changelog</a>
+        <div class="language-switch" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">English</button>
+          <span aria-hidden="true">|</span>
+          <button type="button" data-lang="vi" aria-pressed="false">Tiếng Việt</button>
+        </div>
       </div>
     </nav>
   </header>
@@ -30,28 +35,28 @@
     <section id="top" class="hero-section">
       <div class="hero-inner">
         <div class="hero-copy">
-          <p class="eyebrow">Chrome Extension · MV3 · Local-first</p>
-          <h1>Open bookmarks into organized tab groups.</h1>
-          <p class="hero-text">
+          <p class="eyebrow" data-i18n="heroEyebrow">Chrome Extension · MV3 · Local-first</p>
+          <h1 data-i18n="heroTitle">Open bookmarks into organized tab groups.</h1>
+          <p class="hero-text" data-i18n="heroText">
             Tab Bookmark Grouper turns a bookmark folder into a clean Chrome tab group,
             groups messy open tabs by domain, and exports supported sessions to local files.
           </p>
           <div class="hero-actions" aria-label="Primary actions">
-            <a class="button primary" href="#install">Get the extension</a>
-            <a class="button secondary" href="privacy.html">Read privacy policy</a>
+            <a class="button primary chrome-store-link" href="https://chromewebstore.google.com/detail/tab-bookmark-grouper/ngeehdjoganlmelcmjomdeollcopaglj" rel="noopener" data-i18n="heroPrimary">Get the extension</a>
+            <a class="button secondary" href="privacy.html" data-i18n="heroSecondary">Read privacy policy</a>
           </div>
           <dl class="hero-stats" aria-label="Extension highlights">
             <div>
-              <dt>1-click</dt>
-              <dd>bookmark grouping</dd>
+              <dt data-i18n="statOneTitle">1-click</dt>
+              <dd data-i18n="statOneText">bookmark grouping</dd>
             </div>
             <div>
-              <dt>Local</dt>
-              <dd>no external servers</dd>
+              <dt data-i18n="statTwoTitle">Local</dt>
+              <dd data-i18n="statTwoText">no external servers</dd>
             </div>
             <div>
-              <dt>Undo</dt>
-              <dd>domain grouping</dd>
+              <dt data-i18n="statThreeTitle">Undo</dt>
+              <dd data-i18n="statThreeText">domain grouping</dd>
             </div>
           </dl>
         </div>
@@ -63,48 +68,48 @@
 
     <section class="strip" aria-label="Core workflow">
       <div class="strip-inner">
-        <span>Select folder</span>
-        <span>Open tabs</span>
-        <span>Create group</span>
-        <span>Stay focused</span>
+        <span data-i18n="workflowOne">Select folder</span>
+        <span data-i18n="workflowTwo">Open tabs</span>
+        <span data-i18n="workflowThree">Create group</span>
+        <span data-i18n="workflowFour">Stay focused</span>
       </div>
     </section>
 
     <section id="features" class="section">
       <div class="section-heading">
-        <p class="eyebrow">Built for tab-heavy work</p>
-        <h2>Everything useful, nothing noisy.</h2>
+        <p class="eyebrow" data-i18n="featuresEyebrow">Built for tab-heavy work</p>
+        <h2 data-i18n="featuresTitle">Everything useful, nothing noisy.</h2>
       </div>
 
       <div class="feature-grid">
         <article class="feature-card pink">
           <span class="feature-number">01</span>
-          <h3>Open and group bookmark folders</h3>
-          <p>Select one Chrome bookmark folder and open its links as a named, color-coded tab group.</p>
+          <h3 data-i18n="featureOneTitle">Open and group bookmark folders</h3>
+          <p data-i18n="featureOneText">Select one Chrome bookmark folder and open its links as a named, color-coded tab group.</p>
         </article>
         <article class="feature-card blue">
           <span class="feature-number">02</span>
-          <h3>Group current tabs by domain</h3>
-          <p>Collect related tabs from the same root domain, merge with existing matching groups, and sort groups alphabetically.</p>
+          <h3 data-i18n="featureTwoTitle">Group current tabs by domain</h3>
+          <p data-i18n="featureTwoText">Collect related tabs from the same root domain, merge with existing matching groups, and sort groups alphabetically.</p>
         </article>
         <article class="feature-card violet">
           <span class="feature-number">03</span>
-          <h3>Undo domain grouping</h3>
-          <p>Try grouping without fear. The button switches to undo mode after grouping so you can reverse the latest grouping pass.</p>
+          <h3 data-i18n="featureThreeTitle">Undo domain grouping</h3>
+          <p data-i18n="featureThreeText">Try grouping without fear. The button switches to undo mode after grouping so you can reverse the latest grouping pass.</p>
         </article>
         <article class="feature-card mint">
           <span class="feature-number">04</span>
-          <h3>Export and import supported sessions</h3>
-          <p>Save supported windows, tabs, and tab groups to a local BTG file and restore them later with validation.</p>
+          <h3 data-i18n="featureFourTitle">Export and import supported sessions</h3>
+          <p data-i18n="featureFourText">Save supported windows, tabs, and tab groups to a local BTG file and restore them later with validation.</p>
         </article>
       </div>
     </section>
 
     <section class="showcase-section">
       <div class="showcase-copy">
-        <p class="eyebrow">Domain grouping</p>
-        <h2>Groups first. Loose tabs last.</h2>
-        <p>
+        <p class="eyebrow" data-i18n="showcaseEyebrow">Domain grouping</p>
+        <h2 data-i18n="showcaseTitle">Groups first. Loose tabs last.</h2>
+        <p data-i18n="showcaseText">
           Domain grouping keeps related tabs together, sorts tab groups alphabetically,
           and leaves standalone tabs at the end so the browser tab strip is easier to scan.
         </p>
@@ -116,48 +121,172 @@
 
     <section id="privacy" class="section privacy-section">
       <div class="section-heading">
-        <p class="eyebrow">Privacy model</p>
-        <h2>Offline by design.</h2>
+        <p class="eyebrow" data-i18n="privacyEyebrow">Privacy model</p>
+        <h2 data-i18n="privacyTitle">Offline by design.</h2>
       </div>
       <div class="privacy-grid">
         <div>
-          <h3>No external servers</h3>
-          <p>Bookmark, tab, and session data are processed on your device.</p>
+          <h3 data-i18n="privacyOneTitle">No external servers</h3>
+          <p data-i18n="privacyOneText">Bookmark, tab, and session data are processed on your device.</p>
         </div>
         <div>
-          <h3>No analytics</h3>
-          <p>The extension package does not include tracking SDKs or telemetry code.</p>
+          <h3 data-i18n="privacyTwoTitle">No analytics</h3>
+          <p data-i18n="privacyTwoText">The extension package does not include tracking SDKs or telemetry code.</p>
         </div>
         <div>
-          <h3>User-controlled files</h3>
-          <p>Session exports are created only when you choose to download a BTG file.</p>
+          <h3 data-i18n="privacyThreeTitle">User-controlled files</h3>
+          <p data-i18n="privacyThreeText">Session exports are created only when you choose to download a BTG file.</p>
         </div>
       </div>
     </section>
 
     <section id="install" class="install-section">
       <div>
-        <p class="eyebrow">Install</p>
-        <h2>Ready for your Chrome workspace.</h2>
-        <p>
-          Use the Chrome Web Store listing when available, or load the unpacked extension from the project source during development.
-        </p>
+        <p class="eyebrow" data-i18n="installEyebrow">Install</p>
+        <h2 data-i18n="installTitle">Ready for your Chrome workspace.</h2>
+        <p data-i18n="installText">Install Tab Bookmark Grouper from the Chrome Web Store, or review the source on GitHub.</p>
       </div>
       <div class="install-actions">
-        <a class="button primary" href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a>
-        <a class="button secondary" href="https://github.com/phpathere/bookmark-tab-grouper" rel="noopener">View GitHub</a>
+        <a class="button primary chrome-store-link" href="https://chromewebstore.google.com/detail/tab-bookmark-grouper/ngeehdjoganlmelcmjomdeollcopaglj" rel="noopener" data-i18n="installPrimary">Chrome Web Store</a>
+        <a class="button secondary" href="https://github.com/phpathere/bookmark-tab-grouper" rel="noopener" data-i18n="installSecondary">View GitHub</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>© 2026 Tab Bookmark Grouper. Built by Hoang Tat.</p>
+    <p data-i18n="footerText">© 2026 Tab Bookmark Grouper. Built by Hoang Tat.</p>
     <div>
-      <a href="privacy.html">Privacy Policy</a>
+      <a href="privacy.html" data-i18n="footerPrivacy">Privacy Policy</a>
       <a href="https://github.com/phpathere/bookmark-tab-grouper" rel="noopener">GitHub</a>
-      <a href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+      <a href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener" data-i18n="footerChangelog">Changelog</a>
       <a href="https://x.com/0x0bytejoy" rel="noopener">Twitter</a>
     </div>
   </footer>
+  <script>
+    const messages = {
+      en: {
+        navFeatures: 'Features',
+        navPrivacy: 'Privacy',
+        navPolicy: 'Policy',
+        navChangelog: 'Changelog',
+        heroEyebrow: 'Chrome Extension · MV3 · Local-first',
+        heroTitle: 'Open bookmarks into organized tab groups.',
+        heroText: 'Tab Bookmark Grouper turns a bookmark folder into a clean Chrome tab group, groups messy open tabs by domain, and exports supported sessions to local files.',
+        heroPrimary: 'Get the extension',
+        heroSecondary: 'Read privacy policy',
+        statOneTitle: '1-click',
+        statOneText: 'bookmark grouping',
+        statTwoTitle: 'Local',
+        statTwoText: 'no external servers',
+        statThreeTitle: 'Undo',
+        statThreeText: 'domain grouping',
+        workflowOne: 'Select folder',
+        workflowTwo: 'Open tabs',
+        workflowThree: 'Create group',
+        workflowFour: 'Stay focused',
+        featuresEyebrow: 'Built for tab-heavy work',
+        featuresTitle: 'Everything useful, nothing noisy.',
+        featureOneTitle: 'Open and group bookmark folders',
+        featureOneText: 'Select one Chrome bookmark folder and open its links as a named, color-coded tab group.',
+        featureTwoTitle: 'Group current tabs by domain',
+        featureTwoText: 'Collect related tabs from the same root domain, merge with existing matching groups, and sort groups alphabetically.',
+        featureThreeTitle: 'Undo domain grouping',
+        featureThreeText: 'Try grouping without fear. The button switches to undo mode after grouping so you can reverse the latest grouping pass.',
+        featureFourTitle: 'Export and import supported sessions',
+        featureFourText: 'Save supported windows, tabs, and tab groups to a local BTG file and restore them later with validation.',
+        showcaseEyebrow: 'Domain grouping',
+        showcaseTitle: 'Groups first. Loose tabs last.',
+        showcaseText: 'Domain grouping keeps related tabs together, sorts tab groups alphabetically, and leaves standalone tabs at the end so the browser tab strip is easier to scan.',
+        privacyEyebrow: 'Privacy model',
+        privacyTitle: 'Offline by design.',
+        privacyOneTitle: 'No external servers',
+        privacyOneText: 'Bookmark, tab, and session data are processed on your device.',
+        privacyTwoTitle: 'No analytics',
+        privacyTwoText: 'The extension package does not include tracking SDKs or telemetry code.',
+        privacyThreeTitle: 'User-controlled files',
+        privacyThreeText: 'Session exports are created only when you choose to download a BTG file.',
+        installEyebrow: 'Install',
+        installTitle: 'Ready for your Chrome workspace.',
+        installText: 'Install Tab Bookmark Grouper from the Chrome Web Store, or review the source on GitHub.',
+        installPrimary: 'Chrome Web Store',
+        installSecondary: 'View GitHub',
+        footerText: '© 2026 Tab Bookmark Grouper. Built by Hoang Tat.',
+        footerPrivacy: 'Privacy Policy',
+        footerChangelog: 'Changelog'
+      },
+      vi: {
+        navFeatures: 'Tính năng',
+        navPrivacy: 'Quyền riêng tư',
+        navPolicy: 'Chính sách',
+        navChangelog: 'Lịch sử bản phát hành',
+        heroEyebrow: 'Chrome Extension · MV3 · Bảo mật cục bộ',
+        heroTitle: 'Mở bookmark thành tab group gọn gàng.',
+        heroText: 'Tab Bookmark Grouper biến một thư mục bookmark thành Chrome Tab Group rõ ràng, gom các tab đang mở theo domain và xuất phiên làm việc được hỗ trợ thành file cục bộ.',
+        heroPrimary: 'Cài extension',
+        heroSecondary: 'Đọc chính sách quyền riêng tư',
+        statOneTitle: '1 click',
+        statOneText: 'mở và nhóm bookmark',
+        statTwoTitle: 'Cục bộ',
+        statTwoText: 'không dùng máy chủ ngoài',
+        statThreeTitle: 'Hoàn tác',
+        statThreeText: 'nhóm theo domain',
+        workflowOne: 'Chọn thư mục',
+        workflowTwo: 'Mở tab',
+        workflowThree: 'Tạo group',
+        workflowFour: 'Giữ tập trung',
+        featuresEyebrow: 'Dành cho người mở nhiều tab',
+        featuresTitle: 'Đủ hữu ích, không rườm rà.',
+        featureOneTitle: 'Mở và nhóm thư mục bookmark',
+        featureOneText: 'Chọn một thư mục bookmark trong Chrome và mở các link thành một tab group có tên, có màu rõ ràng.',
+        featureTwoTitle: 'Nhóm tab hiện tại theo domain',
+        featureTwoText: 'Gom các tab cùng root domain, merge với group đã có và sắp xếp group theo alphabet.',
+        featureThreeTitle: 'Hoàn tác nhóm theo domain',
+        featureThreeText: 'Thử nhóm tab mà không lo. Sau khi nhóm, nút sẽ chuyển sang chế độ hoàn tác để đảo lại lượt nhóm mới nhất.',
+        featureFourTitle: 'Export và import session được hỗ trợ',
+        featureFourText: 'Lưu window, tab và tab group được hỗ trợ thành file BTG cục bộ rồi khôi phục lại sau với bước kiểm tra dữ liệu.',
+        showcaseEyebrow: 'Nhóm theo domain',
+        showcaseTitle: 'Group trước. Tab lẻ sau.',
+        showcaseText: 'Tính năng nhóm theo domain giữ các tab liên quan ở cạnh nhau, sắp xếp group theo alphabet và đẩy tab đứng một mình về cuối để thanh tab dễ nhìn hơn.',
+        privacyEyebrow: 'Mô hình quyền riêng tư',
+        privacyTitle: 'Thiết kế để chạy cục bộ.',
+        privacyOneTitle: 'Không dùng máy chủ ngoài',
+        privacyOneText: 'Dữ liệu bookmark, tab và session được xử lý trên thiết bị của bạn.',
+        privacyTwoTitle: 'Không analytics',
+        privacyTwoText: 'Gói extension không chứa tracking SDK hoặc mã telemetry.',
+        privacyThreeTitle: 'File do người dùng kiểm soát',
+        privacyThreeText: 'File session chỉ được tạo khi bạn chủ động chọn tải file BTG.',
+        installEyebrow: 'Cài đặt',
+        installTitle: 'Sẵn sàng cho workspace Chrome của bạn.',
+        installText: 'Cài Tab Bookmark Grouper từ Chrome Web Store, hoặc xem mã nguồn trên GitHub.',
+        installPrimary: 'Chrome Web Store',
+        installSecondary: 'Xem GitHub',
+        footerText: '© 2026 Tab Bookmark Grouper. Xây dựng bởi Hoang Tat.',
+        footerPrivacy: 'Chính sách quyền riêng tư',
+        footerChangelog: 'Lịch sử bản phát hành'
+      }
+    };
+
+    const languageButtons = document.querySelectorAll('[data-lang]');
+    const translatableElements = document.querySelectorAll('[data-i18n]');
+
+    function setLanguage(lang) {
+      const dictionary = messages[lang] || messages.en;
+      document.documentElement.lang = lang;
+      translatableElements.forEach((element) => {
+        const key = element.dataset.i18n;
+        if (dictionary[key]) element.textContent = dictionary[key];
+      });
+      languageButtons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
+      });
+      localStorage.setItem('btg-docs-lang', lang);
+    }
+
+    languageButtons.forEach((button) => {
+      button.addEventListener('click', () => setLanguage(button.dataset.lang));
+    });
+
+    setLanguage(localStorage.getItem('btg-docs-lang') || 'en');
+  </script>
 </body>
 </html>
