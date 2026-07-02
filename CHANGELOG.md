@@ -4,6 +4,18 @@ All notable changes to Tab Bookmark Grouper are documented in this file.
 
 This project follows a practical release history format so users, reviewers, and future maintainers can understand what changed between Chrome Web Store uploads.
 
+## [1.0.2] - 2026-07-02
+
+### Changed
+- Prepared the next Chrome Web Store upload as a maintenance release.
+- Added clearer public release history through `CHANGELOG.md`.
+- Added Chrome Web Store release notes for version history transparency.
+- Rebuilt the release ZIP from the current source after automated tests passed.
+
+### Notes
+- No new runtime permissions were added.
+- No external servers, analytics, remote scripts, or remote fonts were added.
+
 ## [1.0.1] - 2026-07-02
 
 ### Added

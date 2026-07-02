@@ -4,10 +4,15 @@
 
 **Name:** Tab Bookmark Grouper
 **Short Name:** Tab Grouper
-**Version:** 1.0.1
+**Version:** 1.0.2
 **Category:** Productivity
 
 ## Release Notes
+
+### Version 1.0.2
+- Maintenance release for the next Chrome Web Store upload.
+- Added clear public changelog and release notes for version history transparency.
+- Rebuilt the release package from the current source with automated tests passing.
 
 ### Version 1.0.1
 - Renamed the extension to Tab Bookmark Grouper.
