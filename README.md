@@ -61,14 +61,14 @@ The extension opens those links and bundles them into a neat, color-coded Chrome
 - Select a Bookmark folder from the **Select Folder** dropdown.
 - Click the **Open & Group** button. All links inside will open and bundle into a neat, color-coded Tab Group.
 
-<p align="center"><img src="docs/store/store-screenshot-1-main-1280x800.png" alt="Main UI" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phpathere/bookmark-tab-grouper/main/docs/store/store-screenshot-1-main-1280x800.png" alt="Main UI" width="600"></p>
 
 ### 2. Auto-Group Open Tabs (Tự Động Gộp Tab Đang Mở)
 - Click the **Filter icon (Sort/Group Tabs)** on the right side of the toolbar.
 - Click **Group by Website (Nhóm theo trang web)**. The extension will scan all ungrouped tabs and group them by root domain (e.g., all `github.com` tabs go into one group).
 - Made a mistake? Click **Undo Grouping (Hoàn tác nhóm)** to revert the changes.
 
-<p align="center"><img src="docs/store/store-screenshot-2-domain-1280x800.png" alt="Group by Domain Feature" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phpathere/bookmark-tab-grouper/main/docs/store/store-screenshot-2-domain-1280x800.png" alt="Group by Domain Feature" width="600"></p>
 
 ### 3. Session Sync & Team Sharing (Đồng Bộ & Chia Sẻ Phiên)
 - **Export Session:** Click to download a `.btg` file (automatically saved to your browser's default `Downloads` folder). This saves supported windows, tabs, and groups locally.
