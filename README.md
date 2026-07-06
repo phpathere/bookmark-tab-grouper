@@ -98,6 +98,11 @@ Upload `dist/bookmark-tab-grouper-<version>.zip`. The release script reads the v
 
 Release history is documented in [CHANGELOG.md](CHANGELOG.md). Update it before uploading a new Chrome Web Store package so each version has clear user-facing notes.
 
+## 🧭 Handoff & Design System
+
+- [Maintenance and Handoff Guide](docs/MAINTENANCE.md): architecture map, debug flow, tests, release checklist, and bug triage.
+- [Design System Guide](docs/DESIGN_SYSTEM.md): Pixel Neo-Brutalist Mint UI rules for popup, landing page, future pages, and store assets.
+
 <div align="center">
   <h3>🙏 Thank You! (Cảm Ơn!)</h3>
   <p>Thank you so much for installing and using <b>Tab Bookmark Grouper</b>. I built this tool to solve my own productivity chaos, and I truly hope it brings a little more peace and order to your digital workspace. Have a wonderful and productive day!</p>

@@ -230,6 +230,8 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
   const isCurrentWinEmpty = currentTabs.length === 1 && isBrowserEmptyTab(currentTabs[0]);
   let usedCurrentWin = false;
 
+  // Best-effort restore: one bad tab, group, or window should be recorded in
+  // failures[] without aborting the remaining supported session data.
   for (let windowIndex = 0; windowIndex < importData.windows.length; windowIndex++) {
     const winData = importData.windows[windowIndex];
     let winId;

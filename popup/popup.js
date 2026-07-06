@@ -574,6 +574,8 @@ async function handleGroupByDomain() {
     const allTabs = await chrome.tabs.query({ currentWindow: true });
     const existingGroupsByTitle = new Map();
 
+    // Phase 1: detect existing group titles so duplicate domain groups can be merged
+    // instead of creating a second "Google", "Github", etc.
     if (typeof chrome.tabGroups !== 'undefined') {
       const seenGroupIds = new Set();
       for (const tab of allTabs) {
@@ -594,6 +596,8 @@ async function handleGroupByDomain() {
       }
     }
 
+    // Phase 2: bucket unpinned web tabs by normalized root domain.
+    // Single-tab domains are intentionally left loose unless they help merge duplicates.
     const domainMap = new Map();
     for (const tab of allTabs) {
       if (tab.pinned || !tab.url || !isWebUrl(tab.url)) continue;
@@ -681,6 +685,8 @@ async function handleGroupByDomain() {
 async function organizeCurrentWindowGroupsAlphabetically() {
   if (typeof chrome.tabGroups === 'undefined') return;
 
+  // Keep pinned tabs first, sort real tab groups alphabetically after them,
+  // then move loose tabs to the end. This is the "Groups first, loose tabs last" invariant.
   const tabs = await chrome.tabs.query({ currentWindow: true });
   const groupTabsMap = new Map();
   const pinnedTabs = tabs
