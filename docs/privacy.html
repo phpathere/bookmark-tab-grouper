@@ -3,102 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy policy for Tab Bookmark Grouper. The extension works locally, uses no external servers, and stores supported session files on your device.">
   <title>Privacy Policy - Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .policy-card {
-      background: #ffffff;
-    }
-
-    .policy-card h1,
-    .policy-card h2 {
-      line-height: 1.2;
-      text-transform: uppercase;
-    }
-
-    .policy-card h1 {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
-    }
-
-    .policy-card h2 {
-      border-bottom: 3px dashed #000000;
-      font-size: 1.25rem;
-      margin-top: 28px;
-      padding-bottom: 6px;
-    }
-
-    .policy-card p,
-    .policy-card li {
-      font-size: 1rem;
-      margin-top: 10px;
-    }
-
-    .policy-card ul {
-      margin-left: 24px;
-      margin-top: 10px;
-    }
-
-    .policy-meta {
-      font-weight: 700;
-      opacity: 0.75;
-    }
-
-    .nav-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
-  </style>
 </head>
 <body>
-  <main class="container">
-    <article class="card policy-card">
-      <h1>Privacy Policy</h1>
-      <p class="policy-meta">Tab Bookmark Grouper - Effective date: 2026-07-01</p>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <p>Tab Bookmark Grouper is designed to work locally in the browser. It does not collect, sell, rent, transmit, or share personal data with external servers.</p>
-
-      <h2>Data Handled Locally</h2>
-      <p>The extension may access the following browser data only to provide its features:</p>
-      <ul>
-        <li>Bookmarks: read to list bookmark folders and open selected bookmark URLs.</li>
-        <li>Open tabs and tab groups: read to group tabs by website and export or restore sessions.</li>
-        <li>Session export files: created locally as .btg files containing window, tab, URL, group title, group color, active-tab, and timestamp information.</li>
-        <li>Session import files: read locally when the user selects a .btg file.</li>
-        <li>Settings: theme and language preference stored in chrome.storage.local.</li>
-      </ul>
-
-      <h2>Data Collection and Sharing</h2>
-      <p>The extension does not send bookmark data, tab URLs, browsing activity, session files, settings, analytics, telemetry, identifiers, or profile information to any external service.</p>
-
-      <h2>Permissions</h2>
-      <ul>
-        <li>bookmarks: read bookmark folders and URLs selected by the user.</li>
-        <li>tabs: create tabs, inspect current tab URLs for grouping/export, and restore imported sessions.</li>
-        <li>tabGroups: create, name, color, collapse, and ungroup Chrome tab groups.</li>
-        <li>storage: save local language and theme settings.</li>
-        <li>downloads: save a user-requested .btg session export file.</li>
-      </ul>
-
-      <h2>User Control</h2>
-      <p>Session export files are saved only after the user clicks Export Session. Session import files are read only after the user chooses a file and confirms the import summary.</p>
-      <p>Users can remove extension settings by using the reset button in the extension settings screen or by uninstalling the extension.</p>
-
-      <h2>Contact</h2>
-      <p>For privacy questions, contact: phpathere@gmail.com.</p>
-
-      <div class="nav-links">
-        <a class="btn" href="/">Back to Home</a>
-        <a class="btn" href="https://github.com/phpathere/bookmark-tab-grouper">GitHub</a>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Tab Bookmark Grouper home">
+        <img src="favicon.png" width="32" height="32" alt="">
+        <span>Tab Bookmark Grouper</span>
+      </a>
+      <div class="nav-actions">
+        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>
+        <a href="https://github.com/phpathere/bookmark-tab-grouper" rel="noopener">GitHub</a>
       </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="policy-hero">
+      <div class="policy-hero-inner">
+        <p class="eyebrow">Privacy Policy · MV3 · Local-first</p>
+        <h1>Privacy Policy</h1>
+        <p class="hero-text">
+          Tab Bookmark Grouper is designed to work locally in your browser. It does not collect, sell, rent, transmit, or share personal data with external servers.
+        </p>
+        <dl class="policy-summary" aria-label="Privacy highlights">
+          <div>
+            <dt>Local</dt>
+            <dd>data stays on your device</dd>
+          </div>
+          <div>
+            <dt>No servers</dt>
+            <dd>no external data transfer</dd>
+          </div>
+          <div>
+            <dt>User-led</dt>
+            <dd>imports and exports need your action</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <article class="policy-document" aria-labelledby="policy-title">
+      <div class="policy-title-row">
+        <div>
+          <p class="eyebrow">Effective date</p>
+          <h2 id="policy-title">2026-07-01</h2>
+        </div>
+        <a class="button secondary" href="/">Back to Home</a>
+      </div>
+
+      <section class="policy-block">
+        <h3>Data Handled Locally</h3>
+        <p>The extension may access the following browser data only to provide its features:</p>
+        <ul>
+          <li>Bookmarks: read to list bookmark folders and open selected bookmark URLs.</li>
+          <li>Open tabs and tab groups: read to group tabs by website and export or restore sessions.</li>
+          <li>Session export files: created locally as .btg files containing window, tab, URL, group title, group color, active-tab, and timestamp information.</li>
+          <li>Session import files: read locally when the user selects a .btg file.</li>
+          <li>Settings: theme and language preference stored in chrome.storage.local.</li>
+        </ul>
+      </section>
+
+      <section class="policy-block">
+        <h3>Data Collection and Sharing</h3>
+        <p>The extension does not send bookmark data, tab URLs, browsing activity, session files, settings, analytics, telemetry, identifiers, or profile information to any external service.</p>
+      </section>
+
+      <section class="policy-block">
+        <h3>Permissions</h3>
+        <ul>
+          <li>bookmarks: read bookmark folders and URLs selected by the user.</li>
+          <li>tabs: create tabs, inspect current tab URLs for grouping/export, and restore imported sessions.</li>
+          <li>tabGroups: create, name, color, collapse, and ungroup Chrome tab groups.</li>
+          <li>storage: save local language and theme settings.</li>
+          <li>downloads: save a user-requested .btg session export file.</li>
+        </ul>
+      </section>
+
+      <section class="policy-block">
+        <h3>User Control</h3>
+        <p>Session export files are saved only after the user clicks Export Session. Session import files are read only after the user chooses a file and confirms the import summary.</p>
+        <p>Users can remove extension settings by using the reset button in the extension settings screen or by uninstalling the extension.</p>
+      </section>
+
+      <section class="policy-block contact-block">
+        <h3>Contact</h3>
+        <p>For privacy questions, contact <a href="mailto:phpathere@gmail.com">phpathere@gmail.com</a>.</p>
+      </section>
     </article>
   </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Tab Bookmark Grouper. Built by Hoang Tat.</p>
+    <div>
+      <a href="/">Home</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="https://github.com/phpathere/bookmark-tab-grouper" rel="noopener">GitHub</a>
+      <a href="https://x.com/0x0bytejoy" rel="noopener">Twitter</a>
+    </div>
+  </footer>
 </body>
 </html>
