@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260708-demo-fix">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -14,10 +14,12 @@
   <header class="site-header">
     <nav class="nav" aria-label="Primary navigation">
       <div class="brand">
-        <button class="brand-demo-button" type="button" aria-pressed="false" aria-label="Click to demo tab grouping">
-          <img src="favicon.png" width="32" height="32" alt="">
+        <span class="brand-demo-wrap">
+          <button class="brand-demo-button" type="button" aria-pressed="false" aria-label="Click to demo tab grouping">
+            <img src="favicon.png" width="32" height="32" alt="">
+          </button>
           <span class="brand-demo-cue" data-i18n="demoCue">Click to demo</span>
-        </button>
+        </span>
         <a class="brand-name" href="#top" aria-label="Tab Bookmark Grouper home">Tab Bookmark Grouper</a>
       </div>
       <div class="nav-actions">
