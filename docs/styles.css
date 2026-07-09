@@ -190,30 +190,30 @@ a {
   display: inline-grid;
   grid-template-rows: 0 1fr;
   align-items: end;
-  padding-top: 14px;
+  padding-top: 12px;
   transition: padding 160ms ease, transform 160ms ease;
 }
 
 .nav-demo-title {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   justify-self: start;
-  height: 16px;
-  min-width: 112px;
-  transform: translate(9px, 5px);
+  min-height: 24px;
+  min-width: 150px;
+  transform: translate(12px, -2px);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--line);
-  border-bottom: 0;
-  border-radius: 7px 7px 0 0;
+  border: 3px solid var(--line);
+  border-radius: 999px;
   background: var(--pink);
   color: white;
-  padding: 1px 9px 0;
+  box-shadow: 3px 3px 0 var(--line);
+  padding: 4px 12px 3px;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 0;
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.05;
   opacity: 0;
   white-space: nowrap;
   pointer-events: none;
@@ -269,21 +269,22 @@ a {
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
-  padding-top: 22px;
+  padding-top: 34px;
 }
 
 .nav.is-demo-grouped .nav-demo-title {
-  transform: translate(10px, 1px);
-  font-size: 0.66rem;
+  transform: translate(12px, -4px);
+  font-size: 0.88rem;
   opacity: 1;
 }
 
 .nav.is-demo-grouped .nav-demo-items {
   gap: 0;
-  border-color: var(--pink);
-  border-radius: 0 9px 9px 9px;
-  background: #ffe4e6;
-  padding: 4px 5px 5px;
+  border: 3px solid var(--pink);
+  border-radius: 14px;
+  background: #fff1f2;
+  box-shadow: 4px 4px 0 var(--pink);
+  padding: 7px;
 }
 
 .nav.is-demo-grouped .demo-tab {
@@ -921,18 +922,22 @@ h3 {
   .nav.is-demo-grouped .nav-demo-cluster {
     width: 100%;
     align-items: flex-start;
-    padding-top: 22px;
+    padding-top: 32px;
   }
 
   .nav.is-demo-grouped .nav-demo-title {
-    min-width: 104px;
-    transform: translate(9px, 1px);
+    min-width: 132px;
+    transform: translate(10px, -4px);
+    font-size: 0.78rem;
+    box-shadow: 2px 2px 0 var(--line);
   }
 
   .nav.is-demo-grouped .nav-demo-items {
     gap: 0;
     width: 100%;
-    padding: 5px;
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--pink);
+    padding: 6px;
   }
 
   .nav.is-demo-grouped .demo-tab {
