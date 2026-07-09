@@ -278,21 +278,22 @@ a {
   transform: translate(-252px, 28px);
   font-size: 0.82rem;
   opacity: 1;
-  animation: grouperEatsTabs 1.6s cubic-bezier(0.35, 0, 0.2, 1) forwards;
+  animation: grouperEatsTabs 2.55s cubic-bezier(0.32, 0, 0.2, 1) forwards;
 }
 
 .nav.is-demo-animating .nav-demo-title::after {
   content: "";
   position: absolute;
-  right: -3px;
+  right: -5px;
   top: 50%;
   width: 0;
   height: 0;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  border-left: 24px solid var(--paper);
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 31px solid var(--paper);
   transform: translateY(-50%);
-  animation: grouperMouth 220ms steps(2, end) infinite;
+  transform-origin: right center;
+  animation: grouperMouth 260ms steps(2, end) infinite;
 }
 
 .nav.is-demo-animating .nav-demo-title::before {
@@ -309,26 +310,29 @@ a {
 
 .nav.is-demo-animating .demo-tab {
   pointer-events: none;
+  overflow: hidden;
+  transform-origin: left center;
+  will-change: clip-path, opacity, transform;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(1) {
-  animation: tabEaten 300ms ease-in forwards;
-  animation-delay: 280ms;
+  animation: tabEaten 540ms steps(7, end) forwards;
+  animation-delay: 360ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(2) {
-  animation: tabEaten 300ms ease-in forwards;
-  animation-delay: 610ms;
+  animation: tabEaten 620ms steps(10, end) forwards;
+  animation-delay: 890ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(3) {
-  animation: tabEaten 300ms ease-in forwards;
-  animation-delay: 940ms;
+  animation: tabEaten 560ms steps(8, end) forwards;
+  animation-delay: 1450ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(4) {
-  animation: tabEaten 300ms ease-in forwards;
-  animation-delay: 1240ms;
+  animation: tabEaten 660ms steps(12, end) forwards;
+  animation-delay: 1900ms;
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
@@ -435,7 +439,7 @@ a {
     transform: translate(-252px, 28px) scale(0.96);
   }
 
-  78% {
+  86% {
     transform: translate(calc(100% + 34px), 28px) scale(1);
   }
 
@@ -448,23 +452,35 @@ a {
 @keyframes grouperMouth {
   0%,
   100% {
-    transform: scaleX(1);
+    border-top-width: 19px;
+    border-bottom-width: 19px;
+    border-left-width: 33px;
   }
 
   50% {
-    transform: scaleX(0.22);
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 12px;
   }
 }
 
 @keyframes tabEaten {
   0% {
+    clip-path: inset(0 0 0 0);
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 
+  82% {
+    clip-path: inset(0 0 0 88%);
+    opacity: 1;
+    transform: translateY(1px) scale(0.98);
+  }
+
   100% {
+    clip-path: inset(0 0 0 100%);
     opacity: 0;
-    transform: translateY(2px) scale(0.25);
+    transform: translateY(2px) scale(0.75);
   }
 }
 
@@ -473,7 +489,7 @@ a {
     transform: translate(-214px, 28px) scale(0.96);
   }
 
-  78% {
+  86% {
     transform: translate(calc(100% + 18px), 28px) scale(1);
   }
 
