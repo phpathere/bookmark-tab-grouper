@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css?v=20260708-demo-fix">
+  <link rel="stylesheet" href="styles.css?v=20260709-pointer-cue">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -18,7 +18,7 @@
           <button class="brand-demo-button" type="button" aria-pressed="false" aria-label="Click to demo tab grouping">
             <img src="favicon.png" width="32" height="32" alt="">
           </button>
-          <span class="brand-demo-cue" data-i18n="demoCue">Click to demo</span>
+          <span class="brand-demo-cue" aria-hidden="true"></span>
         </span>
         <a class="brand-name" href="#top" aria-label="Tab Bookmark Grouper home">Tab Bookmark Grouper</a>
       </div>
@@ -179,8 +179,6 @@
         navPrivacy: 'Privacy',
         navPolicy: 'Policy',
         navChangelog: 'Changelog',
-        demoCue: 'Click to demo',
-        demoCueActive: 'Toggle demo',
         demoAria: 'Click to demo tab grouping',
         demoAriaActive: 'Toggle demo tab grouping',
         heroEyebrow: 'Chrome Extension · MV3 · Local-first',
@@ -233,8 +231,6 @@
         navPrivacy: 'Quyền riêng tư',
         navPolicy: 'Chính sách',
         navChangelog: 'Lịch sử bản phát hành',
-        demoCue: 'Bấm để demo',
-        demoCueActive: 'Bấm để hoàn tác',
         demoAria: 'Bấm để demo nhóm tab',
         demoAriaActive: 'Bấm để hoàn tác demo nhóm tab',
         heroEyebrow: 'Chrome Extension · MV3 · Bảo mật cục bộ',
@@ -288,7 +284,6 @@
     const translatableElements = document.querySelectorAll('[data-i18n]');
     const navElement = document.querySelector('.nav');
     const demoButton = document.querySelector('.brand-demo-button');
-    const demoCue = document.querySelector('.brand-demo-cue');
     let currentLanguage = localStorage.getItem('btg-docs-lang') || 'en';
 
     function setLanguage(lang) {
@@ -307,10 +302,9 @@
     }
 
     function updateDemoCopy() {
-      if (!demoButton || !demoCue) return;
+      if (!demoButton) return;
       const dictionary = messages[currentLanguage] || messages.en;
       const isGrouped = navElement?.classList.contains('is-demo-grouped');
-      demoCue.textContent = isGrouped ? dictionary.demoCueActive : dictionary.demoCue;
       demoButton.setAttribute('aria-label', isGrouped ? dictionary.demoAriaActive : dictionary.demoAria);
       demoButton.setAttribute('aria-pressed', String(Boolean(isGrouped)));
     }

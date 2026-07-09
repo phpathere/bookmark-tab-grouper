@@ -138,24 +138,45 @@ a {
 
 .brand-demo-cue {
   position: absolute;
-  top: calc(100% + 7px);
-  left: 50%;
+  right: -8px;
+  bottom: -9px;
   z-index: 6;
-  width: max-content;
-  max-width: 138px;
-  transform: translateX(-50%);
+  width: 22px;
+  height: 28px;
+  transform: rotate(-14deg);
+  transform-origin: 40% 80%;
   border: 3px solid var(--line);
-  border-radius: 6px;
+  border-radius: 11px 11px 10px 4px;
   background: var(--yellow);
-  box-shadow: 4px 4px 0 var(--line);
-  padding: 4px 7px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.66rem;
-  font-weight: 900;
-  line-height: 1.05;
-  text-align: center;
-  animation: demoCuePulse 1.15s steps(2, end) infinite;
+  box-shadow: 3px 3px 0 var(--line);
+  animation: demoCuePulse 1s steps(2, end) infinite;
   pointer-events: none;
+}
+
+.brand-demo-cue::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: -12px;
+  width: 8px;
+  height: 18px;
+  border: 3px solid var(--line);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: white;
+}
+
+.brand-demo-cue::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 9px;
+  width: 12px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--line);
+  box-shadow: -2px 6px 0 var(--line);
+  transform: rotate(34deg);
 }
 
 .nav-actions {
@@ -268,13 +289,13 @@ a {
 @keyframes demoCuePulse {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: rotate(-14deg) translateY(0) scale(1);
     opacity: 1;
   }
 
   50% {
-    transform: translateX(-50%) translateY(3px);
-    opacity: 0.42;
+    transform: rotate(-14deg) translateY(3px) scale(0.92);
+    opacity: 0.58;
   }
 }
 
@@ -799,10 +820,11 @@ h3 {
   }
 
   .brand-demo-cue {
-    top: calc(100% + 5px);
-    max-width: 118px;
+    right: -7px;
+    bottom: -8px;
+    width: 20px;
+    height: 26px;
     box-shadow: 3px 3px 0 var(--line);
-    font-size: 0.62rem;
   }
 
   .nav-demo-cluster,
