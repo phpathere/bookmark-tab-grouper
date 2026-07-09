@@ -1149,20 +1149,22 @@ h3 {
   }
 
   .nav {
-    width: min(calc(100% - 28px), 360px);
+    width: min(calc(100% - 24px), 390px);
     min-height: auto;
-    padding: 14px 0;
+    padding: 14px 0 16px;
     align-items: flex-start;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .nav-actions {
     width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 10px 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    gap: 12px;
     font-size: 0.9rem;
+    overflow: hidden;
   }
 
   .nav-actions a {
@@ -1171,7 +1173,8 @@ h3 {
   }
 
   .brand {
-    align-items: flex-start;
+    width: 100%;
+    align-items: center;
   }
 
   .brand-demo-cue {
@@ -1183,28 +1186,50 @@ h3 {
 
   .nav-demo-cluster,
   .nav-demo-items {
-    flex-wrap: wrap;
+    max-width: 100%;
   }
 
   .nav-demo-cluster {
     --collector-width: 100%;
+    display: block;
     width: 100%;
-    padding-top: 16px;
+    padding-top: 30px;
+    overflow: hidden;
   }
 
   .nav-demo-items {
-    gap: 10px 12px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 2px 8px;
+    scrollbar-width: none;
+  }
+
+  .nav-demo-items::-webkit-scrollbar {
+    display: none;
+  }
+
+  .demo-collector {
+    bottom: 2px;
+    height: 42px;
+    border-width: 3px;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 rgba(251, 113, 133, 0.28);
   }
 
   .demo-tab {
-    min-height: 34px;
-    max-width: 100%;
+    flex: 0 0 auto;
+    min-height: 32px;
+    max-width: 132px;
     border-width: 2px;
     border-bottom-width: 3px;
     border-radius: 10px 10px 5px 5px;
     box-shadow: 2px 2px 0 rgba(28, 25, 23, 0.82);
-    padding: 7px 10px 6px;
-    font-size: 0.84rem;
+    padding: 7px 9px 6px;
+    font-size: 0.78rem;
   }
 
   .nav.is-demo-grouped .nav-demo-cluster {
@@ -1221,29 +1246,56 @@ h3 {
   }
 
   .nav.is-demo-animating .nav-demo-title {
-    left: 10px;
-    bottom: 40px;
-    min-width: min(100%, 196px);
-    font-size: 0.68rem;
+    left: 8px;
+    top: 0;
+    bottom: auto;
+    min-width: auto;
+    max-width: calc(100% - 16px);
+    padding: 4px 9px 3px;
+    font-size: 0.62rem;
+    box-shadow: 2px 2px 0 var(--line);
   }
 
   .nav.is-demo-animating .demo-collector {
-    height: calc(100% + 10px);
-    min-height: 52px;
+    min-height: 42px;
+  }
+
+  .nav.is-demo-animating .demo-tab::before {
+    left: -24px;
+    top: calc(50% - 3px);
+    width: 6px;
+    height: 6px;
+    border-width: 2px;
+    box-shadow:
+      -10px 0 0 -2px var(--yellow),
+      -10px 0 0 0 var(--line),
+      -20px 0 0 -2px var(--blue),
+      -20px 0 0 0 var(--line);
+  }
+
+  .nav.is-demo-animating .demo-tab::after {
+    inset: -5px;
+    border-width: 2px;
+    border-radius: 11px;
   }
 
   .nav.is-demo-grouped .nav-demo-items {
     gap: 0;
     width: 100%;
+    overflow: hidden;
     border-radius: 12px;
     box-shadow: 3px 3px 0 var(--pink);
     padding: 6px;
   }
 
   .nav.is-demo-grouped .demo-tab {
-    flex: 1 1 auto;
-    min-width: min(100%, 118px);
-    font-size: 0.8rem;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    padding: 6px 7px 5px;
+    font-size: 0.72rem;
+    white-space: normal;
+    text-align: center;
   }
 
   .nav.is-demo-grouped .demo-tab + .demo-tab {
