@@ -200,7 +200,7 @@ a {
   z-index: 3;
   justify-self: start;
   min-height: 24px;
-  min-width: 150px;
+  min-width: 226px;
   transform: translate(12px, -2px);
   display: inline-flex;
   align-items: center;
@@ -274,11 +274,11 @@ a {
 }
 
 .nav.is-demo-animating .nav-demo-title {
-  min-width: 150px;
-  transform: translate(-168px, 28px);
+  min-width: 226px;
+  transform: translate(-252px, 28px);
   font-size: 0.82rem;
   opacity: 1;
-  animation: grouperEatsTabs 1.08s cubic-bezier(0.35, 0, 0.2, 1) forwards;
+  animation: grouperEatsTabs 1.6s cubic-bezier(0.35, 0, 0.2, 1) forwards;
 }
 
 .nav.is-demo-animating .nav-demo-title::after {
@@ -288,11 +288,11 @@ a {
   top: 50%;
   width: 0;
   height: 0;
-  border-top: 13px solid transparent;
-  border-bottom: 13px solid transparent;
-  border-left: 20px solid var(--paper);
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 24px solid var(--paper);
   transform: translateY(-50%);
-  animation: grouperMouth 180ms steps(2, end) infinite;
+  animation: grouperMouth 220ms steps(2, end) infinite;
 }
 
 .nav.is-demo-animating .nav-demo-title::before {
@@ -312,23 +312,23 @@ a {
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(1) {
-  animation: tabEaten 220ms ease-in forwards;
-  animation-delay: 120ms;
+  animation: tabEaten 300ms ease-in forwards;
+  animation-delay: 280ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(2) {
-  animation: tabEaten 220ms ease-in forwards;
-  animation-delay: 330ms;
+  animation: tabEaten 300ms ease-in forwards;
+  animation-delay: 610ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(3) {
-  animation: tabEaten 220ms ease-in forwards;
-  animation-delay: 560ms;
+  animation: tabEaten 300ms ease-in forwards;
+  animation-delay: 940ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(4) {
-  animation: tabEaten 220ms ease-in forwards;
-  animation-delay: 780ms;
+  animation: tabEaten 300ms ease-in forwards;
+  animation-delay: 1240ms;
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
@@ -337,7 +337,7 @@ a {
 
 .nav.is-demo-grouped .nav-demo-title {
   transform: translate(12px, -4px);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   opacity: 1;
 }
 
@@ -432,11 +432,11 @@ a {
 
 @keyframes grouperEatsTabs {
   0% {
-    transform: translate(-168px, 28px) scale(0.96);
+    transform: translate(-252px, 28px) scale(0.96);
   }
 
   78% {
-    transform: translate(calc(100% + 104px), 28px) scale(1);
+    transform: translate(calc(100% + 34px), 28px) scale(1);
   }
 
   100% {
@@ -470,11 +470,11 @@ a {
 
 @keyframes grouperEatsTabsMobile {
   0% {
-    transform: translate(-138px, 28px) scale(0.96);
+    transform: translate(-214px, 28px) scale(0.96);
   }
 
   78% {
-    transform: translate(calc(100% + 52px), 28px) scale(1);
+    transform: translate(calc(100% + 18px), 28px) scale(1);
   }
 
   100% {
@@ -1042,15 +1042,15 @@ h3 {
   }
 
   .nav.is-demo-grouped .nav-demo-title {
-    min-width: 132px;
+    min-width: min(100%, 196px);
     transform: translate(10px, -4px);
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     box-shadow: 2px 2px 0 var(--line);
   }
 
   .nav.is-demo-animating .nav-demo-title {
-    min-width: 132px;
-    font-size: 0.78rem;
+    min-width: min(100%, 196px);
+    font-size: 0.68rem;
     animation-name: grouperEatsTabsMobile;
   }
 
