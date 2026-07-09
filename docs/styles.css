@@ -138,45 +138,43 @@ a {
 
 .brand-demo-cue {
   position: absolute;
-  right: -8px;
-  bottom: -9px;
+  right: -16px;
+  bottom: -14px;
   z-index: 6;
-  width: 22px;
-  height: 28px;
-  transform: rotate(-14deg);
+  width: 34px;
+  height: 34px;
   transform-origin: 40% 80%;
-  border: 3px solid var(--line);
-  border-radius: 11px 11px 10px 4px;
-  background: var(--yellow);
-  box-shadow: 3px 3px 0 var(--line);
-  animation: demoCuePulse 1s steps(2, end) infinite;
+  filter: drop-shadow(2px 2px 0 var(--line));
+  animation: demoCueTap 1.05s ease-in-out infinite;
   pointer-events: none;
 }
 
-.brand-demo-cue::before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: -12px;
-  width: 8px;
-  height: 18px;
-  border: 3px solid var(--line);
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
-  background: white;
+.brand-demo-pointer {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.brand-demo-cue::after {
-  content: "";
-  position: absolute;
-  left: 15px;
-  top: 9px;
-  width: 12px;
-  height: 3px;
-  border-radius: 999px;
-  background: var(--line);
-  box-shadow: -2px 6px 0 var(--line);
-  transform: rotate(34deg);
+.pointer-hand {
+  fill: white;
+  stroke: var(--line);
+  stroke-width: 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.pointer-fold,
+.pointer-click {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pointer-click {
+  stroke: var(--pink);
+  animation: demoClickFlash 1.05s steps(2, end) infinite;
 }
 
 .nav-actions {
@@ -215,8 +213,8 @@ a {
   gap: 20px;
 }
 
-.nav.is-demo-grouped .brand-demo-cue {
-  background: var(--cyan);
+.nav.is-demo-grouped .pointer-click {
+  stroke: var(--blue);
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
@@ -286,16 +284,27 @@ a {
   outline-offset: 4px;
 }
 
-@keyframes demoCuePulse {
+@keyframes demoCueTap {
   0%,
   100% {
-    transform: rotate(-14deg) translateY(0) scale(1);
+    transform: translate(0, 0) rotate(-12deg) scale(1);
     opacity: 1;
   }
 
   50% {
-    transform: rotate(-14deg) translateY(3px) scale(0.92);
-    opacity: 0.58;
+    transform: translate(-2px, 3px) rotate(-12deg) scale(0.92);
+    opacity: 0.82;
+  }
+}
+
+@keyframes demoClickFlash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.18;
   }
 }
 
@@ -820,11 +829,10 @@ h3 {
   }
 
   .brand-demo-cue {
-    right: -7px;
-    bottom: -8px;
-    width: 20px;
-    height: 26px;
-    box-shadow: 3px 3px 0 var(--line);
+    right: -13px;
+    bottom: -12px;
+    width: 30px;
+    height: 30px;
   }
 
   .nav-demo-cluster,
