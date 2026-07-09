@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css?v=20260709-snake-bite-tabs">
+  <link rel="stylesheet" href="styles.css?v=20260709-collector-bullets">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -30,6 +30,7 @@
       </div>
       <div class="nav-actions">
         <div class="nav-demo-cluster" aria-live="polite" aria-label="Demo Chrome tab strip">
+          <span class="demo-collector" aria-hidden="true"></span>
           <span class="nav-demo-title">
             <span class="nav-demo-title-text">Tab Bookmark Grouper</span>
             <span class="grouper-mouth" aria-hidden="true"></span>
@@ -346,7 +347,7 @@
         navElement.classList.remove('is-demo-animating');
         navElement.classList.add('is-demo-grouped');
         updateDemoCopy();
-      }, 5600);
+      }, 5200);
     });
 
     setLanguage(localStorage.getItem('btg-docs-lang') || 'en');

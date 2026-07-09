@@ -186,7 +186,7 @@ a {
 }
 
 .nav-demo-cluster {
-  --grouper-width: 226px;
+  --collector-width: 100%;
   position: relative;
   display: inline-grid;
   grid-template-rows: 0 1fr;
@@ -196,9 +196,24 @@ a {
   overflow: visible;
 }
 
+.demo-collector {
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  z-index: 1;
+  width: 0;
+  height: 52px;
+  border: 4px solid var(--pink);
+  border-radius: 16px;
+  background: rgba(255, 241, 242, 0.5);
+  box-shadow: 4px 4px 0 rgba(251, 113, 133, 0.32);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .nav-demo-title {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   justify-self: start;
   min-height: 24px;
   min-width: 226px;
@@ -267,7 +282,7 @@ a {
 
 .nav-demo-items {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: inline-flex;
   align-items: flex-end;
   gap: 8px;
@@ -319,13 +334,13 @@ a {
 
 .nav.is-demo-animating .nav-demo-title {
   position: absolute;
-  left: -252px;
-  bottom: 3px;
+  left: 12px;
+  bottom: 42px;
   min-width: 226px;
-  transform: translateY(0) scale(0.96);
+  transform: translateY(0) scale(1);
   font-size: 0.82rem;
   opacity: 1;
-  animation: grouperSnakeRun 5.05s cubic-bezier(0.28, 0.04, 0.18, 1) forwards;
+  animation: collectorLabelPulse 760ms ease-in-out infinite;
 }
 
 .nav.is-demo-animating .nav-demo-title::before {
@@ -341,35 +356,110 @@ a {
 }
 
 .nav.is-demo-animating .grouper-mouth {
-  display: block;
-  animation: grouperMouth 330ms steps(2, end) infinite;
+  display: none;
+}
+
+.nav.is-demo-animating .demo-collector {
+  opacity: 1;
+  animation: collectorGrow 4.6s steps(4, end) forwards;
 }
 
 .nav.is-demo-animating .demo-tab {
   pointer-events: none;
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   transform-origin: left center;
-  will-change: clip-path, opacity, transform;
+  will-change: opacity, transform;
 }
 
-.nav.is-demo-animating .demo-tab:nth-child(1) {
-  animation: tabEaten 900ms steps(7, end) forwards;
+.nav.is-demo-animating .demo-tab::before {
+  content: "";
+  position: absolute;
+  left: -44px;
+  top: calc(50% - 3px);
+  z-index: 5;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow:
+    -15px 0 0 -2px var(--yellow),
+    -15px 0 0 0 var(--line),
+    -30px 0 0 -2px var(--blue),
+    -30px 0 0 0 var(--line);
+  opacity: 0;
+  transform: translateX(0);
+}
+
+.nav.is-demo-animating .demo-tab::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border: 3px dashed var(--pink);
+  border-radius: 14px;
+  opacity: 0;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(1)::before {
+  animation: bulletVolley 580ms linear forwards;
+  animation-delay: 260ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(2)::before {
+  animation: bulletVolley 580ms linear forwards;
+  animation-delay: 1250ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(3)::before {
+  animation: bulletVolley 580ms linear forwards;
+  animation-delay: 2240ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(4)::before {
+  animation: bulletVolley 580ms linear forwards;
+  animation-delay: 3230ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(1)::after {
+  animation: collectFlash 420ms ease-out forwards;
   animation-delay: 760ms;
 }
 
-.nav.is-demo-animating .demo-tab:nth-child(2) {
-  animation: tabEaten 980ms steps(10, end) forwards;
-  animation-delay: 1700ms;
+.nav.is-demo-animating .demo-tab:nth-child(2)::after {
+  animation: collectFlash 420ms ease-out forwards;
+  animation-delay: 1750ms;
 }
 
-.nav.is-demo-animating .demo-tab:nth-child(3) {
-  animation: tabEaten 940ms steps(8, end) forwards;
+.nav.is-demo-animating .demo-tab:nth-child(3)::after {
+  animation: collectFlash 420ms ease-out forwards;
   animation-delay: 2740ms;
 }
 
+.nav.is-demo-animating .demo-tab:nth-child(4)::after {
+  animation: collectFlash 420ms ease-out forwards;
+  animation-delay: 3730ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(1) {
+  animation: tabCollected 520ms ease-in forwards;
+  animation-delay: 820ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(2) {
+  animation: tabCollected 520ms ease-in forwards;
+  animation-delay: 1810ms;
+}
+
+.nav.is-demo-animating .demo-tab:nth-child(3) {
+  animation: tabCollected 520ms ease-in forwards;
+  animation-delay: 2800ms;
+}
+
 .nav.is-demo-animating .demo-tab:nth-child(4) {
-  animation: tabEaten 1120ms steps(14, end) forwards;
-  animation-delay: 3740ms;
+  animation: tabCollected 520ms ease-in forwards;
+  animation-delay: 3790ms;
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
@@ -471,94 +561,96 @@ a {
   }
 }
 
-@keyframes grouperSnakeRun {
-  0% {
-    left: -252px;
-    transform: translateY(0) scale(0.96);
-  }
-
-  12% {
-    left: -172px;
-    transform: translateY(0) scale(1);
-  }
-
-  82% {
-    left: max(12px, calc(100% - var(--grouper-width) - 28px));
-    transform: translateY(0) scale(1);
-  }
-
-  90% {
-    left: max(12px, calc(100% - var(--grouper-width) - 28px));
-    transform: translateY(-12px) scale(1);
-  }
-
-  100% {
-    left: 12px;
-    transform: translateY(-36px) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes grouperMouth {
+@keyframes collectorLabelPulse {
   0%,
   100% {
-    width: 40px;
-    height: 40px;
-    transform: translateY(-50%) scaleX(1);
+    transform: translateY(0) scale(1);
   }
 
   50% {
-    width: 6px;
-    height: 18px;
-    transform: translateY(-50%) scaleX(0.18);
+    transform: translateY(-2px) scale(1.02);
   }
 }
 
-@keyframes tabEaten {
+@keyframes collectorGrow {
   0% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    width: 20%;
+    transform: scaleY(0.84);
   }
 
-  82% {
-    clip-path: inset(0 0 0 88%);
-    opacity: 1;
-    transform: translateY(1px) scale(0.98);
+  25% {
+    width: 35%;
+    transform: scaleY(0.9);
+  }
+
+  50% {
+    width: 58%;
+    transform: scaleY(0.96);
+  }
+
+  75% {
+    width: 78%;
+    transform: scaleY(1);
   }
 
   100% {
-    clip-path: inset(0 0 0 100%);
+    width: var(--collector-width);
+    transform: scaleY(1);
+  }
+}
+
+@keyframes bulletVolley {
+  0% {
     opacity: 0;
-    transform: translateY(2px) scale(0.75);
-  }
-}
-
-@keyframes grouperSnakeRunMobile {
-  0% {
-    left: -214px;
-    transform: translateY(0) scale(0.96);
+    transform: translateX(-34px) scale(0.86);
   }
 
-  12% {
-    left: -132px;
-    transform: translateY(0) scale(1);
+  14% {
+    opacity: 1;
   }
 
   82% {
-    left: max(8px, calc(100% - var(--grouper-width) - 24px));
-    transform: translateY(0) scale(1);
-  }
-
-  90% {
-    left: max(8px, calc(100% - var(--grouper-width) - 24px));
-    transform: translateY(-10px) scale(1);
+    opacity: 1;
+    transform: translateX(42px) scale(1);
   }
 
   100% {
-    left: 10px;
-    transform: translateY(-34px) scale(1);
+    opacity: 0;
+    transform: translateX(54px) scale(0.72);
+  }
+}
+
+@keyframes collectFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+
+  48% {
     opacity: 1;
+    transform: scale(1.08);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@keyframes tabCollected {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  56% {
+    opacity: 1;
+    transform: translateY(-5px) scale(0.92);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.38);
   }
 }
 
@@ -1095,7 +1187,7 @@ h3 {
   }
 
   .nav-demo-cluster {
-    --grouper-width: 196px;
+    --collector-width: 100%;
     width: 100%;
     padding-top: 16px;
   }
@@ -1129,9 +1221,15 @@ h3 {
   }
 
   .nav.is-demo-animating .nav-demo-title {
+    left: 10px;
+    bottom: 40px;
     min-width: min(100%, 196px);
     font-size: 0.68rem;
-    animation-name: grouperSnakeRunMobile;
+  }
+
+  .nav.is-demo-animating .demo-collector {
+    height: calc(100% + 10px);
+    min-height: 52px;
   }
 
   .nav.is-demo-grouped .nav-demo-items {
