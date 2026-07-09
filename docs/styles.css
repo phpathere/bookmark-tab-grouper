@@ -180,66 +180,124 @@ a {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   font-size: 0.95rem;
   font-weight: 800;
 }
 
-.nav-demo-cluster,
-.nav-demo-items {
-  display: inline-flex;
-  align-items: center;
-}
-
 .nav-demo-cluster {
-  gap: 0;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  position: relative;
+  display: inline-grid;
+  grid-template-rows: 0 1fr;
+  align-items: end;
+  padding-top: 14px;
+  transition: padding 160ms ease, transform 160ms ease;
 }
 
 .nav-demo-title {
-  display: none;
+  position: relative;
+  z-index: 1;
+  justify-self: start;
+  height: 16px;
+  min-width: 112px;
+  transform: translate(9px, 5px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--line);
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
   background: var(--pink);
   color: white;
-  border: 3px solid var(--line);
-  border-radius: 6px;
-  padding: 5px 8px;
+  padding: 1px 9px 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.75rem;
+  font-size: 0;
   font-weight: 900;
+  line-height: 1;
+  opacity: 0;
   white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease, font-size 160ms ease;
 }
 
 .nav-demo-items {
-  gap: 20px;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+  border-bottom: 3px solid transparent;
+  transition: gap 160ms ease, border-color 160ms ease, background 160ms ease, padding 160ms ease;
 }
 
 .nav.is-demo-grouped .pointer-click {
   stroke: var(--blue);
 }
 
-.nav.is-demo-grouped .nav-demo-cluster {
-  gap: 8px;
+.demo-tab {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 180px;
   border: 3px solid var(--line);
-  border-radius: var(--radius);
-  background: #bbf7d0;
-  box-shadow: 5px 5px 0 var(--line);
-  padding: 5px 8px;
+  border-bottom-width: 4px;
+  border-radius: 12px 12px 5px 5px;
+  background: white;
+  box-shadow: 3px 3px 0 rgba(28, 25, 23, 0.82);
+  padding: 7px 13px 6px;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateY(0);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-radius 160ms ease;
+}
+
+.demo-tab:nth-child(2) {
+  background: #fef9c3;
+}
+
+.demo-tab:nth-child(3) {
+  background: #dbeafe;
+}
+
+.demo-tab:nth-child(4) {
+  background: #fce7f3;
+}
+
+.demo-tab:hover {
+  transform: translateY(-2px);
+}
+
+.nav.is-demo-grouped .nav-demo-cluster {
+  padding-top: 22px;
 }
 
 .nav.is-demo-grouped .nav-demo-title {
-  display: inline-flex;
+  transform: translate(10px, 1px);
+  font-size: 0.66rem;
+  opacity: 1;
 }
 
 .nav.is-demo-grouped .nav-demo-items {
-  gap: 6px;
+  gap: 0;
+  border-color: var(--pink);
+  border-radius: 0 9px 9px 9px;
+  background: #ffe4e6;
+  padding: 4px 5px 5px;
 }
 
-.nav.is-demo-grouped .nav-demo-items a {
-  border: 2px solid var(--line);
-  border-radius: 6px;
-  background: white;
-  padding: 4px 7px;
-  box-shadow: 2px 2px 0 var(--line);
+.nav.is-demo-grouped .demo-tab {
+  min-height: 32px;
+  border-width: 2px;
+  border-bottom-width: 3px;
+  border-radius: 8px 8px 5px 5px;
+  box-shadow: none;
+  padding: 6px 10px 5px;
+  transform: translateY(0);
+}
+
+.nav.is-demo-grouped .demo-tab + .demo-tab {
+  margin-left: -1px;
 }
 
 .nav-actions a {
@@ -840,22 +898,51 @@ h3 {
     flex-wrap: wrap;
   }
 
+  .nav-demo-cluster {
+    width: 100%;
+    padding-top: 16px;
+  }
+
   .nav-demo-items {
     gap: 10px 12px;
+  }
+
+  .demo-tab {
+    min-height: 34px;
+    max-width: 100%;
+    border-width: 2px;
+    border-bottom-width: 3px;
+    border-radius: 10px 10px 5px 5px;
+    box-shadow: 2px 2px 0 rgba(28, 25, 23, 0.82);
+    padding: 7px 10px 6px;
+    font-size: 0.84rem;
   }
 
   .nav.is-demo-grouped .nav-demo-cluster {
     width: 100%;
     align-items: flex-start;
-    box-shadow: 3px 3px 0 var(--line);
+    padding-top: 22px;
+  }
+
+  .nav.is-demo-grouped .nav-demo-title {
+    min-width: 104px;
+    transform: translate(9px, 1px);
   }
 
   .nav.is-demo-grouped .nav-demo-items {
-    gap: 8px;
+    gap: 0;
+    width: 100%;
+    padding: 5px;
   }
 
-  .nav.is-demo-grouped .nav-demo-items a {
-    font-size: 0.82rem;
+  .nav.is-demo-grouped .demo-tab {
+    flex: 1 1 auto;
+    min-width: min(100%, 118px);
+    font-size: 0.8rem;
+  }
+
+  .nav.is-demo-grouped .demo-tab + .demo-tab {
+    margin-left: 0;
   }
 
   .language-switch {
