@@ -221,6 +221,49 @@ a {
   transition: opacity 160ms ease, transform 160ms ease, font-size 160ms ease;
 }
 
+.nav-demo-title-text {
+  position: relative;
+  z-index: 2;
+}
+
+.grouper-mouth {
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  display: none;
+  transform: translateY(-50%);
+  transform-origin: right center;
+  background: var(--paper);
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.grouper-mouth::before,
+.grouper-mouth::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  width: 34px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line);
+  transform-origin: left center;
+}
+
+.grouper-mouth::before {
+  top: 15px;
+  transform: rotate(-31deg);
+}
+
+.grouper-mouth::after {
+  top: 15px;
+  transform: rotate(31deg);
+}
+
 .nav-demo-items {
   position: relative;
   z-index: 2;
@@ -281,21 +324,6 @@ a {
   animation: grouperEatsTabs 2.55s cubic-bezier(0.32, 0, 0.2, 1) forwards;
 }
 
-.nav.is-demo-animating .nav-demo-title::after {
-  content: "";
-  position: absolute;
-  right: -5px;
-  top: 50%;
-  width: 0;
-  height: 0;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
-  border-left: 31px solid var(--paper);
-  transform: translateY(-50%);
-  transform-origin: right center;
-  animation: grouperMouth 260ms steps(2, end) infinite;
-}
-
 .nav.is-demo-animating .nav-demo-title::before {
   content: "";
   position: absolute;
@@ -306,6 +334,11 @@ a {
   border-radius: 50%;
   background: white;
   box-shadow: 2px 2px 0 rgba(28, 25, 23, 0.36);
+}
+
+.nav.is-demo-animating .grouper-mouth {
+  display: block;
+  animation: grouperMouth 300ms steps(2, end) infinite;
 }
 
 .nav.is-demo-animating .demo-tab {
@@ -331,8 +364,8 @@ a {
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(4) {
-  animation: tabEaten 660ms steps(12, end) forwards;
-  animation-delay: 1900ms;
+  animation: tabEaten 760ms steps(14, end) forwards;
+  animation-delay: 1960ms;
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
@@ -452,15 +485,15 @@ a {
 @keyframes grouperMouth {
   0%,
   100% {
-    border-top-width: 19px;
-    border-bottom-width: 19px;
-    border-left-width: 33px;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%) scaleX(1);
   }
 
   50% {
-    border-top-width: 5px;
-    border-bottom-width: 5px;
-    border-left-width: 12px;
+    width: 13px;
+    height: 16px;
+    transform: translateY(-50%) scaleX(0.48);
   }
 }
 
