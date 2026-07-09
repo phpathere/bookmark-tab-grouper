@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css?v=20260709-tabstrip-label">
+  <link rel="stylesheet" href="styles.css?v=20260709-grouper-eats-tabs">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -290,6 +290,7 @@
     const translatableElements = document.querySelectorAll('[data-i18n]');
     const navElement = document.querySelector('.nav');
     const demoButton = document.querySelector('.brand-demo-button');
+    let demoTimer = 0;
     let currentLanguage = localStorage.getItem('btg-docs-lang') || 'en';
 
     function setLanguage(lang) {
@@ -321,8 +322,28 @@
 
     demoButton?.addEventListener('click', (event) => {
       event.preventDefault();
-      navElement?.classList.toggle('is-demo-grouped');
+      if (!navElement) return;
+      window.clearTimeout(demoTimer);
+
+      if (navElement.classList.contains('is-demo-grouped') || navElement.classList.contains('is-demo-animating')) {
+        navElement.classList.remove('is-demo-grouped', 'is-demo-animating');
+        updateDemoCopy();
+        return;
+      }
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        navElement.classList.add('is-demo-grouped');
+        updateDemoCopy();
+        return;
+      }
+
+      navElement.classList.add('is-demo-animating');
       updateDemoCopy();
+      demoTimer = window.setTimeout(() => {
+        navElement.classList.remove('is-demo-animating');
+        navElement.classList.add('is-demo-grouped');
+        updateDemoCopy();
+      }, 1100);
     });
 
     setLanguage(localStorage.getItem('btg-docs-lang') || 'en');
