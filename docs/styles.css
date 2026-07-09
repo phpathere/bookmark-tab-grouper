@@ -340,7 +340,7 @@ a {
   transform: translateY(0) scale(1);
   font-size: 0.82rem;
   opacity: 1;
-  animation: collectorLabelPulse 760ms ease-in-out infinite;
+  animation: collectorLabelSettle 420ms ease-out both;
 }
 
 .nav.is-demo-animating .nav-demo-title::before {
@@ -361,7 +361,7 @@ a {
 
 .nav.is-demo-animating .demo-collector {
   opacity: 1;
-  animation: collectorGrow 4.6s steps(4, end) forwards;
+  animation: collectorGrow 4.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .nav.is-demo-animating .demo-tab {
@@ -369,7 +369,7 @@ a {
   position: relative;
   overflow: visible;
   transform-origin: left center;
-  will-change: opacity, transform;
+  will-change: box-shadow, filter;
 }
 
 .nav.is-demo-animating .demo-tab::before {
@@ -423,42 +423,42 @@ a {
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(1)::after {
-  animation: collectFlash 420ms ease-out forwards;
+  animation: collectFlash 360ms ease-out forwards;
   animation-delay: 760ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(2)::after {
-  animation: collectFlash 420ms ease-out forwards;
+  animation: collectFlash 360ms ease-out forwards;
   animation-delay: 1750ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(3)::after {
-  animation: collectFlash 420ms ease-out forwards;
+  animation: collectFlash 360ms ease-out forwards;
   animation-delay: 2740ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(4)::after {
-  animation: collectFlash 420ms ease-out forwards;
+  animation: collectFlash 360ms ease-out forwards;
   animation-delay: 3730ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(1) {
-  animation: tabCollected 520ms ease-in forwards;
+  animation: tabCollectSettle 620ms ease-out forwards;
   animation-delay: 820ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(2) {
-  animation: tabCollected 520ms ease-in forwards;
+  animation: tabCollectSettle 620ms ease-out forwards;
   animation-delay: 1810ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(3) {
-  animation: tabCollected 520ms ease-in forwards;
+  animation: tabCollectSettle 620ms ease-out forwards;
   animation-delay: 2800ms;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(4) {
-  animation: tabCollected 520ms ease-in forwards;
+  animation: tabCollectSettle 620ms ease-out forwards;
   animation-delay: 3790ms;
 }
 
@@ -561,41 +561,42 @@ a {
   }
 }
 
-@keyframes collectorLabelPulse {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
+@keyframes collectorLabelSettle {
+  0% {
+    opacity: 0;
+    transform: translateY(3px) scale(0.98);
   }
 
-  50% {
-    transform: translateY(-2px) scale(1.02);
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes collectorGrow {
   0% {
-    width: 20%;
-    transform: scaleY(0.84);
+    width: 18%;
+    opacity: 0.72;
   }
 
   25% {
     width: 35%;
-    transform: scaleY(0.9);
+    opacity: 0.86;
   }
 
   50% {
     width: 58%;
-    transform: scaleY(0.96);
+    opacity: 0.94;
   }
 
   75% {
     width: 78%;
-    transform: scaleY(1);
+    opacity: 1;
   }
 
   100% {
     width: var(--collector-width);
-    transform: scaleY(1);
+    opacity: 1;
   }
 }
 
@@ -623,34 +624,34 @@ a {
 @keyframes collectFlash {
   0% {
     opacity: 0;
-    transform: scale(0.86);
+    transform: scale(0.98);
   }
 
   48% {
-    opacity: 1;
-    transform: scale(1.08);
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 
   100% {
     opacity: 0;
-    transform: scale(1.18);
+    transform: scale(1.04);
   }
 }
 
-@keyframes tabCollected {
+@keyframes tabCollectSettle {
   0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    filter: brightness(1);
+    box-shadow: 3px 3px 0 rgba(28, 25, 23, 0.82);
   }
 
-  56% {
-    opacity: 1;
-    transform: translateY(-5px) scale(0.92);
+  45% {
+    filter: brightness(1.08);
+    box-shadow: 2px 2px 0 rgba(251, 113, 133, 0.64);
   }
 
   100% {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.38);
+    filter: brightness(0.98);
+    box-shadow: 1px 1px 0 rgba(28, 25, 23, 0.55);
   }
 }
 
