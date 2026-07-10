@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css?v=20260710-brand-morph-v3">
+  <link rel="stylesheet" href="styles.css?v=20260710-production-demo">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -30,18 +30,19 @@
       </div>
       <div class="nav-actions">
         <div class="nav-demo-cluster" aria-live="polite" aria-label="Demo Chrome tab strip">
-          <span class="nav-demo-title">
+          <button class="nav-demo-title" type="button" aria-pressed="false" aria-label="Click to demo tab grouping">
             <img class="nav-demo-icon" src="favicon.png" width="22" height="22" alt="">
             <span class="demo-chomper" aria-hidden="true"></span>
             <span class="nav-demo-title-text">Tab Bookmark Grouper</span>
             <span class="demo-count" aria-hidden="true">0 tabs</span>
-          </span>
+          </button>
           <div class="nav-demo-items">
             <a class="demo-tab" href="#features" data-i18n="navFeatures">Features</a>
             <a class="demo-tab" href="#privacy" data-i18n="navPrivacy">Privacy</a>
             <a class="demo-tab" href="privacy.html" data-i18n="navPolicy">Policy</a>
             <a class="demo-tab" href="https://github.com/phpathere/bookmark-tab-grouper/blob/main/CHANGELOG.md" rel="noopener" data-i18n="navChangelog">Changelog</a>
           </div>
+          <span class="demo-status visually-hidden" role="status" aria-live="polite" aria-atomic="true"></span>
         </div>
         <div class="language-switch" aria-label="Language">
           <button type="button" data-lang="en" aria-pressed="true">English</button>
@@ -192,6 +193,9 @@
         navChangelog: 'Changelog',
         demoAria: 'Click to demo tab grouping',
         demoAriaActive: 'Toggle demo tab grouping',
+        demoStatusReady: 'Demo ready: 4 tabs',
+        demoStatusProgress: 'Collected',
+        demoStatusOf: 'of',
         heroEyebrow: 'Chrome Extension · MV3 · Local-first',
         heroTitle: 'Open bookmarks into organized tab groups.',
         heroText: 'Tab Bookmark Grouper turns a bookmark folder into a clean Chrome tab group, groups messy open tabs by domain, and exports supported sessions to local files.',
@@ -244,6 +248,9 @@
         navChangelog: 'Lịch sử bản phát hành',
         demoAria: 'Bấm để demo nhóm tab',
         demoAriaActive: 'Bấm để hoàn tác demo nhóm tab',
+        demoStatusReady: 'Demo sẵn sàng: 4 tab',
+        demoStatusProgress: 'Đã gom',
+        demoStatusOf: '/',
         heroEyebrow: 'Chrome Extension · MV3 · Bảo mật cục bộ',
         heroTitle: 'Mở bookmark thành tab group gọn gàng.',
         heroText: 'Tab Bookmark Grouper biến một thư mục bookmark thành Chrome Tab Group rõ ràng, gom các tab đang mở theo domain và xuất phiên làm việc được hỗ trợ thành file cục bộ.',
@@ -295,7 +302,9 @@
     const translatableElements = document.querySelectorAll('[data-i18n]');
     const navElement = document.querySelector('.nav');
     const demoButton = document.querySelector('.brand-demo-button');
+    const demoTitle = document.querySelector('.nav-demo-title');
     const demoCount = document.querySelector('.demo-count');
+    const demoStatus = document.querySelector('.demo-status');
     let demoTimer = 0;
     let demoCountTimers = [];
     let currentLanguage = localStorage.getItem('btg-docs-lang') || 'en';
@@ -319,14 +328,26 @@
       if (!demoButton) return;
       const dictionary = messages[currentLanguage] || messages.en;
       const isGrouped = navElement?.classList.contains('is-demo-grouped');
-      demoButton.setAttribute('aria-label', isGrouped ? dictionary.demoAriaActive : dictionary.demoAria);
-      demoButton.setAttribute('aria-pressed', String(Boolean(isGrouped)));
+      [demoButton, demoTitle].forEach((control) => {
+        if (!control) return;
+        control.setAttribute('aria-label', isGrouped ? dictionary.demoAriaActive : dictionary.demoAria);
+        control.setAttribute('aria-pressed', String(Boolean(isGrouped)));
+      });
+      demoButton?.setAttribute('tabindex', isGrouped ? '-1' : '0');
+      if (demoStatus && !isGrouped && demoStatus.textContent === '') {
+        demoStatus.textContent = dictionary.demoStatusReady;
+      }
     }
 
     function setDemoCount(count) {
       navElement?.style.setProperty('--demo-creature-width', `${58 + count * 14}px`);
-      if (!demoCount) return;
-      demoCount.textContent = `${count} ${count === 1 ? 'tab' : 'tabs'}`;
+      if (demoCount) demoCount.textContent = `${count} ${count === 1 ? 'tab' : 'tabs'}`;
+      if (demoStatus) {
+        const dictionary = messages[currentLanguage] || messages.en;
+        demoStatus.textContent = count === 0
+          ? dictionary.demoStatusReady
+          : `${dictionary.demoStatusProgress} ${count} ${dictionary.demoStatusOf} 4 ${count === 1 ? 'tab' : 'tabs'}`;
+      }
     }
 
     function clearDemoCountTimers() {
@@ -338,7 +359,7 @@
       button.addEventListener('click', () => setLanguage(button.dataset.lang));
     });
 
-    demoButton?.addEventListener('click', (event) => {
+    function toggleDemo(event) {
       event.preventDefault();
       if (!navElement) return;
       window.clearTimeout(demoTimer);
@@ -371,7 +392,10 @@
         setDemoCount(4);
         updateDemoCopy();
       }, 4700);
-    });
+    }
+
+    demoButton?.addEventListener('click', toggleDemo);
+    demoTitle?.addEventListener('click', toggleDemo);
 
     setLanguage(localStorage.getItem('btg-docs-lang') || 'en');
   </script>
