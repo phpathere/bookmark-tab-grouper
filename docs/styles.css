@@ -235,7 +235,7 @@ a {
 .demo-chomper {
   position: relative;
   display: none;
-  width: 58px;
+  width: var(--demo-creature-width, 58px);
   height: 32px;
   flex: 0 0 auto;
   border: 3px solid var(--line);
@@ -243,6 +243,7 @@ a {
   background: var(--yellow);
   box-shadow: 2px 2px 0 var(--line);
   overflow: hidden;
+  transition: width 260ms ease-out;
 }
 
 .demo-chomper::before {
@@ -584,17 +585,34 @@ a {
 
 @keyframes demoRestore {
   0% {
-    transform: translate(12px, -1px) scale(0.78);
+    transform: translate(0, -50%) scale(0.78);
     opacity: 0.08;
   }
 
   70% {
-    transform: translate(12px, -5px) scale(1.03);
+    transform: translate(0, -50%) scale(1.03);
     opacity: 1;
   }
 
   100% {
-    transform: translate(12px, -4px) scale(1);
+    transform: translate(0, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes demoRestoreMobile {
+  0% {
+    transform: translateY(-4px) scale(0.78);
+    opacity: 0.08;
+  }
+
+  70% {
+    transform: translateY(0) scale(1.03);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
@@ -1210,7 +1228,7 @@ h3 {
 
   .nav.is-demo-grouped .nav-demo-cluster {
     width: 100%;
-    align-items: flex-start;
+    align-items: center;
     padding-top: 32px;
   }
 
@@ -1219,10 +1237,12 @@ h3 {
     left: auto;
     top: auto;
     bottom: auto;
+    margin-inline: auto;
     min-width: min(100%, var(--demo-runner-width));
-    transform: translate(10px, -4px);
+    transform: translateY(0);
     font-size: 0.68rem;
     box-shadow: 2px 2px 0 var(--line);
+    animation: demoRestoreMobile 620ms ease-out both;
   }
 
   .nav.is-demo-animating .nav-demo-title {
@@ -1237,8 +1257,8 @@ h3 {
   }
 
   .nav.is-demo-animating .demo-chomper {
-    width: 22px;
-    height: 22px;
+    width: var(--demo-creature-width, 58px);
+    height: 26px;
   }
 
   .nav.is-demo-animating .demo-count,
