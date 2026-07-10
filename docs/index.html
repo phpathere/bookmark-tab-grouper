@@ -6,7 +6,7 @@
   <meta name="description" content="Tab Bookmark Grouper opens bookmark folders into organized Chrome tab groups, groups current tabs by domain, and keeps session backup files local.">
   <title>Tab Bookmark Grouper</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="styles.css?v=20260709-settled-collector">
+  <link rel="stylesheet" href="styles.css?v=20260709-chomp-count">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -30,9 +30,11 @@
       </div>
       <div class="nav-actions">
         <div class="nav-demo-cluster" aria-live="polite" aria-label="Demo Chrome tab strip">
-          <span class="demo-collector" aria-hidden="true"></span>
           <span class="nav-demo-title">
+            <img class="nav-demo-icon" src="favicon.png" width="22" height="22" alt="">
+            <span class="demo-chomper" aria-hidden="true"></span>
             <span class="nav-demo-title-text">Tab Bookmark Grouper</span>
+            <span class="demo-count" aria-hidden="true">0 tabs</span>
             <span class="grouper-mouth" aria-hidden="true"></span>
           </span>
           <div class="nav-demo-items">
@@ -294,7 +296,9 @@
     const translatableElements = document.querySelectorAll('[data-i18n]');
     const navElement = document.querySelector('.nav');
     const demoButton = document.querySelector('.brand-demo-button');
+    const demoCount = document.querySelector('.demo-count');
     let demoTimer = 0;
+    let demoCountTimers = [];
     let currentLanguage = localStorage.getItem('btg-docs-lang') || 'en';
 
     function setLanguage(lang) {
@@ -320,6 +324,16 @@
       demoButton.setAttribute('aria-pressed', String(Boolean(isGrouped)));
     }
 
+    function setDemoCount(count) {
+      if (!demoCount) return;
+      demoCount.textContent = `${count} ${count === 1 ? 'tab' : 'tabs'}`;
+    }
+
+    function clearDemoCountTimers() {
+      demoCountTimers.forEach((timer) => window.clearTimeout(timer));
+      demoCountTimers = [];
+    }
+
     languageButtons.forEach((button) => {
       button.addEventListener('click', () => setLanguage(button.dataset.lang));
     });
@@ -328,26 +342,35 @@
       event.preventDefault();
       if (!navElement) return;
       window.clearTimeout(demoTimer);
+      clearDemoCountTimers();
 
       if (navElement.classList.contains('is-demo-grouped') || navElement.classList.contains('is-demo-animating')) {
         navElement.classList.remove('is-demo-grouped', 'is-demo-animating');
+        setDemoCount(0);
         updateDemoCopy();
         return;
       }
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setDemoCount(4);
         navElement.classList.add('is-demo-grouped');
         updateDemoCopy();
         return;
       }
 
+      setDemoCount(0);
       navElement.classList.add('is-demo-animating');
       updateDemoCopy();
+      [1, 2, 3, 4].forEach((count, index) => {
+        demoCountTimers.push(window.setTimeout(() => setDemoCount(count), 980 + index * 900));
+      });
       demoTimer = window.setTimeout(() => {
+        clearDemoCountTimers();
         navElement.classList.remove('is-demo-animating');
         navElement.classList.add('is-demo-grouped');
+        setDemoCount(4);
         updateDemoCopy();
-      }, 5200);
+      }, 4700);
     });
 
     setLanguage(localStorage.getItem('btg-docs-lang') || 'en');
