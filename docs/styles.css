@@ -79,6 +79,7 @@ a {
 }
 
 .nav {
+  position: relative;
   width: min(1120px, calc(100% - 32px));
   min-height: 72px;
   margin: 0 auto;
@@ -94,6 +95,7 @@ a {
   gap: 12px;
   text-decoration: none;
   font-weight: 900;
+  transition: opacity 220ms ease;
 }
 
 .brand-name {
@@ -353,7 +355,37 @@ a {
   background: transparent;
   box-shadow: none;
   padding: 0;
-  animation: demoChomperRun 4.45s linear forwards;
+  animation: demoChomperRun 4.65s linear forwards;
+}
+
+/* The mascot travels across the complete desktop header, starting where the
+   brand lives and finishing back at that same stable anchor. */
+.nav.is-demo-animating .brand,
+.nav.is-demo-grouped .brand {
+  opacity: 0;
+}
+
+.nav.is-demo-animating .brand-demo-cue,
+.nav.is-demo-grouped .brand-demo-cue {
+  visibility: hidden;
+}
+
+.nav.is-demo-animating .nav-demo-cluster,
+.nav.is-demo-grouped .nav-demo-cluster {
+  position: static;
+  padding-top: 0;
+}
+
+.nav.is-demo-animating .nav-demo-title,
+.nav.is-demo-grouped .nav-demo-title {
+  left: 0;
+  top: 50%;
+  bottom: auto;
+  transform: translate(0, -50%);
+}
+
+.nav.is-demo-animating .nav-demo-title {
+  min-width: max-content;
 }
 
 .nav.is-demo-animating .nav-demo-title-text {
@@ -403,11 +435,15 @@ a {
 }
 
 .nav.is-demo-grouped .nav-demo-cluster {
-  padding-top: 34px;
+  padding-top: 0;
 }
 
 .nav.is-demo-grouped .nav-demo-title {
-  transform: translate(12px, -4px);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  bottom: auto;
+  transform: translate(0, -50%);
   font-size: 0.86rem;
   opacity: 1;
   animation: demoRestore 620ms ease-out both;
@@ -500,38 +536,38 @@ a {
 
 @keyframes demoChomperRun {
   0% {
-    left: calc(-1 * var(--demo-runner-width) - 24px);
-    transform: translateY(0);
+    left: 0;
+    transform: translate(0, -50%);
   }
 
   18% {
-    left: 0;
-    transform: translateY(0);
+    left: 12%;
+    transform: translate(0, -50%);
   }
 
   38% {
-    left: clamp(0px, 22%, max(0px, calc(100% - var(--demo-runner-width))));
-    transform: translateY(0);
+    left: 28%;
+    transform: translate(0, -50%);
   }
 
   58% {
-    left: clamp(0px, 44%, max(0px, calc(100% - var(--demo-runner-width))));
-    transform: translateY(0);
+    left: 46%;
+    transform: translate(0, -50%);
   }
 
   78% {
-    left: clamp(0px, 66%, max(0px, calc(100% - var(--demo-runner-width))));
-    transform: translateY(0);
+    left: 64%;
+    transform: translate(0, -50%);
   }
 
   92% {
-    left: max(0px, calc(100% - var(--demo-runner-width)));
-    transform: translateY(0);
+    left: 76%;
+    transform: translate(0, -50%);
   }
 
   100% {
-    left: 12px;
-    transform: translateY(-36px);
+    left: 0;
+    transform: translate(0, -50%) scale(0.84);
   }
 }
 
@@ -1135,6 +1171,16 @@ h3 {
     overflow: hidden;
   }
 
+  .nav.is-demo-animating .nav-demo-cluster {
+    position: relative;
+    padding-top: 30px;
+  }
+
+  .nav.is-demo-grouped .nav-demo-cluster {
+    position: relative;
+    padding-top: 32px;
+  }
+
   .nav-demo-items {
     display: flex;
     flex-wrap: nowrap;
@@ -1169,6 +1215,10 @@ h3 {
   }
 
   .nav.is-demo-grouped .nav-demo-title {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
     min-width: min(100%, var(--demo-runner-width));
     transform: translate(10px, -4px);
     font-size: 0.68rem;
