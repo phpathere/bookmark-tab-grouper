@@ -13,6 +13,7 @@ test('landing demo exposes an accessible status and visible grouped toggle', () 
 });
 
 test('landing demo keeps mobile header height stable after grouping', () => {
+  assert.match(stylesCss, /\.nav-demo-cluster[\s\S]*?min-height: 108px/);
   assert.match(stylesCss, /\.nav\.is-demo-animating \.nav-demo-cluster[\s\S]*?min-height: 108px/);
   assert.match(stylesCss, /\.nav\.is-demo-grouped \.nav-demo-cluster[\s\S]*?min-height: 108px/);
 });

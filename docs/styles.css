@@ -1234,6 +1234,7 @@ h3 {
     --demo-runner-width: 220px;
     display: block;
     width: 100%;
+    min-height: 108px;
     padding-top: 30px;
     overflow: hidden;
   }
