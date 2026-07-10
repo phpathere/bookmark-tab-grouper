@@ -312,6 +312,26 @@ a {
   line-height: 1.05;
 }
 
+.demo-toggle-cue {
+  display: none;
+  position: absolute;
+  top: -21px;
+  right: 8px;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  transform-origin: 40% 80%;
+  filter: drop-shadow(2px 2px 0 var(--line));
+  animation: demoCueTap 1.05s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.demo-toggle-cue .brand-demo-pointer {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
 .nav-demo-items {
   position: relative;
   z-index: 3;
@@ -478,6 +498,10 @@ a {
 .nav.is-demo-grouped .nav-demo-icon,
 .nav.is-demo-grouped .demo-count {
   display: inline-flex;
+}
+
+.nav.is-demo-grouped .demo-toggle-cue {
+  display: block;
 }
 
 .nav.is-demo-grouped .nav-demo-icon,
