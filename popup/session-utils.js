@@ -32,7 +32,13 @@ function getChromeApi(chromeApi = globalThis.chrome) {
 }
 
 function safeErrorMessage(error) {
-  return error?.message || String(error || 'Unknown error');
+  const message = typeof error?.message === 'string'
+    ? error.message
+    : String(error || 'Unknown error');
+  return message
+    .replace(/(?:https?|file|chrome|edge|view-source):[^\s)]+/gi, '[URL]')
+    .replace(/[\r\n]+/g, ' ')
+    .slice(0, 240) || 'Unknown error';
 }
 
 function countWindowTabs(winData) {
@@ -221,7 +227,12 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
     };
     failures.push(safeFailure);
     if (logger?.warn) {
-      logger.warn('Bookmark Tab Grouper import issue', safeFailure);
+      logger.warn('Bookmark Tab Grouper import issue', {
+        scope: safeFailure.scope,
+        action: safeFailure.action,
+        windowIndex: safeFailure.windowIndex,
+        message: safeFailure.message
+      });
     }
   };
 

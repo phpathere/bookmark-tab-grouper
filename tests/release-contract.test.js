@@ -41,4 +41,8 @@ test('domain undo stores and restores affected group metadata', () => {
 test('production logging avoids raw exception objects', () => {
   assert.match(popup, /function logExtensionError\(/);
   assert.doesNotMatch(popup, /console\.(log|warn|error)\([^\n]*,\s*e\s*\)/);
+  assert.match(popup, /getSafeErrorMessage\(err\)/);
+  assert.match(read('popup/session-utils.js'), /replace\(\/\(\?:https\?\|file\|chrome\|edge\|view-source\)/);
+  assert.doesNotMatch(read('popup/session-utils.js'), /logger\.warn\([^\n]*safeFailure\)/);
+  assert.match(read('popup/styles.css'), /prefers-reduced-motion: reduce/);
 });

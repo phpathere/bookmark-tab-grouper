@@ -1065,7 +1065,7 @@ async function handleFileImport(event) {
       showStatus(formatImportResult(result, getMessage), statusType, { persist: statusType !== 'success' });
       updateStatsBar();
     } catch(err) {
-      showStatus(`${getMessage('invalidFile')} ${err.message}`, 'error', { persist: true });
+      showStatus(`${getMessage('invalidFile')} ${getSafeErrorMessage(err)}`, 'error', { persist: true });
     }
   };
   reader.readAsText(file);

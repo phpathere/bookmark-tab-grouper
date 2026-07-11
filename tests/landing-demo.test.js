@@ -36,4 +36,5 @@ test('landing demo removes hidden focus targets after grouping', () => {
   assert.match(stylesCss, /\.demo-toggle-cue[\s\S]*?right: 50%;/);
   assert.match(stylesCss, /\.demo-toggle-cue[\s\S]*?top: calc\(100% \+ 3px\)/);
   assert.match(stylesCss, /@keyframes demoGroupedCueTap/);
+  assert.match(stylesCss, /@media \(prefers-reduced-motion: reduce\)/);
 });
