@@ -28,6 +28,12 @@
   "successMessage": {
     "message": "Success! Bookmarks opened."
   },
+  "bookmarkPartialSuccess": {
+    "message": "Opened {OPENED}/{TOTAL} tabs; {FAILED} failed."
+  },
+  "bookmarkTooManyTabs": {
+    "message": "This folder contains {COUNT} supported tabs. Please choose a folder with no more than {MAX} tabs."
+  },
   "exportSuccess": {
     "message": "Session exported successfully!"
   },

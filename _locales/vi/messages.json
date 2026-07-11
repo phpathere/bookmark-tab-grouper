@@ -28,6 +28,12 @@
   "successMessage": {
     "message": "Tuyệt vời! Đã mở thành công."
   },
+  "bookmarkPartialSuccess": {
+    "message": "Đã mở {OPENED}/{TOTAL} tab; {FAILED} tab lỗi."
+  },
+  "bookmarkTooManyTabs": {
+    "message": "Thư mục có {COUNT} tab được hỗ trợ. Vui lòng chọn thư mục không quá {MAX} tab."
+  },
   "exportSuccess": {
     "message": "Đã lưu phiên làm việc!"
   },

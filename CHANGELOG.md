@@ -4,6 +4,16 @@ All notable changes to Tab Bookmark Grouper are documented in this file.
 
 This project follows a practical release history format so users, reviewers, and future maintainers can understand what changed between Chrome Web Store uploads.
 
+## [1.0.3] - 2026-07-11
+
+### Changed
+- Hardened bookmark-folder opening with tab limits, partial-failure reporting, and safer progress feedback.
+- Fixed export success handling so interrupted downloads are reported instead of shown as successful.
+- Improved domain-group undo by restoring affected pre-existing groups and their metadata.
+- Reduced production console noise and capped user-facing error details.
+- Stabilized the landing-page demo header on mobile and optimized below-the-fold image loading.
+- Anchored the post-demo pointer to the grouped tab-count badge, corrected the initial `0 tab` label, and added a non-reflow hover lift for the tab currently being collected.
+
 ## [1.0.2] - 2026-07-02
 
 ### Changed

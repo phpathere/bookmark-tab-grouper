@@ -312,17 +312,24 @@ a {
   line-height: 1.05;
 }
 
+.demo-count-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
 .demo-toggle-cue {
   display: none;
   position: absolute;
-  top: -21px;
-  right: 8px;
+  top: -29px;
+  right: 50%;
   z-index: 5;
   width: 30px;
   height: 30px;
   transform-origin: 40% 80%;
   filter: drop-shadow(2px 2px 0 var(--line));
-  animation: demoCueTap 1.05s ease-in-out infinite;
+  animation: demoGroupedCueTap 1.05s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -378,6 +385,11 @@ a {
 
 .demo-tab:hover {
   transform: translateY(-2px);
+}
+
+.nav.is-demo-animating .demo-tab.is-current {
+  transform: translateY(-3px);
+  box-shadow: 3px 5px 0 rgba(28, 25, 23, 0.82);
 }
 
 .nav.is-demo-animating .pointer-click {
@@ -455,7 +467,7 @@ a {
 .nav.is-demo-animating .demo-tab {
   pointer-events: none;
   overflow: hidden;
-  will-change: opacity, filter;
+  will-change: opacity, filter, transform;
 }
 
 .nav.is-demo-animating .demo-tab:nth-child(1) {
@@ -569,6 +581,19 @@ a {
 
   50% {
     transform: translate(-2px, 3px) rotate(-12deg) scale(0.92);
+    opacity: 0.82;
+  }
+}
+
+@keyframes demoGroupedCueTap {
+  0%,
+  100% {
+    transform: translateX(50%) rotate(168deg) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateX(50%) translate(-1px, 3px) rotate(168deg) scale(0.92);
     opacity: 0.82;
   }
 }

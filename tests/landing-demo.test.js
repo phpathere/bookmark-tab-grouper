@@ -7,6 +7,8 @@ const stylesCss = fs.readFileSync(new URL('../docs/styles.css', import.meta.url)
 
 test('landing demo exposes an accessible status and visible grouped toggle', () => {
   assert.match(indexHtml, /class="nav-demo-title" type="button"/);
+  assert.match(indexHtml, /class="demo-count-wrap"/);
+  assert.match(indexHtml, /class="demo-count" aria-hidden="true">0 tab<\/span>/);
   assert.match(indexHtml, /class="demo-toggle-cue" aria-hidden="true"/);
   assert.match(indexHtml, /class="demo-status visually-hidden" role="status" aria-live="polite" aria-atomic="true"/);
   assert.match(indexHtml, /demoTitle\?\.addEventListener\('click', toggleDemo\)/);
@@ -22,10 +24,15 @@ test('landing demo announces progress and scales the mascot with each count', ()
   assert.match(indexHtml, /demoStatusProgress/);
   assert.match(indexHtml, /--demo-creature-width/);
   assert.match(stylesCss, /width: var\(--demo-creature-width, 58px\)/);
+  assert.match(indexHtml, /tab\.classList\.toggle\('is-current'/);
+  assert.match(stylesCss, /\.nav\.is-demo-animating \.demo-tab\.is-current[\s\S]*?transform: translateY\(-3px\)/);
 });
 
 test('landing demo removes hidden focus targets after grouping', () => {
   assert.match(indexHtml, /demoButton\?\.setAttribute\('tabindex', isGrouped \? '-1' : '0'\)/);
   assert.match(stylesCss, /\.nav\.is-demo-animating \.brand,[\s\S]*?visibility: hidden;[\s\S]*?pointer-events: none;/);
   assert.match(stylesCss, /\.nav\.is-demo-grouped \.demo-toggle-cue[\s\S]*?display: block;/);
+  assert.match(stylesCss, /\.demo-count-wrap[\s\S]*?position: relative;/);
+  assert.match(stylesCss, /\.demo-toggle-cue[\s\S]*?right: 50%;/);
+  assert.match(stylesCss, /@keyframes demoGroupedCueTap/);
 });
