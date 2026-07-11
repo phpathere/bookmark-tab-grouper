@@ -25,7 +25,7 @@ test('landing demo announces progress and scales the mascot with each count', ()
   assert.match(indexHtml, /--demo-creature-width/);
   assert.match(stylesCss, /width: var\(--demo-creature-width, 58px\)/);
   assert.match(indexHtml, /tab\.classList\.toggle\('is-current'/);
-  assert.match(stylesCss, /\.nav\.is-demo-animating \.demo-tab\.is-current[\s\S]*?transform: translateY\(-3px\)/);
+  assert.match(stylesCss, /\.nav\.is-demo-animating \.demo-tab\.is-current[\s\S]*?transform: translateY\(-1px\)/);
 });
 
 test('landing demo removes hidden focus targets after grouping', () => {
@@ -34,5 +34,6 @@ test('landing demo removes hidden focus targets after grouping', () => {
   assert.match(stylesCss, /\.nav\.is-demo-grouped \.demo-toggle-cue[\s\S]*?display: block;/);
   assert.match(stylesCss, /\.demo-count-wrap[\s\S]*?position: relative;/);
   assert.match(stylesCss, /\.demo-toggle-cue[\s\S]*?right: 50%;/);
+  assert.match(stylesCss, /\.demo-toggle-cue[\s\S]*?top: calc\(100% \+ 3px\)/);
   assert.match(stylesCss, /@keyframes demoGroupedCueTap/);
 });

@@ -13,6 +13,7 @@ This project follows a practical release history format so users, reviewers, and
 - Reduced production console noise and capped user-facing error details.
 - Stabilized the landing-page demo header on mobile and optimized below-the-fold image loading.
 - Anchored the post-demo pointer to the grouped tab-count badge, corrected the initial `0 tab` label, and added a non-reflow hover lift for the tab currently being collected.
+- Refined the pointer placement so it points upward from below the count badge without covering the grouped label, and reduced the active-tab lift to a subtle hover distance.
 
 ## [1.0.2] - 2026-07-02
 

@@ -322,12 +322,12 @@ a {
 .demo-toggle-cue {
   display: none;
   position: absolute;
-  top: -29px;
+  top: calc(100% + 3px);
   right: 50%;
   z-index: 5;
-  width: 30px;
-  height: 30px;
-  transform-origin: 40% 80%;
+  width: 27px;
+  height: 27px;
+  transform-origin: 40% 20%;
   filter: drop-shadow(2px 2px 0 var(--line));
   animation: demoGroupedCueTap 1.05s ease-in-out infinite;
   pointer-events: none;
@@ -388,8 +388,8 @@ a {
 }
 
 .nav.is-demo-animating .demo-tab.is-current {
-  transform: translateY(-3px);
-  box-shadow: 3px 5px 0 rgba(28, 25, 23, 0.82);
+  transform: translateY(-1px);
+  box-shadow: 3px 4px 0 rgba(28, 25, 23, 0.82);
 }
 
 .nav.is-demo-animating .pointer-click {
@@ -588,12 +588,12 @@ a {
 @keyframes demoGroupedCueTap {
   0%,
   100% {
-    transform: translateX(50%) rotate(168deg) scale(1);
+    transform: translateX(50%) translateY(0) scale(1);
     opacity: 1;
   }
 
   50% {
-    transform: translateX(50%) translate(-1px, 3px) rotate(168deg) scale(0.92);
+    transform: translateX(50%) translateY(-2px) scale(0.92);
     opacity: 0.82;
   }
 }
@@ -1324,6 +1324,12 @@ h3 {
     font-size: 0.68rem;
     box-shadow: 2px 2px 0 var(--line);
     animation: demoRestoreMobile 620ms ease-out both;
+  }
+
+  .nav.is-demo-grouped .demo-toggle-cue {
+    top: calc(100% + 2px);
+    width: 24px;
+    height: 24px;
   }
 
   .nav.is-demo-animating .nav-demo-title {
