@@ -67,6 +67,9 @@ function createChromeMock(options = {}) {
         return found.tab;
       },
       async create(props) {
+        if (options.failDirectInternal && /^chrome:\/\//.test(props.url)) {
+          throw new Error('direct internal URL creation failed');
+        }
         if (failCreateUrls.has(props.url)) throw new Error('tab create failed');
         const win = state.windows.get(props.windowId || 1);
         if (!win) throw new Error('window not found');
@@ -174,6 +177,18 @@ test('openTabInWindow reuses a remembered empty tab instead of creating a new on
   assert.equal(chromeApi.state.windows.get(1).tabs[0].url, 'https://example.com');
 });
 
+test('openTabInWindow retries supported Chrome internal URLs through a blank tab', async () => {
+  const chromeApi = createChromeMock({ failDirectInternal: true });
+  const tab = await openTabInWindow('chrome://extensions/', {
+    windowId: 1,
+    active: false,
+    chromeApi
+  });
+
+  assert.equal(tab.url, 'chrome://extensions/');
+  assert.equal(chromeApi.state.windows.get(1).tabs.some(item => item.url === 'chrome://extensions/'), true);
+});
+
 test('restoreImportedSession continues after partial tab creation failure', async () => {
   const chromeApi = createChromeMock({ failCreateUrls: ['https://bad.example'] });
   const importData = normalizeImportData(makeSession({
@@ -196,6 +211,13 @@ test('restoreImportedSession activates the exported first tab only after all tab
   const chromeApi = createChromeMock();
   const importData = normalizeImportData(makeSession({
     active_tab_url: 'https://first.example',
+    active_tab_ref: {
+      window_index: 0,
+      kind: 'group',
+      group_index: 0,
+      tab_index: 0,
+      url: 'https://first.example'
+    },
     windows: [{
       is_focused: true,
       groups: [{ title: 'First', color: 'blue', tabs: ['https://first.example', 'https://second.example'] }],

@@ -144,7 +144,30 @@ export async function openTabInWindow(url, { windowId, active = false, reusableE
     return api.tabs.update(tabId, { url, active });
   }
 
-  return api.tabs.create({ url, windowId, active });
+  try {
+    return await api.tabs.create({ url, windowId, active });
+  } catch (error) {
+    const parsed = parseUrl(url);
+    if (parsed?.protocol !== 'chrome:' && parsed?.protocol !== 'edge:') throw error;
+
+    // Some Chromium builds reject direct creation of a browser-internal URL.
+    // Creating a background blank tab first gives those builds a second valid
+    // navigation path without weakening the URL allowlist.
+    let fallbackTab = null;
+    try {
+      fallbackTab = await api.tabs.create({ url: 'about:blank', windowId, active: false });
+      return await api.tabs.update(fallbackTab.id, { url, active });
+    } catch (fallbackError) {
+      if (fallbackTab?.id) {
+        try {
+          await api.tabs.remove(fallbackTab.id);
+        } catch (_) {
+          // Best effort cleanup only.
+        }
+      }
+      throw fallbackError;
+    }
+  }
 }
 
 export function normalizeImportData(data, getMessage = () => '') {
@@ -203,9 +226,28 @@ export function normalizeImportData(data, getMessage = () => '') {
 
   return {
     active_tab_url: isRestorableSessionUrl(data.active_tab_url) ? data.active_tab_url : null,
+    active_tab_ref: normalizeActiveTabRef(data.active_tab_ref),
     windows: sanitizedWindows,
     totalTabs,
     totalGroups: sanitizedWindows.reduce((sum, winData) => sum + winData.groups.length, 0)
+  };
+}
+
+function normalizeActiveTabRef(ref) {
+  if (!ref || typeof ref !== 'object') return null;
+  const validKind = ref.kind === 'group' || ref.kind === 'ungrouped';
+  const validIndexes = Number.isInteger(ref.window_index)
+    && ref.window_index >= 0
+    && Number.isInteger(ref.tab_index)
+    && ref.tab_index >= 0
+    && (ref.kind === 'ungrouped' || (Number.isInteger(ref.group_index) && ref.group_index >= 0));
+  if (!validKind || !validIndexes || !isRestorableSessionUrl(ref.url)) return null;
+  return {
+    window_index: ref.window_index,
+    kind: ref.kind,
+    group_index: ref.kind === 'group' ? ref.group_index : null,
+    tab_index: ref.tab_index,
+    url: ref.url
   };
 }
 
@@ -269,10 +311,17 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       targetWindowId = winId;
     }
 
-    for (const group of winData.groups || []) {
+    for (const [groupIndex, group] of (winData.groups || []).entries()) {
       const tabIds = [];
-      for (const url of group.tabs || []) {
-        const shouldActivate = activeTabId === null && url === importData.active_tab_url;
+      for (const [tabIndex, url] of (group.tabs || []).entries()) {
+        const activeRef = importData.active_tab_ref;
+        const shouldActivate = activeTabId === null && activeRef
+          ? activeRef.window_index === windowIndex
+            && activeRef.kind === 'group'
+            && activeRef.group_index === groupIndex
+            && activeRef.tab_index === tabIndex
+            && activeRef.url === url
+          : activeTabId === null && !activeRef && url === importData.active_tab_url;
         try {
           const tab = await openTabInWindow(url, {
             windowId: winId,
@@ -303,8 +352,14 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       }
     }
 
-    for (const url of winData.ungrouped_tabs || []) {
-      const shouldActivate = activeTabId === null && url === importData.active_tab_url;
+    for (const [tabIndex, url] of (winData.ungrouped_tabs || []).entries()) {
+      const activeRef = importData.active_tab_ref;
+      const shouldActivate = activeTabId === null && activeRef
+        ? activeRef.window_index === windowIndex
+          && activeRef.kind === 'ungrouped'
+          && activeRef.tab_index === tabIndex
+          && activeRef.url === url
+        : activeTabId === null && !activeRef && url === importData.active_tab_url;
       try {
         const tab = await openTabInWindow(url, {
           windowId: winId,

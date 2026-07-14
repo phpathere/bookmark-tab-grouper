@@ -886,6 +886,7 @@ async function handleExport() {
       generator: "Bookmark Tab Grouper",
       export_date: new Date().toISOString(),
       active_tab_url: null,
+      active_tab_ref: null,
       windows: []
     };
 
@@ -894,6 +895,7 @@ async function handleExport() {
       
       const groupMap = {};
       const ungrouped = [];
+      let activeTabLocation = null;
       
       for (const tab of win.tabs) {
         const isThisWindowFocused = lastFocusedWinId !== null ? (win.id === lastFocusedWinId) : win.focused;
@@ -905,8 +907,23 @@ async function handleExport() {
           if (!groupMap[tab.groupId]) {
             groupMap[tab.groupId] = [];
           }
+          if (tab.active && isThisWindowFocused) {
+            activeTabLocation = {
+              kind: 'group',
+              groupKey: String(tab.groupId),
+              tabIndex: groupMap[tab.groupId].length,
+              url: tab.url
+            };
+          }
           groupMap[tab.groupId].push(tab.url);
         } else {
+          if (tab.active && isThisWindowFocused) {
+            activeTabLocation = {
+              kind: 'ungrouped',
+              tabIndex: ungrouped.length,
+              url: tab.url
+            };
+          }
           ungrouped.push(tab.url);
         }
       }
@@ -929,6 +946,32 @@ async function handleExport() {
             });
           } catch(e) {
             winData.ungrouped_tabs = winData.ungrouped_tabs.concat(groupMap[groupId]);
+          }
+        }
+      }
+
+      if (activeTabLocation && exportData.active_tab_ref === null) {
+        if (activeTabLocation.kind === 'group') {
+          const groupIndex = Object.keys(groupMap).indexOf(activeTabLocation.groupKey);
+          if (groupIndex >= 0 && winData.groups[groupIndex]?.tabs[activeTabLocation.tabIndex] === activeTabLocation.url) {
+            exportData.active_tab_ref = {
+              window_index: exportData.windows.length,
+              kind: 'group',
+              group_index: groupIndex,
+              tab_index: activeTabLocation.tabIndex,
+              url: activeTabLocation.url
+            };
+          }
+        } else {
+          const tabIndex = winData.ungrouped_tabs.indexOf(activeTabLocation.url);
+          if (tabIndex >= 0) {
+            exportData.active_tab_ref = {
+              window_index: exportData.windows.length,
+              kind: 'ungrouped',
+              group_index: null,
+              tab_index: tabIndex,
+              url: activeTabLocation.url
+            };
           }
         }
       }

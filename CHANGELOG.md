@@ -17,6 +17,7 @@ This project follows a practical release history format so users, reviewers, and
 - Redacted and capped import error details before logging or displaying them, and added reduced-motion handling for the popup and landing page.
 - Fixed active-first session imports by restoring every tab and group before activating the exported tab, preventing early popup interruption and lost loose tabs.
 - Kept post-group ordering deterministic: pinned tabs first, groups alphabetically from left to right, and loose tabs last.
+- Preserved the active tab by a serialized group/tab reference, including duplicate URLs, and added a safe fallback for supported `chrome://` and `edge://` pages such as Extensions and Downloads.
 
 ## [1.0.2] - 2026-07-02
 

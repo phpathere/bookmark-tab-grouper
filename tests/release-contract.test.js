@@ -29,6 +29,8 @@ test('bookmark opening and export paths have production failure guards', () => {
   assert.match(popup, /openBookmarkLinks\(links/);
   assert.match(popup, /chrome\.runtime\.lastError/);
   assert.match(popup, /persist: Boolean\(failedTabs\)/);
+  assert.match(popup, /active_tab_ref/);
+  assert.match(read('popup/session-utils.js'), /browser-internal URL/);
 });
 
 test('domain undo stores and restores affected group metadata', () => {
