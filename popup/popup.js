@@ -763,15 +763,21 @@ async function organizeCurrentWindowGroupsAlphabetically() {
     return titleCompare || a.id - b.id;
   });
 
-  let targetIndex = pinnedTabs.length;
+  let placedGroupTabCount = 0;
   for (const group of groups) {
     if (group.tabIds.length === 0) continue;
+    // Re-read the live tab order before every move. Chrome may normalize the
+    // requested index while moving a whole group, so a stale counter can
+    // leave groups interleaved with loose tabs on the first click.
+    const currentTabs = await chrome.tabs.query({ currentWindow: true });
+    const currentPinnedCount = currentTabs.filter(tab => tab.pinned).length;
+    const targetIndex = currentPinnedCount + placedGroupTabCount;
     if (typeof chrome.tabGroups.move === 'function') {
       await chrome.tabGroups.move(group.id, { index: targetIndex });
     } else {
       await chrome.tabs.move(group.tabIds, { index: targetIndex });
     }
-    targetIndex += group.tabIds.length;
+    placedGroupTabCount += group.tabIds.length;
   }
 
   const refreshedTabs = await chrome.tabs.query({ currentWindow: true });
@@ -780,7 +786,13 @@ async function organizeCurrentWindowGroupsAlphabetically() {
     .sort((a, b) => a.index - b.index);
 
   if (refreshedUngroupedTabs.length > 0) {
-    await chrome.tabs.move(refreshedUngroupedTabs.map(tab => tab.id), { index: targetIndex });
+    const finalPinnedCount = refreshedTabs.filter(tab => tab.pinned).length;
+    const finalGroupedTabCount = refreshedTabs.filter(
+      tab => !tab.pinned && tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE
+    ).length;
+    await chrome.tabs.move(refreshedUngroupedTabs.map(tab => tab.id), {
+      index: finalPinnedCount + finalGroupedTabCount
+    });
   }
 }
 
@@ -874,16 +886,25 @@ async function handleExport() {
     const windows = await chrome.windows.getAll({ populate: true });
     
     let focusedWindowId = null;
+    let activeTabId = null;
     try {
-      const currentWindow = await chrome.windows.getCurrent({ windowTypes: ['normal'] });
-      if (currentWindow?.type === 'normal') focusedWindowId = currentWindow.id;
-    } catch (e) {
-      // Fallback for browsers that do not expose getCurrent window metadata.
+      const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (activeTab?.id !== undefined && activeTab?.windowId !== undefined) {
+        activeTabId = activeTab.id;
+        focusedWindowId = activeTab.windowId;
+      }
+    } catch (_) {
+      // Fallback for browsers that do not expose lastFocusedWindow queries.
       try {
-        const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
-        if (lastFocused?.type === 'normal') focusedWindowId = lastFocused.id;
+        const currentWindow = await chrome.windows.getCurrent({ windowTypes: ['normal'] });
+        if (currentWindow?.type === 'normal') focusedWindowId = currentWindow.id;
       } catch (_) {
-        // The per-window focused flag below remains the final fallback.
+        try {
+          const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+          if (lastFocused?.type === 'normal') focusedWindowId = lastFocused.id;
+        } catch (_) {
+          // The per-window focused flag below remains the final fallback.
+        }
       }
     }
     
@@ -905,7 +926,8 @@ async function handleExport() {
       
       for (const tab of win.tabs) {
         const isThisWindowFocused = focusedWindowId !== null ? (win.id === focusedWindowId) : win.focused;
-        if (tab.active && isThisWindowFocused) {
+        const isActiveTab = activeTabId !== null ? tab.id === activeTabId : tab.active;
+        if (isActiveTab && isThisWindowFocused) {
           exportData.active_tab_url = tab.url;
         }
         
@@ -913,7 +935,7 @@ async function handleExport() {
           if (!groupMap[tab.groupId]) {
             groupMap[tab.groupId] = [];
           }
-          if (tab.active && isThisWindowFocused) {
+          if (isActiveTab && isThisWindowFocused) {
             activeTabLocation = {
               kind: 'group',
               groupKey: String(tab.groupId),
@@ -923,7 +945,7 @@ async function handleExport() {
           }
           groupMap[tab.groupId].push(tab.url);
         } else {
-          if (tab.active && isThisWindowFocused) {
+          if (isActiveTab && isThisWindowFocused) {
             activeTabLocation = {
               kind: 'ungrouped',
               tabIndex: ungrouped.length,
