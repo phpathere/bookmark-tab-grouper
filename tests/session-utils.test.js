@@ -235,6 +235,43 @@ test('restoreImportedSession activates the exported first tab only after all tab
   assert.deepEqual(chromeApi.state.updateCalls.map(call => call.props.active), [true]);
 });
 
+test('restoreImportedSession preserves a 15-tab session with Chrome internal pages', async () => {
+  const chromeApi = createChromeMock();
+  const firstGroup = ['chrome://extensions/', ...Array.from({ length: 7 }, (_, index) => `https://first.example/${index}`)];
+  const secondGroup = Array.from({ length: 5 }, (_, index) => `https://second.example/${index}`);
+  const looseTabs = ['chrome://downloads/', 'https://loose.example'];
+  const importData = normalizeImportData({
+    generator: 'Bookmark Tab Grouper',
+    version: '2.0',
+    active_tab_url: 'chrome://extensions/',
+    active_tab_ref: {
+      window_index: 0,
+      kind: 'group',
+      group_index: 0,
+      tab_index: 0,
+      url: 'chrome://extensions/'
+    },
+    windows: [{
+      is_focused: true,
+      groups: [
+        { title: 'Extensions', color: 'blue', tabs: firstGroup },
+        { title: 'Second', color: 'green', tabs: secondGroup }
+      ],
+      ungrouped_tabs: looseTabs
+    }]
+  });
+
+  const result = await restoreImportedSession(importData, { chromeApi });
+  const restoredUrls = chromeApi.state.windows.get(1).tabs.map(tab => tab.url);
+
+  assert.equal(importData.totalTabs, 15);
+  assert.equal(result.importedTabs, 15);
+  assert.equal(result.failedTabs, 0);
+  assert.equal(restoredUrls.includes('chrome://extensions/'), true);
+  assert.equal(restoredUrls.includes('chrome://downloads/'), true);
+  assert.equal(chromeApi.state.windows.get(1).tabs.find(tab => tab.active)?.url, 'chrome://extensions/');
+});
+
 test('restoreImportedSession reports skipped tabs when a new window cannot be created', async () => {
   const chromeApi = createChromeMock({ windowCreateFailures: 1 });
   const importData = normalizeImportData(makeSession({
