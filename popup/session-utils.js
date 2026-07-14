@@ -214,7 +214,7 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
   const failures = [];
   const reusableEmptyTabIds = new Map();
   let importedTabs = 0;
-  let hasActivated = false;
+  let activeTabId = null;
   let targetWindowId = null;
 
   const recordFailure = (failure) => {
@@ -252,7 +252,9 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       if (isCurrentWinEmpty && !usedCurrentWin) {
         winId = currentWin.id;
         usedCurrentWin = true;
-        await rememberReusableEmptyTab(winId, reusableEmptyTabIds, currentWin, api);
+        // Keep the currently active blank tab untouched until all tabs have
+        // been restored. Navigating it mid-import can close this popup and
+        // interrupt the remaining restore work.
       } else {
         const newWin = await api.windows.create({ focused: false });
         winId = newWin.id;
@@ -270,15 +272,15 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
     for (const group of winData.groups || []) {
       const tabIds = [];
       for (const url of group.tabs || []) {
-        const isActive = !hasActivated && url === importData.active_tab_url;
+        const shouldActivate = activeTabId === null && url === importData.active_tab_url;
         try {
           const tab = await openTabInWindow(url, {
             windowId: winId,
-            active: isActive,
+            active: false,
             reusableEmptyTabIds,
             chromeApi: api
           });
-          if (isActive) hasActivated = true;
+          if (shouldActivate) activeTabId = tab.id;
           importedTabs++;
           tabIds.push(tab.id);
           createdTabIds.add(tab.id);
@@ -302,15 +304,15 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
     }
 
     for (const url of winData.ungrouped_tabs || []) {
-      const isActive = !hasActivated && url === importData.active_tab_url;
+      const shouldActivate = activeTabId === null && url === importData.active_tab_url;
       try {
         const tab = await openTabInWindow(url, {
           windowId: winId,
-          active: isActive,
+          active: false,
           reusableEmptyTabIds,
           chromeApi: api
         });
-        if (isActive) hasActivated = true;
+        if (shouldActivate) activeTabId = tab.id;
         importedTabs++;
         createdTabIds.add(tab.id);
       } catch (error) {
@@ -341,6 +343,14 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       await api.windows.update(targetWindowId, { focused: true });
     } catch (error) {
       recordFailure({ scope: 'window', action: 'focusWindow', windowIndex: null, error });
+    }
+  }
+
+  if (activeTabId !== null) {
+    try {
+      await api.tabs.update(activeTabId, { active: true });
+    } catch (error) {
+      recordFailure({ scope: 'tab', action: 'activateImportedTab', windowIndex: null, error });
     }
   }
 

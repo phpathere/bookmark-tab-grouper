@@ -34,6 +34,7 @@ function createChromeMock(options = {}) {
     nextWindowId: 2,
     nextTabId: 2,
     nextGroupId: 1,
+    updateCalls: [],
     windows: new Map([[1, { id: 1, focused: true, tabs: [{ id: 1, windowId: 1, url: 'chrome://newtab/', active: true }] }]])
   };
   const failCreateUrls = new Set(options.failCreateUrls || []);
@@ -58,6 +59,7 @@ function createChromeMock(options = {}) {
     },
     tabs: {
       async update(tabId, props) {
+        state.updateCalls.push({ tabId, props });
         if (failCreateUrls.has(props.url)) throw new Error('tab update failed');
         const found = findTab(tabId);
         if (!found) throw new Error('tab not found');
@@ -188,6 +190,27 @@ test('restoreImportedSession continues after partial tab creation failure', asyn
   assert.equal(result.failedTabs, 1);
   assert.equal(result.failures.some(failure => failure.scope === 'tab'), true);
   assert.match(formatImportResult(result), /Imported 2\/3 tabs; 1 failed/);
+});
+
+test('restoreImportedSession activates the exported first tab only after all tabs are restored', async () => {
+  const chromeApi = createChromeMock();
+  const importData = normalizeImportData(makeSession({
+    active_tab_url: 'https://first.example',
+    windows: [{
+      is_focused: true,
+      groups: [{ title: 'First', color: 'blue', tabs: ['https://first.example', 'https://second.example'] }],
+      ungrouped_tabs: ['https://loose.example']
+    }]
+  }));
+
+  const result = await restoreImportedSession(importData, { chromeApi });
+  const currentTabs = chromeApi.state.windows.get(1).tabs;
+
+  assert.equal(result.importedTabs, 3);
+  assert.equal(currentTabs.some(tab => tab.url === 'chrome://newtab/'), false);
+  assert.equal(currentTabs.filter(tab => tab.active).length, 1);
+  assert.equal(currentTabs.find(tab => tab.active)?.url, 'https://first.example');
+  assert.deepEqual(chromeApi.state.updateCalls.map(call => call.props.active), [true]);
 });
 
 test('restoreImportedSession reports skipped tabs when a new window cannot be created', async () => {

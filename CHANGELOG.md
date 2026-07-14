@@ -4,7 +4,7 @@ All notable changes to Tab Bookmark Grouper are documented in this file.
 
 This project follows a practical release history format so users, reviewers, and future maintainers can understand what changed between Chrome Web Store uploads.
 
-## [1.0.3] - 2026-07-11
+## [1.0.3] - 2026-07-14
 
 ### Changed
 - Hardened bookmark-folder opening with tab limits, partial-failure reporting, and safer progress feedback.
@@ -15,6 +15,8 @@ This project follows a practical release history format so users, reviewers, and
 - Anchored the post-demo pointer to the grouped tab-count badge, corrected the initial `0 tab` label, and added a non-reflow hover lift for the tab currently being collected.
 - Refined the pointer placement so it points upward from below the count badge without covering the grouped label, and reduced the active-tab lift to a subtle hover distance.
 - Redacted and capped import error details before logging or displaying them, and added reduced-motion handling for the popup and landing page.
+- Fixed active-first session imports by restoring every tab and group before activating the exported tab, preventing early popup interruption and lost loose tabs.
+- Kept post-group ordering deterministic: pinned tabs first, groups alphabetically from left to right, and loose tabs last.
 
 ## [1.0.2] - 2026-07-02
 
