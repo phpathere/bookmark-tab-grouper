@@ -207,16 +207,16 @@ test('restoreImportedSession continues after partial tab creation failure', asyn
   assert.match(formatImportResult(result), /Imported 2\/3 tabs; 1 failed/);
 });
 
-test('restoreImportedSession activates the exported first tab only after all tabs are restored', async () => {
+test('restoreImportedSession activates the exported last tab in a group only after all tabs are restored', async () => {
   const chromeApi = createChromeMock();
   const importData = normalizeImportData(makeSession({
-    active_tab_url: 'https://first.example',
+    active_tab_url: 'https://second.example',
     active_tab_ref: {
       window_index: 0,
       kind: 'group',
       group_index: 0,
-      tab_index: 0,
-      url: 'https://first.example'
+      tab_index: 1,
+      url: 'https://second.example'
     },
     windows: [{
       is_focused: true,
@@ -231,7 +231,7 @@ test('restoreImportedSession activates the exported first tab only after all tab
   assert.equal(result.importedTabs, 3);
   assert.equal(currentTabs.some(tab => tab.url === 'chrome://newtab/'), false);
   assert.equal(currentTabs.filter(tab => tab.active).length, 1);
-  assert.equal(currentTabs.find(tab => tab.active)?.url, 'https://first.example');
+  assert.equal(currentTabs.find(tab => tab.active)?.url, 'https://second.example');
   assert.deepEqual(chromeApi.state.updateCalls.map(call => call.props.active), [true]);
 });
 

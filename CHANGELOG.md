@@ -18,6 +18,7 @@ This project follows a practical release history format so users, reviewers, and
 - Fixed active-first session imports by restoring every tab and group before activating the exported tab, preventing early popup interruption and lost loose tabs.
 - Kept post-group ordering deterministic: pinned tabs first, groups alphabetically from left to right, and loose tabs last.
 - Preserved the active tab by a serialized group/tab reference, including duplicate URLs, and added a safe fallback for supported `chrome://` and `edge://` pages such as Extensions and Downloads.
+- Export now resolves the active window from the popup's current window context, preventing focus from falling back to the first loose tab.
 
 ## [1.0.2] - 2026-07-02
 

@@ -873,12 +873,18 @@ async function handleExport() {
   try {
     const windows = await chrome.windows.getAll({ populate: true });
     
-    let lastFocusedWinId = null;
+    let focusedWindowId = null;
     try {
-      const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
-      if (lastFocused) lastFocusedWinId = lastFocused.id;
+      const currentWindow = await chrome.windows.getCurrent({ windowTypes: ['normal'] });
+      if (currentWindow?.type === 'normal') focusedWindowId = currentWindow.id;
     } catch (e) {
-      // fallback if getLastFocused fails
+      // Fallback for browsers that do not expose getCurrent window metadata.
+      try {
+        const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+        if (lastFocused?.type === 'normal') focusedWindowId = lastFocused.id;
+      } catch (_) {
+        // The per-window focused flag below remains the final fallback.
+      }
     }
     
     const exportData = {
@@ -898,7 +904,7 @@ async function handleExport() {
       let activeTabLocation = null;
       
       for (const tab of win.tabs) {
-        const isThisWindowFocused = lastFocusedWinId !== null ? (win.id === lastFocusedWinId) : win.focused;
+        const isThisWindowFocused = focusedWindowId !== null ? (win.id === focusedWindowId) : win.focused;
         if (tab.active && isThisWindowFocused) {
           exportData.active_tab_url = tab.url;
         }
@@ -928,7 +934,7 @@ async function handleExport() {
         }
       }
       
-      const isThisWindowFocused = lastFocusedWinId !== null ? (win.id === lastFocusedWinId) : win.focused;
+      const isThisWindowFocused = focusedWindowId !== null ? (win.id === focusedWindowId) : win.focused;
       const winData = {
         is_focused: isThisWindowFocused,
         groups: [],
