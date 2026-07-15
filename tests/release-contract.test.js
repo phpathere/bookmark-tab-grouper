@@ -30,8 +30,9 @@ test('bookmark opening and export paths have production failure guards', () => {
   assert.match(popup, /chrome\.runtime\.lastError/);
   assert.match(popup, /persist: Boolean\(failedTabs\)/);
   assert.match(popup, /active_tab_ref/);
-  assert.match(popup, /chrome\.tabs\.query\(\{ active: true, lastFocusedWindow: true \}\)/);
-  assert.match(popup, /placedGroupTabCount/);
+  assert.match(popup, /chrome\.tabs\.query\(\{ active: true, currentWindow: true \}\)/);
+  assert.match(popup, /popupSourceTabPromise/);
+  assert.match(read('popup/session-utils.js'), /sortGroupsFirstLooseTabsLast/);
   assert.match(read('popup/session-utils.js'), /browser-internal URL/);
 });
 

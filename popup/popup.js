@@ -1,6 +1,7 @@
 import {
   GROUP_COLORS,
   IMPORT_LIMITS,
+  findActiveTabSnapshot,
   formatImportResult,
   getDomainGroupName,
   isOpenableBookmarkUrl,
@@ -8,7 +9,8 @@ import {
   normalizeImportData,
   openTabInWindow,
   rememberReusableEmptyTab,
-  restoreImportedSession
+  restoreImportedSession,
+  sortGroupsFirstLooseTabsLast
 } from './session-utils.js';
 
 let currentLang = 'vi';
@@ -18,6 +20,18 @@ let savedTabState = null;
 let statusHideTimer = null;
 let activeModal = null;
 let modalReturnFocus = null;
+
+// Capture the page behind the toolbar popup immediately. Once asynchronous UI
+// work starts, relying on the browser's current/last-focused window can point
+// at a different window and lose the tab that the user actually exported from.
+let popupSourceTabPromise;
+try {
+  popupSourceTabPromise = chrome.tabs.query({ active: true, currentWindow: true })
+    .then(([tab]) => tab || null)
+    .catch(() => null);
+} catch (_) {
+  popupSourceTabPromise = Promise.resolve(null);
+}
 
 function getSafeErrorMessage(error, fallback = 'Something went wrong.') {
   const message = typeof error?.message === 'string' ? error.message : fallback;
@@ -724,76 +738,7 @@ async function handleGroupByDomain() {
 }
 
 async function organizeCurrentWindowGroupsAlphabetically() {
-  if (typeof chrome.tabGroups === 'undefined') return;
-
-  // Keep pinned tabs first, sort real tab groups alphabetically after them,
-  // then move loose tabs to the end. This is the "Groups first, loose tabs last" invariant.
-  const tabs = await chrome.tabs.query({ currentWindow: true });
-  const groupTabsMap = new Map();
-  const pinnedTabs = tabs
-    .filter(tab => tab.pinned)
-    .sort((a, b) => a.index - b.index);
-
-  for (const tab of tabs) {
-    if (tab.pinned || tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE) continue;
-    if (!groupTabsMap.has(tab.groupId)) {
-      groupTabsMap.set(tab.groupId, []);
-    }
-    groupTabsMap.get(tab.groupId).push(tab);
-  }
-
-  const groups = [];
-  for (const [groupId, groupTabs] of groupTabsMap.entries()) {
-    try {
-      const groupInfo = await chrome.tabGroups.get(groupId);
-      groups.push({
-        id: groupId,
-        title: groupInfo.title || '',
-        tabIds: groupTabs
-          .sort((a, b) => a.index - b.index)
-          .map(tab => tab.id)
-      });
-    } catch (_) {
-      // If a group disappears while sorting, skip it and continue.
-    }
-  }
-
-  groups.sort((a, b) => {
-    const titleCompare = a.title.localeCompare(b.title, undefined, { sensitivity: 'base' });
-    return titleCompare || a.id - b.id;
-  });
-
-  let placedGroupTabCount = 0;
-  for (const group of groups) {
-    if (group.tabIds.length === 0) continue;
-    // Re-read the live tab order before every move. Chrome may normalize the
-    // requested index while moving a whole group, so a stale counter can
-    // leave groups interleaved with loose tabs on the first click.
-    const currentTabs = await chrome.tabs.query({ currentWindow: true });
-    const currentPinnedCount = currentTabs.filter(tab => tab.pinned).length;
-    const targetIndex = currentPinnedCount + placedGroupTabCount;
-    if (typeof chrome.tabGroups.move === 'function') {
-      await chrome.tabGroups.move(group.id, { index: targetIndex });
-    } else {
-      await chrome.tabs.move(group.tabIds, { index: targetIndex });
-    }
-    placedGroupTabCount += group.tabIds.length;
-  }
-
-  const refreshedTabs = await chrome.tabs.query({ currentWindow: true });
-  const refreshedUngroupedTabs = refreshedTabs
-    .filter(tab => !tab.pinned && tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE)
-    .sort((a, b) => a.index - b.index);
-
-  if (refreshedUngroupedTabs.length > 0) {
-    const finalPinnedCount = refreshedTabs.filter(tab => tab.pinned).length;
-    const finalGroupedTabCount = refreshedTabs.filter(
-      tab => !tab.pinned && tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE
-    ).length;
-    await chrome.tabs.move(refreshedUngroupedTabs.map(tab => tab.id), {
-      index: finalPinnedCount + finalGroupedTabCount
-    });
-  }
+  return sortGroupsFirstLooseTabsLast(chrome);
 }
 
 function normalizeGroupTitle(title) {
@@ -884,29 +829,16 @@ async function handleExport() {
 
   try {
     const windows = await chrome.windows.getAll({ populate: true });
-    
-    let focusedWindowId = null;
-    let activeTabId = null;
+
+    const popupSourceTab = await popupSourceTabPromise;
+    let lastFocusedWindowId = null;
     try {
-      const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-      if (activeTab?.id !== undefined && activeTab?.windowId !== undefined) {
-        activeTabId = activeTab.id;
-        focusedWindowId = activeTab.windowId;
-      }
+      const lastFocusedWindow = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+      lastFocusedWindowId = lastFocusedWindow?.id ?? null;
     } catch (_) {
-      // Fallback for browsers that do not expose lastFocusedWindow queries.
-      try {
-        const currentWindow = await chrome.windows.getCurrent({ windowTypes: ['normal'] });
-        if (currentWindow?.type === 'normal') focusedWindowId = currentWindow.id;
-      } catch (_) {
-        try {
-          const lastFocused = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
-          if (lastFocused?.type === 'normal') focusedWindowId = lastFocused.id;
-        } catch (_) {
-          // The per-window focused flag below remains the final fallback.
-        }
-      }
+      // Populated window/tab state below remains the fallback.
     }
+    const activeTabSnapshot = findActiveTabSnapshot(windows, popupSourceTab, lastFocusedWindowId);
     
     const exportData = {
       version: "2.0",
@@ -919,31 +851,37 @@ async function handleExport() {
 
     for (const win of windows) {
       if (win.type !== 'normal') continue;
-      
-      const groupMap = {};
+
+      const windowIndex = exportData.windows.length;
+      const groupMap = new Map();
       const ungrouped = [];
       let activeTabLocation = null;
-      
+
       for (const tab of win.tabs) {
-        const isThisWindowFocused = focusedWindowId !== null ? (win.id === focusedWindowId) : win.focused;
-        const isActiveTab = activeTabId !== null ? tab.id === activeTabId : tab.active;
+        const isThisWindowFocused = activeTabSnapshot
+          ? win.id === activeTabSnapshot.windowId
+          : Boolean(win.focused);
+        const isActiveTab = activeTabSnapshot
+          ? tab.id === activeTabSnapshot.id
+          : Boolean(tab.active && isThisWindowFocused);
         if (isActiveTab && isThisWindowFocused) {
           exportData.active_tab_url = tab.url;
         }
-        
+
         if (typeof chrome.tabGroups !== 'undefined' && tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE) {
-          if (!groupMap[tab.groupId]) {
-            groupMap[tab.groupId] = [];
+          if (!groupMap.has(tab.groupId)) {
+            groupMap.set(tab.groupId, []);
           }
+          const groupTabs = groupMap.get(tab.groupId);
           if (isActiveTab && isThisWindowFocused) {
             activeTabLocation = {
               kind: 'group',
-              groupKey: String(tab.groupId),
-              tabIndex: groupMap[tab.groupId].length,
+              groupId: tab.groupId,
+              tabIndex: groupTabs.length,
               url: tab.url
             };
           }
-          groupMap[tab.groupId].push(tab.url);
+          groupTabs.push(tab.url);
         } else {
           if (isActiveTab && isThisWindowFocused) {
             activeTabLocation = {
@@ -955,8 +893,10 @@ async function handleExport() {
           ungrouped.push(tab.url);
         }
       }
-      
-      const isThisWindowFocused = focusedWindowId !== null ? (win.id === focusedWindowId) : win.focused;
+
+      const isThisWindowFocused = activeTabSnapshot
+        ? win.id === activeTabSnapshot.windowId
+        : Boolean(win.focused);
       const winData = {
         is_focused: isThisWindowFocused,
         groups: [],
@@ -964,46 +904,50 @@ async function handleExport() {
       };
 
       if (typeof chrome.tabGroups !== 'undefined') {
-        for (const groupId in groupMap) {
+        for (const [groupId, groupTabs] of groupMap.entries()) {
           try {
-            const groupInfo = await chrome.tabGroups.get(parseInt(groupId));
+            const groupInfo = await chrome.tabGroups.get(groupId);
+            const groupIndex = winData.groups.length;
             winData.groups.push({
               title: groupInfo.title || '',
               color: groupInfo.color || 'grey',
-              tabs: groupMap[groupId]
+              tabs: groupTabs
             });
-          } catch(e) {
-            winData.ungrouped_tabs = winData.ungrouped_tabs.concat(groupMap[groupId]);
+            if (activeTabLocation?.kind === 'group' && activeTabLocation.groupId === groupId) {
+              exportData.active_tab_ref = {
+                window_index: windowIndex,
+                kind: 'group',
+                group_index: groupIndex,
+                tab_index: activeTabLocation.tabIndex,
+                url: activeTabLocation.url
+              };
+            }
+          } catch (_) {
+            const firstUngroupedIndex = winData.ungrouped_tabs.length;
+            winData.ungrouped_tabs = winData.ungrouped_tabs.concat(groupTabs);
+            if (activeTabLocation?.kind === 'group' && activeTabLocation.groupId === groupId) {
+              exportData.active_tab_ref = {
+                window_index: windowIndex,
+                kind: 'ungrouped',
+                group_index: null,
+                tab_index: firstUngroupedIndex + activeTabLocation.tabIndex,
+                url: activeTabLocation.url
+              };
+            }
           }
         }
       }
 
-      if (activeTabLocation && exportData.active_tab_ref === null) {
-        if (activeTabLocation.kind === 'group') {
-          const groupIndex = Object.keys(groupMap).indexOf(activeTabLocation.groupKey);
-          if (groupIndex >= 0 && winData.groups[groupIndex]?.tabs[activeTabLocation.tabIndex] === activeTabLocation.url) {
-            exportData.active_tab_ref = {
-              window_index: exportData.windows.length,
-              kind: 'group',
-              group_index: groupIndex,
-              tab_index: activeTabLocation.tabIndex,
-              url: activeTabLocation.url
-            };
-          }
-        } else {
-          const tabIndex = winData.ungrouped_tabs.indexOf(activeTabLocation.url);
-          if (tabIndex >= 0) {
-            exportData.active_tab_ref = {
-              window_index: exportData.windows.length,
-              kind: 'ungrouped',
-              group_index: null,
-              tab_index: tabIndex,
-              url: activeTabLocation.url
-            };
-          }
-        }
+      if (activeTabLocation?.kind === 'ungrouped') {
+        exportData.active_tab_ref = {
+          window_index: windowIndex,
+          kind: 'ungrouped',
+          group_index: null,
+          tab_index: activeTabLocation.tabIndex,
+          url: activeTabLocation.url
+        };
       }
-      
+
       exportData.windows.push(winData);
     }
     

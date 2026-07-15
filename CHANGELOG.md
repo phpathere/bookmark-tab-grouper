@@ -18,8 +18,10 @@ This project follows a practical release history format so users, reviewers, and
 - Fixed active-first session imports by restoring every tab and group before activating the exported tab, preventing early popup interruption and lost loose tabs.
 - Kept post-group ordering deterministic: pinned tabs first, groups alphabetically from left to right, and loose tabs last.
 - Preserved the active tab by a serialized group/tab reference, including duplicate URLs, and added a safe fallback for supported `chrome://` and `edge://` pages such as Extensions and Downloads.
-- Export now resolves the active tab from Chrome's last-focused-window tab query, preserving the exact active tab even when it is inside the first group.
-- Re-read live tab positions while sorting groups so alphabetical groups stay contiguous from left to right and loose tabs remain last on the first click.
+- Export now captures the source tab as soon as the toolbar popup opens and writes its group/tab reference directly while serializing the session.
+- Import activates the restored tab before focusing its window and falls back safely to the exported URL if a sanitized session changes an index.
+- Sort groups deterministically by prepending them in reverse alphabetical order, producing A-to-Z groups from left to right before loose tabs.
+- Apply the same alphabetical group ordering after session import.
 
 ## [1.0.2] - 2026-07-02
 

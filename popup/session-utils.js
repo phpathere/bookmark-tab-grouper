@@ -125,6 +125,89 @@ export function getSingleEmptyTabFromWindow(win) {
   return tabs.length === 1 && isBrowserEmptyTab(tabs[0]) ? tabs[0] : null;
 }
 
+export function findActiveTabSnapshot(windows, preferredTab = null, preferredWindowId = null) {
+  const normalWindows = (Array.isArray(windows) ? windows : [])
+    .filter(win => win?.type === 'normal' && Array.isArray(win.tabs));
+
+  if (preferredTab?.id !== undefined) {
+    for (const win of normalWindows) {
+      const tab = win.tabs.find(candidate => candidate.id === preferredTab.id);
+      if (tab) return { id: tab.id, windowId: win.id, url: tab.url };
+    }
+  }
+
+  if (preferredWindowId !== null && preferredWindowId !== undefined) {
+    const preferredWindow = normalWindows.find(win => win.id === preferredWindowId);
+    const activeTab = preferredWindow?.tabs.find(tab => tab.active);
+    if (activeTab) return { id: activeTab.id, windowId: preferredWindow.id, url: activeTab.url };
+  }
+
+  const focusedWindow = normalWindows.find(win => win.focused);
+  const focusedTab = focusedWindow?.tabs.find(tab => tab.active);
+  if (focusedTab) return { id: focusedTab.id, windowId: focusedWindow.id, url: focusedTab.url };
+
+  if (normalWindows.length === 1) {
+    const activeTab = normalWindows[0].tabs.find(tab => tab.active);
+    if (activeTab) return { id: activeTab.id, windowId: normalWindows[0].id, url: activeTab.url };
+  }
+
+  return null;
+}
+
+export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome, { windowId = null } = {}) {
+  const api = getChromeApi(chromeApi);
+  if (!api.tabGroups) return [];
+
+  const queryInfo = windowId === null ? { currentWindow: true } : { windowId };
+  const tabs = await api.tabs.query(queryInfo);
+  const pinnedCount = tabs.filter(tab => tab.pinned).length;
+  const groupTabs = new Map();
+
+  for (const tab of tabs) {
+    if (tab.pinned || tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE) continue;
+    if (!groupTabs.has(tab.groupId)) groupTabs.set(tab.groupId, []);
+    groupTabs.get(tab.groupId).push(tab);
+  }
+
+  const groups = [];
+  for (const [groupId, tabsInGroup] of groupTabs.entries()) {
+    try {
+      const groupInfo = await api.tabGroups.get(groupId);
+      groups.push({
+        id: groupId,
+        title: String(groupInfo.title || '').trim(),
+        tabIds: tabsInGroup.sort((a, b) => a.index - b.index).map(tab => tab.id)
+      });
+    } catch (_) {
+      // A group can disappear if the user closes it while the popup is open.
+    }
+  }
+
+  const collator = new Intl.Collator('en', { sensitivity: 'base', numeric: true });
+  groups.sort((a, b) => collator.compare(a.title, b.title) || a.id - b.id);
+
+  // Prepend groups in reverse order at the same boundary. This avoids relying
+  // on indexes that Chrome recalculates after moving an entire collapsed group.
+  for (const group of [...groups].reverse()) {
+    if (typeof api.tabGroups.move === 'function') {
+      await api.tabGroups.move(group.id, { index: pinnedCount });
+    } else if (group.tabIds.length > 0) {
+      await api.tabs.move(group.tabIds, { index: pinnedCount });
+    }
+  }
+
+  const refreshedTabs = await api.tabs.query(queryInfo);
+  const looseTabIds = refreshedTabs
+    .filter(tab => !tab.pinned && tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE)
+    .sort((a, b) => a.index - b.index)
+    .map(tab => tab.id);
+  if (looseTabIds.length > 0) {
+    await api.tabs.move(looseTabIds, { index: -1 });
+  }
+
+  return groups.map(group => group.title);
+}
+
 export async function rememberReusableEmptyTab(winId, reusableEmptyTabIds, populatedWin = null, chromeApi = globalThis.chrome) {
   const api = getChromeApi(chromeApi);
   const win = Array.isArray(populatedWin?.tabs)
@@ -257,6 +340,8 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
   const reusableEmptyTabIds = new Map();
   let importedTabs = 0;
   let activeTabId = null;
+  let activeTabWindowId = null;
+  let fallbackActiveTab = null;
   let targetWindowId = null;
 
   const recordFailure = (failure) => {
@@ -329,7 +414,13 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
             reusableEmptyTabIds,
             chromeApi: api
           });
-          if (shouldActivate) activeTabId = tab.id;
+          if (!fallbackActiveTab && url === importData.active_tab_url) {
+            fallbackActiveTab = { id: tab.id, windowId: winId };
+          }
+          if (shouldActivate) {
+            activeTabId = tab.id;
+            activeTabWindowId = winId;
+          }
           importedTabs++;
           tabIds.push(tab.id);
           createdTabIds.add(tab.id);
@@ -367,7 +458,13 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
           reusableEmptyTabIds,
           chromeApi: api
         });
-        if (shouldActivate) activeTabId = tab.id;
+        if (!fallbackActiveTab && url === importData.active_tab_url) {
+          fallbackActiveTab = { id: tab.id, windowId: winId };
+        }
+        if (shouldActivate) {
+          activeTabId = tab.id;
+          activeTabWindowId = winId;
+        }
         importedTabs++;
         createdTabIds.add(tab.id);
       } catch (error) {
@@ -391,14 +488,17 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
     } catch (error) {
       recordFailure({ scope: 'cleanup', action: 'queryTabsForCleanup', windowIndex, error });
     }
+
+    try {
+      await sortGroupsFirstLooseTabsLast(api, { windowId: winId });
+    } catch (error) {
+      recordFailure({ scope: 'sort', action: 'sortImportedGroups', windowIndex, error });
+    }
   }
 
-  if (targetWindowId !== null) {
-    try {
-      await api.windows.update(targetWindowId, { focused: true });
-    } catch (error) {
-      recordFailure({ scope: 'window', action: 'focusWindow', windowIndex: null, error });
-    }
+  if (activeTabId === null && fallbackActiveTab) {
+    activeTabId = fallbackActiveTab.id;
+    activeTabWindowId = fallbackActiveTab.windowId;
   }
 
   if (activeTabId !== null) {
@@ -406,6 +506,15 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       await api.tabs.update(activeTabId, { active: true });
     } catch (error) {
       recordFailure({ scope: 'tab', action: 'activateImportedTab', windowIndex: null, error });
+    }
+  }
+
+  const finalWindowId = activeTabWindowId ?? targetWindowId;
+  if (finalWindowId !== null) {
+    try {
+      await api.windows.update(finalWindowId, { focused: true });
+    } catch (error) {
+      recordFailure({ scope: 'window', action: 'focusWindow', windowIndex: null, error });
     }
   }
 

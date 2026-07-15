@@ -2,13 +2,15 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   IMPORT_LIMITS,
+  findActiveTabSnapshot,
   formatImportResult,
   getDomainGroupName,
   isOpenableBookmarkUrl,
   isRestorableSessionUrl,
   normalizeImportData,
   openTabInWindow,
-  restoreImportedSession
+  restoreImportedSession,
+  sortGroupsFirstLooseTabsLast
 } from '../popup/session-utils.js';
 
 function makeSession(overrides = {}) {
@@ -35,7 +37,16 @@ function createChromeMock(options = {}) {
     nextTabId: 2,
     nextGroupId: 1,
     updateCalls: [],
-    windows: new Map([[1, { id: 1, focused: true, tabs: [{ id: 1, windowId: 1, url: 'chrome://newtab/', active: true }] }]])
+    groups: new Map(),
+    windows: new Map([[1, { id: 1, focused: true, tabs: [{
+      id: 1,
+      windowId: 1,
+      url: 'chrome://newtab/',
+      active: true,
+      pinned: false,
+      groupId: -1,
+      index: 0
+    }] }]])
   };
   const failCreateUrls = new Set(options.failCreateUrls || []);
   let remainingWindowCreateFailures = options.windowCreateFailures || 0;
@@ -48,13 +59,47 @@ function createChromeMock(options = {}) {
     return null;
   };
 
+  const reindexWindow = (win) => {
+    win.tabs.forEach((tab, index) => { tab.index = index; });
+  };
+
+  const moveTabs = (tabIds, index) => {
+    const ids = new Set(Array.isArray(tabIds) ? tabIds : [tabIds]);
+    const firstMatch = [...state.windows.values()].find(win => win.tabs.some(tab => ids.has(tab.id)));
+    if (!firstMatch) throw new Error('tab not found');
+    const movingTabs = firstMatch.tabs.filter(tab => ids.has(tab.id));
+    const remainingTabs = firstMatch.tabs.filter(tab => !ids.has(tab.id));
+    const targetIndex = index === -1 ? remainingTabs.length : Math.min(index, remainingTabs.length);
+    remainingTabs.splice(targetIndex, 0, ...movingTabs);
+    firstMatch.tabs = remainingTabs;
+    reindexWindow(firstMatch);
+    return movingTabs;
+  };
+
   return {
     state,
     tabGroups: {
       TAB_GROUP_ID_NONE: -1,
       async update(groupId, props) {
         if (options.failGroupUpdate) throw new Error('group update failed');
-        return { id: groupId, ...props };
+        const group = { id: groupId, ...(state.groups.get(groupId) || {}), ...props };
+        state.groups.set(groupId, group);
+        return group;
+      },
+      async get(groupId) {
+        const group = state.groups.get(groupId);
+        if (!group) throw new Error('group not found');
+        return group;
+      },
+      async move(groupId, props) {
+        const tabIds = [];
+        for (const win of state.windows.values()) {
+          for (const tab of win.tabs) {
+            if (tab.groupId === groupId) tabIds.push(tab.id);
+          }
+        }
+        moveTabs(tabIds, props.index);
+        return state.groups.get(groupId);
       }
     },
     tabs: {
@@ -63,6 +108,9 @@ function createChromeMock(options = {}) {
         if (failCreateUrls.has(props.url)) throw new Error('tab update failed');
         const found = findTab(tabId);
         if (!found) throw new Error('tab not found');
+        if (props.active) {
+          found.win.tabs.forEach(tab => { tab.active = tab.id === tabId; });
+        }
         Object.assign(found.tab, props);
         return found.tab;
       },
@@ -77,17 +125,31 @@ function createChromeMock(options = {}) {
           id: state.nextTabId++,
           windowId: win.id,
           url: props.url,
-          active: Boolean(props.active)
+          active: Boolean(props.active),
+          pinned: false,
+          groupId: -1,
+          index: win.tabs.length
         };
         win.tabs.push(tab);
         return tab;
       },
-      async group() {
+      async group({ tabIds }) {
         if (options.failGroupCreate) throw new Error('group create failed');
-        return state.nextGroupId++;
+        const groupId = state.nextGroupId++;
+        state.groups.set(groupId, { id: groupId, title: '', color: 'grey' });
+        for (const tabId of tabIds) {
+          const found = findTab(tabId);
+          if (found) found.tab.groupId = groupId;
+        }
+        return groupId;
       },
       async query(queryInfo) {
-        return [...(state.windows.get(queryInfo.windowId)?.tabs || [])];
+        const win = state.windows.get(queryInfo.windowId || 1);
+        if (win) reindexWindow(win);
+        return [...(win?.tabs || [])];
+      },
+      async move(tabIds, props) {
+        return moveTabs(tabIds, props.index);
       },
       async remove(tabId) {
         const found = findTab(tabId);
@@ -110,7 +172,15 @@ function createChromeMock(options = {}) {
         const win = {
           id: state.nextWindowId++,
           focused: false,
-          tabs: [{ id: state.nextTabId++, windowId: state.nextWindowId - 1, url: 'chrome://newtab/', active: true }]
+          tabs: [{
+            id: state.nextTabId++,
+            windowId: state.nextWindowId - 1,
+            url: 'chrome://newtab/',
+            active: true,
+            pinned: false,
+            groupId: -1,
+            index: 0
+          }]
         };
         state.windows.set(win.id, win);
         return win;
@@ -133,6 +203,40 @@ test('normalizeImportData filters dangerous URLs and keeps restorable browser UR
     'file:///tmp/report.html'
   ]);
   assert.deepEqual(normalized.windows[0].ungrouped_tabs, ['chrome://extensions']);
+});
+
+test('findActiveTabSnapshot keeps the tab captured when the popup opened', () => {
+  const windows = [
+    { id: 10, type: 'normal', focused: false, tabs: [{ id: 101, active: true, url: 'https://loose.example' }] },
+    { id: 20, type: 'normal', focused: true, tabs: [{ id: 201, active: true, url: 'https://group.example/active' }] }
+  ];
+
+  assert.deepEqual(findActiveTabSnapshot(windows, { id: 201, windowId: 20 }), {
+    id: 201,
+    windowId: 20,
+    url: 'https://group.example/active'
+  });
+});
+
+test('sortGroupsFirstLooseTabsLast produces A-to-Z groups before loose tabs', async () => {
+  const chromeApi = createChromeMock();
+  const win = chromeApi.state.windows.get(1);
+  win.tabs = [
+    { id: 1, windowId: 1, pinned: true, groupId: -1, index: 0 },
+    { id: 2, windowId: 1, pinned: false, groupId: -1, index: 1 },
+    { id: 3, windowId: 1, pinned: false, groupId: 20, index: 2 },
+    { id: 4, windowId: 1, pinned: false, groupId: 20, index: 3 },
+    { id: 5, windowId: 1, pinned: false, groupId: -1, index: 4 },
+    { id: 6, windowId: 1, pinned: false, groupId: 10, index: 5 },
+    { id: 7, windowId: 1, pinned: false, groupId: 10, index: 6 }
+  ];
+  chromeApi.state.groups.set(20, { id: 20, title: 'Bravo' });
+  chromeApi.state.groups.set(10, { id: 10, title: 'Alpha' });
+
+  const titles = await sortGroupsFirstLooseTabsLast(chromeApi, { windowId: 1 });
+
+  assert.deepEqual(titles, ['Alpha', 'Bravo']);
+  assert.deepEqual(win.tabs.map(tab => tab.id), [1, 6, 7, 3, 4, 2, 5]);
 });
 
 test('URL policy blocks dangerous and app-launching schemes', () => {
@@ -233,6 +337,38 @@ test('restoreImportedSession activates the exported last tab in a group only aft
   assert.equal(currentTabs.filter(tab => tab.active).length, 1);
   assert.equal(currentTabs.find(tab => tab.active)?.url, 'https://second.example');
   assert.deepEqual(chromeApi.state.updateCalls.map(call => call.props.active), [true]);
+});
+
+test('restoreImportedSession keeps the active grouped tab while sorting imported groups A-to-Z', async () => {
+  const chromeApi = createChromeMock();
+  const importData = normalizeImportData(makeSession({
+    active_tab_url: 'https://zulu.example/active',
+    active_tab_ref: {
+      window_index: 0,
+      kind: 'group',
+      group_index: 0,
+      tab_index: 1,
+      url: 'https://zulu.example/active'
+    },
+    windows: [{
+      is_focused: true,
+      groups: [
+        { title: 'Zulu', color: 'blue', tabs: ['https://zulu.example/first', 'https://zulu.example/active'] },
+        { title: 'Alpha', color: 'green', tabs: ['https://alpha.example/first', 'https://alpha.example/second'] }
+      ],
+      ungrouped_tabs: ['https://loose.example']
+    }]
+  }));
+
+  await restoreImportedSession(importData, { chromeApi });
+  const restoredTabs = chromeApi.state.windows.get(1).tabs;
+  const orderedLabels = restoredTabs.map(tab => {
+    if (tab.groupId === -1) return 'loose';
+    return chromeApi.state.groups.get(tab.groupId)?.title;
+  });
+
+  assert.deepEqual(orderedLabels, ['Alpha', 'Alpha', 'Zulu', 'Zulu', 'loose']);
+  assert.equal(restoredTabs.find(tab => tab.active)?.url, 'https://zulu.example/active');
 });
 
 test('restoreImportedSession preserves a 15-tab session with Chrome internal pages', async () => {
