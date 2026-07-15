@@ -7,6 +7,7 @@ const read = (file) => fs.readFileSync(new URL(file, root), 'utf8');
 const manifest = JSON.parse(read('manifest.json'));
 const packageJson = JSON.parse(read('package.json'));
 const popup = read('popup/popup.js');
+const background = read('background.js');
 const buildScript = read('scripts/build-release.sh');
 const indexHtml = read('docs/index.html');
 
@@ -34,6 +35,9 @@ test('bookmark opening and export paths have production failure guards', () => {
   assert.match(popup, /popupSourceTabPromise/);
   assert.match(popup, /Could not preserve the active tab in this export/);
   assert.match(read('popup/session-utils.js'), /sortGroupsFirstLooseTabsLast/);
+  assert.match(popup, /requestBackgroundSessionRestore/);
+  assert.match(background, /restoreImportedSession/);
+  assert.match(background, /return true/);
   assert.match(read('popup/session-utils.js'), /browser-internal URL/);
 });
 

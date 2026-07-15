@@ -376,7 +376,7 @@ test('restoreImportedSession keeps the active grouped tab while sorting imported
 
   assert.deepEqual(orderedLabels, ['Alpha', 'Alpha', 'Zulu', 'Zulu', 'loose']);
   assert.equal(restoredTabs.find(tab => tab.active)?.url, 'https://zulu.example/active');
-  assert.equal(chromeApi.state.updateCalls.filter(call => call.props.active).length, 2);
+  assert.equal(chromeApi.state.updateCalls.filter(call => call.props.active).length, 1);
 });
 
 test('restoreImportedSession preserves a 15-tab session with Chrome internal pages', async () => {

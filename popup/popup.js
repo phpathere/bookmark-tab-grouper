@@ -10,7 +10,6 @@ import {
   normalizeImportData,
   openTabInWindow,
   rememberReusableEmptyTab,
-  restoreImportedSession,
   sortGroupsFirstLooseTabsLast
 } from './session-utils.js';
 
@@ -1062,6 +1061,23 @@ function confirmImport(summary) {
   });
 }
 
+function requestBackgroundSessionRestore(importData) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'RESTORE_SESSION', importData }, response => {
+      const runtimeError = chrome.runtime.lastError;
+      if (runtimeError) {
+        reject(new Error(runtimeError.message || 'Background import could not be started.'));
+        return;
+      }
+      if (!response?.ok) {
+        reject(new Error(response?.error || 'Session import failed.'));
+        return;
+      }
+      resolve(response.result);
+    });
+  });
+}
+
 async function handleFileImport(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1083,7 +1099,8 @@ async function handleFileImport(event) {
         return;
       }
 
-      const result = await restoreImportedSession(importData, { chromeApi: chrome, logger: console });
+      showStatus(getMessage('importInProgress') || 'Importing session...', 'success', { persist: true });
+      const result = await requestBackgroundSessionRestore(importData);
       const statusType = result.failedTabs > 0 || result.failures.length > 0 ? 'warning' : 'success';
       showStatus(formatImportResult(result, getMessage), statusType, { persist: statusType !== 'success' });
       updateStatsBar();

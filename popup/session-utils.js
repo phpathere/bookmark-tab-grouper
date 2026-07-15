@@ -159,8 +159,20 @@ export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome
   if (!api.tabGroups) return [];
 
   const queryInfo = windowId === null ? { currentWindow: true } : { windowId };
+  const initialTabs = await api.tabs.query(queryInfo);
+  const pinnedCount = initialTabs.filter(tab => tab.pinned).length;
+  const initialLooseTabIds = initialTabs
+    .filter(tab => !tab.pinned && tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE)
+    .sort((a, b) => a.index - b.index)
+    .map(tab => tab.id);
+
+  // Stabilize the tab strip before calculating group indexes. Interleaved
+  // loose tabs otherwise make Chrome normalize group target positions.
+  if (initialLooseTabIds.length > 0) {
+    await api.tabs.move(initialLooseTabIds, { index: -1 });
+  }
+
   const tabs = await api.tabs.query(queryInfo);
-  const pinnedCount = tabs.filter(tab => tab.pinned).length;
   const groupTabs = new Map();
 
   for (const tab of tabs) {
@@ -204,24 +216,28 @@ export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome
     && groupIds.every((groupId, index) => groupId === expectedGroupIds[index])
   );
 
-  // Prepend groups in reverse order at the same boundary. This avoids relying
-  // on indexes that Chrome recalculates after moving an entire collapsed group.
-  for (const group of [...groups].reverse()) {
+  let targetIndex = pinnedCount;
+  for (const group of groups) {
     if (typeof api.tabGroups.move === 'function') {
-      await api.tabGroups.move(group.id, { index: pinnedCount });
+      const moveProperties = { index: targetIndex };
+      if (windowId !== null) moveProperties.windowId = windowId;
+      await api.tabGroups.move(group.id, moveProperties);
     } else if (group.tabIds.length > 0) {
-      await api.tabs.move(group.tabIds, { index: pinnedCount });
+      await api.tabs.move(group.tabIds, { index: targetIndex, ...(windowId !== null ? { windowId } : {}) });
     }
+    targetIndex += group.tabIds.length;
   }
 
   let observedOrder = await readCurrentGroupOrder();
   if (!hasExpectedGroupOrder(observedOrder.groupIds)) {
-    // Some Chromium builds accept tabGroups.move() but normalize the target
-    // index in a way that leaves the visual order unchanged. Moving every tab
-    // in each group together provides a deterministic fallback.
+    // Moving every tab in a group together is the deterministic fallback when
+    // a browser accepts tabGroups.move() but leaves the visual order unchanged.
     for (const group of [...groups].reverse()) {
       if (group.tabIds.length > 0) {
-        await api.tabs.move(group.tabIds, { index: pinnedCount });
+        await api.tabs.move(group.tabIds, {
+          index: pinnedCount,
+          ...(windowId !== null ? { windowId } : {})
+        });
       }
     }
     observedOrder = await readCurrentGroupOrder();
@@ -544,20 +560,20 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
     activeTabWindowId = fallbackActiveTab.windowId;
   }
 
-  if (activeTabId !== null) {
-    try {
-      await api.tabs.update(activeTabId, { active: true });
-    } catch (error) {
-      recordFailure({ scope: 'tab', action: 'activateImportedTab', windowIndex: null, error });
-    }
-  }
-
   const finalWindowId = activeTabWindowId ?? targetWindowId;
   if (finalWindowId !== null) {
     try {
       await api.windows.update(finalWindowId, { focused: true });
     } catch (error) {
       recordFailure({ scope: 'window', action: 'focusWindow', windowIndex: null, error });
+    }
+  }
+
+  if (activeTabId !== null) {
+    try {
+      await api.tabs.update(activeTabId, { active: true });
+    } catch (error) {
+      recordFailure({ scope: 'tab', action: 'activateImportedTab', windowIndex: null, error });
     }
   }
 
