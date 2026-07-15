@@ -98,7 +98,7 @@ function createChromeMock(options = {}) {
             if (tab.groupId === groupId) tabIds.push(tab.id);
           }
         }
-        moveTabs(tabIds, props.index);
+        if (!options.noOpGroupMove) moveTabs(tabIds, props.index);
         return state.groups.get(groupId);
       }
     },
@@ -146,7 +146,8 @@ function createChromeMock(options = {}) {
       async query(queryInfo) {
         const win = state.windows.get(queryInfo.windowId || 1);
         if (win) reindexWindow(win);
-        return [...(win?.tabs || [])];
+        const tabs = [...(win?.tabs || [])];
+        return queryInfo.active ? tabs.filter(tab => tab.active) : tabs;
       },
       async move(tabIds, props) {
         return moveTabs(tabIds, props.index);
@@ -189,6 +190,12 @@ function createChromeMock(options = {}) {
         const win = state.windows.get(winId);
         if (!win) throw new Error('window not found');
         Object.assign(win, props);
+        if (props.focused && options.focusResetsActiveToFirstLoose) {
+          const firstLooseTab = win.tabs.find(tab => tab.groupId === -1);
+          if (firstLooseTab) {
+            win.tabs.forEach(tab => { tab.active = tab.id === firstLooseTab.id; });
+          }
+        }
         return win;
       }
     }
@@ -218,8 +225,8 @@ test('findActiveTabSnapshot keeps the tab captured when the popup opened', () =>
   });
 });
 
-test('sortGroupsFirstLooseTabsLast produces A-to-Z groups before loose tabs', async () => {
-  const chromeApi = createChromeMock();
+test('sortGroupsFirstLooseTabsLast produces A-to-Z groups before loose tabs when group move is a no-op', async () => {
+  const chromeApi = createChromeMock({ noOpGroupMove: true });
   const win = chromeApi.state.windows.get(1);
   win.tabs = [
     { id: 1, windowId: 1, pinned: true, groupId: -1, index: 0 },
@@ -340,7 +347,7 @@ test('restoreImportedSession activates the exported last tab in a group only aft
 });
 
 test('restoreImportedSession keeps the active grouped tab while sorting imported groups A-to-Z', async () => {
-  const chromeApi = createChromeMock();
+  const chromeApi = createChromeMock({ focusResetsActiveToFirstLoose: true });
   const importData = normalizeImportData(makeSession({
     active_tab_url: 'https://zulu.example/active',
     active_tab_ref: {
@@ -369,6 +376,7 @@ test('restoreImportedSession keeps the active grouped tab while sorting imported
 
   assert.deepEqual(orderedLabels, ['Alpha', 'Alpha', 'Zulu', 'Zulu', 'loose']);
   assert.equal(restoredTabs.find(tab => tab.active)?.url, 'https://zulu.example/active');
+  assert.equal(chromeApi.state.updateCalls.filter(call => call.props.active).length, 2);
 });
 
 test('restoreImportedSession preserves a 15-tab session with Chrome internal pages', async () => {

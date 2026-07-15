@@ -4,6 +4,14 @@ All notable changes to Tab Bookmark Grouper are documented in this file.
 
 This project follows a practical release history format so users, reviewers, and future maintainers can understand what changed between Chrome Web Store uploads.
 
+## [1.0.4] - 2026-07-15
+
+### Fixed
+- Capture and validate the exact active tab before writing a `.btg` export.
+- Activate the restored tab, focus its window, then verify and retry activation if Chrome selected another tab.
+- Verify A-to-Z group order after every import or domain-group action and use a tab-level fallback when group movement is not applied.
+- Keep pinned tabs first, alphabetized groups second, and loose tabs last.
+
 ## [1.0.3] - 2026-07-14
 
 ### Changed

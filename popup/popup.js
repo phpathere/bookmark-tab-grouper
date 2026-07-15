@@ -5,6 +5,7 @@ import {
   formatImportResult,
   getDomainGroupName,
   isOpenableBookmarkUrl,
+  isRestorableSessionUrl,
   isWebUrl,
   normalizeImportData,
   openTabInWindow,
@@ -839,6 +840,9 @@ async function handleExport() {
       // Populated window/tab state below remains the fallback.
     }
     const activeTabSnapshot = findActiveTabSnapshot(windows, popupSourceTab, lastFocusedWindowId);
+    if (!activeTabSnapshot) {
+      throw new Error('Could not identify the active tab. Close and reopen the extension, then export again.');
+    }
     
     const exportData = {
       version: "2.0",
@@ -949,6 +953,10 @@ async function handleExport() {
       }
 
       exportData.windows.push(winData);
+    }
+
+    if (isRestorableSessionUrl(activeTabSnapshot.url) && !exportData.active_tab_ref) {
+      throw new Error('Could not preserve the active tab in this export. Close and reopen the extension, then export again.');
     }
     
     // Encode data to proprietary format

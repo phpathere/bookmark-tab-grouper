@@ -10,10 +10,10 @@ const popup = read('popup/popup.js');
 const buildScript = read('scripts/build-release.sh');
 const indexHtml = read('docs/index.html');
 
-test('release versions stay synchronized at 1.0.3', () => {
-  assert.equal(manifest.version, '1.0.3');
+test('release versions stay synchronized at 1.0.4', () => {
+  assert.equal(manifest.version, '1.0.4');
   assert.equal(packageJson.version, manifest.version);
-  assert.match(read('CHANGELOG.md'), /## \[1\.0\.3\]/);
+  assert.match(read('CHANGELOG.md'), /## \[1\.0\.4\]/);
 });
 
 test('MV3 package keeps executable code local and avoids string execution sinks', () => {
@@ -32,6 +32,7 @@ test('bookmark opening and export paths have production failure guards', () => {
   assert.match(popup, /active_tab_ref/);
   assert.match(popup, /chrome\.tabs\.query\(\{ active: true, currentWindow: true \}\)/);
   assert.match(popup, /popupSourceTabPromise/);
+  assert.match(popup, /Could not preserve the active tab in this export/);
   assert.match(read('popup/session-utils.js'), /sortGroupsFirstLooseTabsLast/);
   assert.match(read('popup/session-utils.js'), /browser-internal URL/);
 });

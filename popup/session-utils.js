@@ -186,6 +186,24 @@ export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome
   const collator = new Intl.Collator('en', { sensitivity: 'base', numeric: true });
   groups.sort((a, b) => collator.compare(a.title, b.title) || a.id - b.id);
 
+  const expectedGroupIds = groups.map(group => group.id);
+  const readCurrentGroupOrder = async () => {
+    const currentTabs = await api.tabs.query(queryInfo);
+    const seen = new Set();
+    const groupIds = [];
+    for (const tab of currentTabs.sort((a, b) => a.index - b.index)) {
+      if (tab.pinned || tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE || seen.has(tab.groupId)) continue;
+      seen.add(tab.groupId);
+      groupIds.push(tab.groupId);
+    }
+    return { currentTabs, groupIds };
+  };
+
+  const hasExpectedGroupOrder = groupIds => (
+    groupIds.length === expectedGroupIds.length
+    && groupIds.every((groupId, index) => groupId === expectedGroupIds[index])
+  );
+
   // Prepend groups in reverse order at the same boundary. This avoids relying
   // on indexes that Chrome recalculates after moving an entire collapsed group.
   for (const group of [...groups].reverse()) {
@@ -196,13 +214,38 @@ export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome
     }
   }
 
-  const refreshedTabs = await api.tabs.query(queryInfo);
+  let observedOrder = await readCurrentGroupOrder();
+  if (!hasExpectedGroupOrder(observedOrder.groupIds)) {
+    // Some Chromium builds accept tabGroups.move() but normalize the target
+    // index in a way that leaves the visual order unchanged. Moving every tab
+    // in each group together provides a deterministic fallback.
+    for (const group of [...groups].reverse()) {
+      if (group.tabIds.length > 0) {
+        await api.tabs.move(group.tabIds, { index: pinnedCount });
+      }
+    }
+    observedOrder = await readCurrentGroupOrder();
+  }
+
+  const refreshedTabs = observedOrder.currentTabs;
   const looseTabIds = refreshedTabs
     .filter(tab => !tab.pinned && tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE)
     .sort((a, b) => a.index - b.index)
     .map(tab => tab.id);
   if (looseTabIds.length > 0) {
     await api.tabs.move(looseTabIds, { index: -1 });
+  }
+
+  const finalOrder = await readCurrentGroupOrder();
+  const lastGroupedIndex = finalOrder.currentTabs.reduce((lastIndex, tab, index) => (
+    !tab.pinned && tab.groupId !== api.tabGroups.TAB_GROUP_ID_NONE ? index : lastIndex
+  ), -1);
+  const firstLooseIndex = finalOrder.currentTabs.findIndex(
+    tab => !tab.pinned && tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE
+  );
+  const looseTabsAreLast = firstLooseIndex === -1 || firstLooseIndex > lastGroupedIndex;
+  if (!hasExpectedGroupOrder(finalOrder.groupIds) || !looseTabsAreLast) {
+    throw new Error('Chrome did not apply the requested alphabetical tab-group order.');
   }
 
   return groups.map(group => group.title);
@@ -515,6 +558,17 @@ export async function restoreImportedSession(importData, { chromeApi = globalThi
       await api.windows.update(finalWindowId, { focused: true });
     } catch (error) {
       recordFailure({ scope: 'window', action: 'focusWindow', windowIndex: null, error });
+    }
+  }
+
+  if (activeTabId !== null && activeTabWindowId !== null) {
+    try {
+      const [observedActiveTab] = await api.tabs.query({ active: true, windowId: activeTabWindowId });
+      if (observedActiveTab?.id !== activeTabId) {
+        await api.tabs.update(activeTabId, { active: true });
+      }
+    } catch (error) {
+      recordFailure({ scope: 'tab', action: 'verifyActiveImportedTab', windowIndex: null, error });
     }
   }
 
