@@ -4,10 +4,17 @@
 
 **Name:** Tab Bookmark Grouper
 **Short Name:** Tab Grouper
-**Version:** 1.0.2
+**Version:** 1.0.4
 **Category:** Productivity
+**Policy review:** Updated for the Chrome Web Store policy changes announced July 1, 2026 and enforced August 1, 2026.
 
 ## Release Notes
+
+### Version 1.0.4
+- Restored the tab that was active when a supported session was exported.
+- Sorted tab groups alphabetically from left to right and kept loose tabs last.
+- Moved session restoration to the MV3 service worker so importing can finish after Chrome focuses the restored window.
+- Improved support for permitted Chrome internal pages and partial import failures.
 
 ### Version 1.0.2
 - Maintenance release for the next Chrome Web Store upload.
@@ -28,26 +35,95 @@
 - Group open tabs by website/domain.
 - Export and import supported local session files.
 
-## Summary
-Open and group bookmarks easily with one click. (Mở và gộp nhóm các trang đã bookmark một cách dễ dàng.)
+## Store Summary
 
-## Description
+### English
+Open bookmark folders as tab groups, group open tabs by website, and export or import supported sessions locally.
 
-Tab Bookmark Grouper is a lightweight extension designed to help organize browser tabs from bookmark folders and saved sessions. Whether you do research, development, or online shopping, this tool reduces the tedious work of managing tabs.
+### Vietnamese
+Mở folder bookmark thành nhóm tab, nhóm tab theo website và xuất hoặc nhập các session được hỗ trợ ngay trên thiết bị.
 
-**🌟 Features:**
-- **1-Click Grouping:** Select a bookmark folder and it instantly opens all links, categorizing them into neat, color-coded Chrome Tab Groups.
-- **Group by Website:** Automatically detect and group your currently open tabs by their root domain (e.g., all `github.com` tabs go into one group).
-- **Smart Undo:** Revert auto-grouping with a single click if you change your mind.
-- **Session Export/Import:** Save your supported multi-window layout, tabs, and groups to an offline `.btg` file, and restore supported sessions when needed.
-- **Focused UI:** Neo-Brutalism-inspired design with dark mode, clear controls, and keyboard-accessible interactions.
-- **Offline by Design:** No tracking, no analytics, no external servers. Bookmark, tab, and session data stay on your device.
+## Detailed Description - English
 
-**🛠️ How to Use:**
-1. Click the 👾 Extension icon in your toolbar.
-2. Select a folder from your Chrome Bookmarks and click **Open & Group**.
-3. *Alternatively*, click the 🌪️ Filter icon and choose **Group by Website** to organize your currently open tabs.
-4. Use the **Export/Import Session** buttons to backup and restore your entire workspace.
+Use this text for the English locale in **Product details > Detailed description**:
+
+```text
+Tab Bookmark Grouper helps you organize and restore Chrome tabs. Its single purpose is tab organization: open bookmarks as a group, group matching open tabs by website, and save or restore supported tab sessions.
+
+Main features
+
+- Open a bookmark folder: Select a folder and open its supported bookmark URLs in a Chrome tab group named after that folder.
+- Group by website: Group matching open web tabs by root domain. Groups are ordered alphabetically from left to right, with loose tabs placed after groups.
+- Undo automatic grouping: Restore the affected tabs and groups after the most recent Group by Website action.
+- Export and import sessions: Create a local .btg file containing supported normal windows, tab URLs, group titles and colors, and the active-tab reference. Importing restores supported items and reports partial failures when an individual tab, group, or window cannot be created.
+- Choose English or Vietnamese and use light, dark, or automatic theme settings.
+
+How it handles data
+
+To provide these features, the extension processes bookmark folder names and URLs, open-tab URLs, tab-group metadata, and user-selected .btg session files. Processing takes place locally in Chrome. This data is not transmitted to the developer or to an external server.
+
+The extension contains no advertising, analytics, telemetry, remote code, or user account system. It stores only language and theme preferences in Chrome local storage. A session file is created only when you select Export Session, and a file is read only when you select it and confirm the import.
+
+Permissions
+
+- Bookmarks: Read the bookmark tree so you can choose a folder and open its URLs. The extension does not modify or delete bookmarks.
+- Tabs and tabGroups: Create, group, move, and restore tabs and Chrome tab groups.
+- Storage: Save language and theme preferences locally.
+- Downloads: Save a .btg session file after you select Export Session.
+
+The extension does not read webpage content. Some browser pages or URL types cannot be restored because Chrome restricts extensions from opening them.
+
+Basic use
+
+1. Open Tab Bookmark Grouper from the Chrome toolbar.
+2. Select a bookmark folder and choose Open and Group.
+3. To organize existing tabs, choose Group by Website.
+4. Use Export Session or Import Session when you want to save or restore a supported local session.
+
+Privacy policy: https://tinhxuanghiacu.com/privacy.html
+Support: phpathere@gmail.com
+```
+
+## Detailed Description - Vietnamese
+
+Use this text for the Vietnamese locale in **Thông tin chi tiết về sản phẩm > Mô tả chi tiết**:
+
+```text
+Tab Bookmark Grouper giúp bạn sắp xếp và khôi phục các tab Chrome. Extension có một mục đích duy nhất là tổ chức tab: mở bookmark thành nhóm, nhóm các tab đang mở theo website và lưu hoặc khôi phục những session được hỗ trợ.
+
+Tính năng chính
+
+- Mở folder bookmark: Chọn một folder để mở các URL bookmark được hỗ trợ trong một Chrome Tab Group mang tên folder đó.
+- Nhóm theo website: Nhóm các tab web phù hợp theo tên miền gốc. Các group được xếp theo thứ tự chữ cái từ trái sang phải và tab lẻ được đặt sau các group.
+- Hoàn tác nhóm tự động: Khôi phục các tab và group bị ảnh hưởng bởi lần dùng tính năng Nhóm theo website gần nhất.
+- Xuất và nhập session: Tạo file .btg cục bộ chứa các cửa sổ thông thường được hỗ trợ, URL của tab, tên và màu group, cùng thông tin tab đang active. Khi import, extension khôi phục những mục được hỗ trợ và thông báo nếu một tab, group hoặc cửa sổ không thể tạo được.
+- Hỗ trợ tiếng Anh, tiếng Việt và chế độ giao diện sáng, tối hoặc tự động.
+
+Cách extension xử lý dữ liệu
+
+Để cung cấp các tính năng trên, extension xử lý tên và URL trong folder bookmark, URL của các tab đang mở, thông tin tab group và file session .btg do người dùng chọn. Việc xử lý diễn ra cục bộ trong Chrome. Dữ liệu này không được gửi cho nhà phát triển hoặc máy chủ bên ngoài.
+
+Extension không chứa quảng cáo, analytics, telemetry, mã chạy từ xa hoặc hệ thống tài khoản. Extension chỉ lưu lựa chọn ngôn ngữ và giao diện trong bộ nhớ cục bộ của Chrome. File session chỉ được tạo khi bạn chọn Xuất session và chỉ được đọc khi bạn chủ động chọn file rồi xác nhận import.
+
+Quyền được sử dụng
+
+- Bookmarks: Đọc cây bookmark để bạn chọn folder và mở URL. Extension không sửa hoặc xóa bookmark.
+- Tabs và tabGroups: Tạo, nhóm, di chuyển và khôi phục tab cùng Chrome Tab Group.
+- Storage: Lưu lựa chọn ngôn ngữ và giao diện trên thiết bị.
+- Downloads: Lưu file session .btg sau khi bạn chọn Xuất session.
+
+Extension không đọc nội dung bên trong trang web. Một số trang nội bộ của trình duyệt hoặc loại URL không thể khôi phục do giới hạn bảo mật của Chrome.
+
+Cách sử dụng cơ bản
+
+1. Mở Tab Bookmark Grouper từ thanh công cụ Chrome.
+2. Chọn một folder bookmark rồi bấm Mở và nhóm tab.
+3. Để sắp xếp các tab hiện có, bấm Nhóm theo website.
+4. Dùng Xuất session hoặc Nhập session khi cần lưu hay khôi phục một session cục bộ được hỗ trợ.
+
+Chính sách quyền riêng tư: https://tinhxuanghiacu.com/privacy.html
+Hỗ trợ: phpathere@gmail.com
+```
 
 ---
 

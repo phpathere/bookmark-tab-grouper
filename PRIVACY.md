@@ -1,6 +1,6 @@
 # Privacy Policy for Tab Bookmark Grouper
 
-Effective date: 2026-07-01
+Effective date: 2026-07-15
 
 Tab Bookmark Grouper is designed to work locally in the browser. It does not collect, sell, rent, transmit, or share personal data with external servers.
 
@@ -17,6 +17,10 @@ The extension may access the following browser data only to provide its features
 ## Data Collection and Sharing
 
 The extension does not send bookmark data, tab URLs, browsing activity, session files, settings, analytics, telemetry, identifiers, or profile information to any external service.
+
+## Chrome Web Store Limited Use
+
+The use of information received from Google APIs will adhere to the Chrome Web Store User Data Policy, including the Limited Use requirements. The extension uses browser data only to provide its disclosed tab-organization and supported-session features.
 
 ## Permissions
 
