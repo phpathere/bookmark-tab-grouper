@@ -4,6 +4,52 @@ All notable changes to Tab Bookmark Grouper are documented in this file.
 
 This project follows a practical release history format so users, reviewers, and future maintainers can understand what changed between Chrome Web Store uploads.
 
+## [1.0.7] - 2026-07-20
+
+### Added
+- Apply the complete multi-color palette to every visible group after A-to-Z sorting.
+- Assign colors strictly by visual order so neighboring groups alternate predictably.
+- Show bookmark-folder groups with their successfully opened tab count, such as `POD Research | 4`.
+- Shorten long folder and domain labels to a Chrome-toolbar-friendly width while preserving the visible `| tab count` suffix.
+- Replace synthetic public screenshots with a reproducible real-product image set for the Store, GitHub Pages, and README.
+
+### Fixed
+- Prevent existing groups from remaining limited to their previous grey and blue colors.
+- Keep repeated color passes idempotent and preserve the complete pre-action color state for Undo.
+- Prevent long group names from pushing the tab count out of the generated label.
+
+### Quality
+- Added mocked Chrome API coverage for full-window alternating colors and repeated no-op passes.
+- No new permissions, remote code, analytics, or external services were added.
+
+## [1.0.6] - 2026-07-20
+
+### Added
+- Show each tab-group title with its current tab count, such as `Google | 4`, after Group by Domain runs.
+- Keep the group containing the active tab expanded while collapsing every inactive group.
+
+### Fixed
+- Refresh stale generated counts after tabs are opened or closed without stacking count suffixes.
+- Preserve complete pre-action group metadata so Undo restores original titles, colors, tab membership, and collapsed states.
+- Recognize counted domain titles on later grouping passes to avoid duplicate groups.
+
+### Quality
+- Added mocked Chrome API coverage for active-group expansion, inactive-group collapse, loose active tabs, and count-title stability.
+- No new permissions, remote code, analytics, or external services were added.
+
+## [1.0.5] - 2026-07-15
+
+### Changed
+- Added a dedicated tablet header layout and compact mobile navigation for the landing and privacy pages.
+- Kept long English and Vietnamese navigation labels accessible through contained horizontal scrolling instead of clipping the page.
+- Improved popup action sizing so Export, Import, settings, and modal controls remain readable at the 320px Chrome popup width.
+- Updated pink action buttons to use accessible dark text in both light and dark themes.
+- Reserved intrinsic space for landing-page screenshots to reduce layout shift while images load.
+
+### Quality
+- Added automated UI quality gates for color contrast, responsive breakpoints, popup labels, privacy navigation, and image dimensions.
+- No new permissions, remote code, analytics, or external services were added.
+
 ## [1.0.4] - 2026-07-15
 
 ### Fixed

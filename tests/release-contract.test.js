@@ -11,10 +11,10 @@ const background = read('background.js');
 const buildScript = read('scripts/build-release.sh');
 const indexHtml = read('docs/index.html');
 
-test('release versions stay synchronized at 1.0.4', () => {
-  assert.equal(manifest.version, '1.0.4');
+test('release versions stay synchronized at 1.0.7', () => {
+  assert.equal(manifest.version, '1.0.7');
   assert.equal(packageJson.version, manifest.version);
-  assert.match(read('CHANGELOG.md'), /## \[1\.0\.4\]/);
+  assert.match(read('CHANGELOG.md'), /## \[1\.0\.7\]/);
 });
 
 test('MV3 package keeps executable code local and avoids string execution sinks', () => {
@@ -23,6 +23,9 @@ test('MV3 package keeps executable code local and avoids string execution sinks'
   assert.doesNotMatch(read('manifest.json'), /host_permissions|content_scripts/);
   assert.equal(manifest.content_security_policy.extension_pages, "script-src 'self'; object-src 'self'");
   assert.match(buildScript, /grep -R -nE/);
+  assert.match(buildScript, /verify_packaged_file/);
+  assert.match(buildScript, /unzip -p/);
+  assert.match(buildScript, /Development-only files found in release ZIP/);
 });
 
 test('bookmark opening and export paths have production failure guards', () => {
@@ -42,10 +45,13 @@ test('bookmark opening and export paths have production failure guards', () => {
 });
 
 test('domain undo stores and restores affected group metadata', () => {
-  assert.match(popup, /captureAffectedGroupSnapshot\(domainMap, allTabs\)/);
+  assert.match(popup, /captureCurrentGroupSnapshot\(allTabs\)/);
   assert.match(popup, /originalGroups/);
   assert.match(popup, /restoreAffectedGroups\(/);
   assert.match(popup, /collapsed: group\.collapsed/);
+  assert.match(popup, /updateGroupPresentation\(chrome\)/);
+  assert.match(popup, /colorizeGroupsByOrder\(chrome\)/);
+  assert.match(popup, /hasGroupingUndo\(\)/);
 });
 
 test('production logging avoids raw exception objects', () => {

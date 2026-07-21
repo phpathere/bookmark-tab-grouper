@@ -59,10 +59,10 @@
     "message": "Hoàn tác nhóm"
   },
   "groupByDomainSuccess": {
-    "message": "Đã nhóm theo domain"
+    "message": "Đã nhóm theo domain, thêm số tab, màu dễ phân biệt và thu gọn nhóm không hoạt động."
   },
   "groupSortWarning": {
-    "message": "Đã nhóm tab, nhưng chưa sắp xếp được các nhóm."
+    "message": "Đã nhóm tab, nhưng chưa hoàn tất bố cục của tất cả nhóm."
   },
   "noUndoAvailable": {
     "message": "Không có hành động nào để hoàn tác"

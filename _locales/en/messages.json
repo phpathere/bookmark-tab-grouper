@@ -59,10 +59,10 @@
     "message": "Undo Grouping"
   },
   "groupByDomainSuccess": {
-    "message": "Grouped tabs by domain successfully"
+    "message": "Grouped by domain with tab counts, distinct colors, and inactive groups collapsed."
   },
   "groupSortWarning": {
-    "message": "Grouped tabs, but could not sort groups."
+    "message": "Grouped tabs, but could not finish arranging every group."
   },
   "noUndoAvailable": {
     "message": "No action to undo"

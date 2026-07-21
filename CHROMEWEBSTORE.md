@@ -4,11 +4,30 @@
 
 **Name:** Tab Bookmark Grouper
 **Short Name:** Tab Grouper
-**Version:** 1.0.4
+**Version:** 1.0.7
 **Category:** Productivity
 **Policy review:** Updated for the Chrome Web Store policy changes announced July 1, 2026 and enforced August 1, 2026.
 
 ## Release Notes
+
+### Version 1.0.7
+- Applied alternating colors to every visible group after alphabetical sorting.
+- Fixed existing groups remaining limited to their previous grey and blue colors.
+- Kept Undo restoration for all original group colors.
+- Added test coverage without introducing new permissions.
+
+### Version 1.0.6
+- Added live tab counts to group titles, such as `Google | 4`.
+- Expanded only the group containing the active tab and collapsed inactive groups after Group by Domain.
+- Kept group sorting alphabetical with loose tabs last.
+- Improved Undo coverage for original group titles and collapsed states.
+
+### Version 1.0.5
+- Improved tablet and mobile layouts for the extension website and privacy page.
+- Improved popup label readability at Chrome's compact popup width.
+- Updated action-button contrast for WCAG AA accessibility.
+- Reduced landing-page layout shift by reserving screenshot dimensions.
+- Added automated UI quality gates without adding permissions or external services.
 
 ### Version 1.0.4
 - Restored the tab that was active when a supported session was exported.
@@ -52,8 +71,8 @@ Tab Bookmark Grouper helps you organize and restore Chrome tabs. Its single purp
 
 Main features
 
-- Open a bookmark folder: Select a folder and open its supported bookmark URLs in a Chrome tab group named after that folder.
-- Group by website: Group matching open web tabs by root domain. Groups are ordered alphabetically from left to right, with loose tabs placed after groups.
+- Open a bookmark folder: Select a folder and open its supported bookmark URLs in a Chrome tab group named after that folder, with its opened tab count (for example, `Project Research | 6`).
+- Group by website: Group matching open web tabs by root domain. Each title shows its current tab count, groups are ordered alphabetically from left to right, inactive groups are collapsed, and loose tabs are placed after groups.
 - Undo automatic grouping: Restore the affected tabs and groups after the most recent Group by Website action.
 - Export and import sessions: Create a local .btg file containing supported normal windows, tab URLs, group titles and colors, and the active-tab reference. Importing restores supported items and reports partial failures when an individual tab, group, or window cannot be created.
 - Choose English or Vietnamese and use light, dark, or automatic theme settings.
@@ -93,7 +112,7 @@ Tab Bookmark Grouper giúp bạn sắp xếp và khôi phục các tab Chrome. E
 
 Tính năng chính
 
-- Mở folder bookmark: Chọn một folder để mở các URL bookmark được hỗ trợ trong một Chrome Tab Group mang tên folder đó.
+- Mở folder bookmark: Chọn một folder để mở các URL bookmark được hỗ trợ trong một Chrome Tab Group mang tên folder đó và kèm số tab đã mở (ví dụ: `Nghiên cứu POD | 6`).
 - Nhóm theo website: Nhóm các tab web phù hợp theo tên miền gốc. Các group được xếp theo thứ tự chữ cái từ trái sang phải và tab lẻ được đặt sau các group.
 - Hoàn tác nhóm tự động: Khôi phục các tab và group bị ảnh hưởng bởi lần dùng tính năng Nhóm theo website gần nhất.
 - Xuất và nhập session: Tạo file .btg cục bộ chứa các cửa sổ thông thường được hỗ trợ, URL của tab, tên và màu group, cùng thông tin tab đang active. Khi import, extension khôi phục những mục được hỗ trợ và thông báo nếu một tab, group hoặc cửa sổ không thể tạo được.
@@ -166,7 +185,7 @@ Before zipping and uploading to the Chrome Web Store Developer Dashboard, ensure
 
 - [ ] Create 3 icons (`icon-16.png`, `icon-48.png`, `icon-128.png`) and place them in an `icons` folder.
 - [ ] Add the `"icons"` field to `manifest.json` referencing those images.
-- [x] Use the approved screenshot set in `docs/store/`: `store-screenshot-1-main-1280x800.png`, `store-screenshot-2-domain-1280x800.png`, `store-promo-small-440x280.png`, and optional `store-marquee-1400x560.png`.
+- [x] Use the real-product screenshot set in `docs/store/`: `real-grouped-tabs-1280x800.png`, `real-popup-interface-1280x800.png`, `real-how-it-works-1280x800.png`, `real-promo-small-440x280.png`, and optional `real-marquee-1400x560.png`.
 - [x] Confirm the privacy contact is present in `PRIVACY.md` and `docs/privacy.html`.
 - [x] Verify every public screenshot/listing image in `THIRD_PARTY_ASSETS.md`; do not use assets marked `NOT APPROVED FOR STORE USE`.
 - [ ] Run `npm test`.

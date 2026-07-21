@@ -1,4 +1,8 @@
 export const GROUP_COLORS = ['grey', 'blue', 'red', 'yellow', 'green', 'pink', 'purple', 'cyan', 'orange'];
+export const DOMAIN_GROUP_COLORS = ['blue', 'orange', 'green', 'purple', 'cyan', 'red', 'yellow', 'pink', 'grey'];
+// Chrome caps the visible width of a tab-group label. Keep generated labels
+// compact enough that the count suffix remains visible at common UI scales.
+export const GROUP_TITLE_DISPLAY_MAX_LENGTH = 16;
 
 export const IMPORT_LIMITS = {
   maxFileBytes: 1024 * 1024,
@@ -110,6 +114,109 @@ export function getDomainGroupName(url) {
   return groupName.charAt(0).toUpperCase() + groupName.slice(1);
 }
 
+export function getGroupBaseTitle(title, tabCount = null) {
+  const normalizedTitle = String(title || '').trim() || 'Group';
+  const countedTitle = normalizedTitle.match(/^(.*?)\s*\|\s*(\d+)\s*$/);
+  if (!countedTitle) return normalizedTitle;
+
+  const displayedCount = Number(countedTitle[2]);
+  // Generated counts can become stale when tabs are opened or closed between
+  // grouping passes. Counts above the supported session limit are treated as
+  // part of a user-authored title, such as "Roadmap | 2026".
+  if (displayedCount > IMPORT_LIMITS.maxTabs) return normalizedTitle;
+  return countedTitle[1].trim() || 'Group';
+}
+
+export function formatGroupTitleWithCount(title, tabCount) {
+  const safeCount = Math.max(0, Number.isFinite(tabCount) ? Math.trunc(tabCount) : 0);
+  const suffix = ` | ${safeCount}`;
+  const baseTitle = getGroupBaseTitle(title, safeCount);
+  const maxBaseLength = Math.max(1, GROUP_TITLE_DISPLAY_MAX_LENGTH - Array.from(suffix).length);
+  const baseCharacters = Array.from(baseTitle);
+  let displayTitle = baseTitle;
+
+  if (baseCharacters.length > maxBaseLength) {
+    const visibleCharacters = Math.max(1, maxBaseLength - 1);
+    displayTitle = `${baseCharacters.slice(0, visibleCharacters).join('').trimEnd()}\u2026`;
+  }
+
+  return `${displayTitle || 'Group'}${suffix}`;
+}
+
+export async function colorizeGroupsByOrder(
+  chromeApi = globalThis.chrome,
+  { windowId = null, palette = DOMAIN_GROUP_COLORS } = {}
+) {
+  const api = getChromeApi(chromeApi);
+  if (!api.tabGroups || !Array.isArray(palette) || palette.length === 0) {
+    return { updatedGroups: [], failures: [] };
+  }
+
+  const queryInfo = windowId === null ? { currentWindow: true } : { windowId };
+  const tabs = (await api.tabs.query(queryInfo)).sort((a, b) => a.index - b.index);
+  const orderedGroupIds = [];
+  const seenGroupIds = new Set();
+  for (const tab of tabs) {
+    if (tab.groupId === api.tabGroups.TAB_GROUP_ID_NONE || seenGroupIds.has(tab.groupId)) continue;
+    seenGroupIds.add(tab.groupId);
+    orderedGroupIds.push(tab.groupId);
+  }
+
+  const updatedGroups = [];
+  const failures = [];
+  for (let index = 0; index < orderedGroupIds.length; index++) {
+    const groupId = orderedGroupIds[index];
+    try {
+      const groupInfo = await api.tabGroups.get(groupId);
+      const color = palette[index % palette.length];
+      if (groupInfo.color === color) continue;
+      await api.tabGroups.update(groupId, { color });
+      updatedGroups.push({ id: groupId, color });
+    } catch (error) {
+      failures.push({ groupId, error: safeErrorMessage(error) });
+    }
+  }
+
+  return { updatedGroups, failures };
+}
+
+export async function updateGroupPresentation(chromeApi = globalThis.chrome, { windowId = null } = {}) {
+  const api = getChromeApi(chromeApi);
+  if (!api.tabGroups) {
+    return { activeGroupId: null, updatedGroups: [], failures: [] };
+  }
+
+  const queryInfo = windowId === null ? { currentWindow: true } : { windowId };
+  const tabs = await api.tabs.query(queryInfo);
+  const noGroupId = api.tabGroups.TAB_GROUP_ID_NONE;
+  const activeGroupId = tabs.find(tab => tab.active && tab.groupId !== noGroupId)?.groupId ?? null;
+  const groupTabs = new Map();
+
+  for (const tab of tabs) {
+    if (tab.groupId === noGroupId) continue;
+    if (!groupTabs.has(tab.groupId)) groupTabs.set(tab.groupId, []);
+    groupTabs.get(tab.groupId).push(tab);
+  }
+
+  const updatedGroups = [];
+  const failures = [];
+  for (const [groupId, tabsInGroup] of groupTabs.entries()) {
+    try {
+      const groupInfo = await api.tabGroups.get(groupId);
+      const title = formatGroupTitleWithCount(groupInfo.title, tabsInGroup.length);
+      const collapsed = groupId !== activeGroupId;
+      if (groupInfo.title !== title || Boolean(groupInfo.collapsed) !== collapsed) {
+        await api.tabGroups.update(groupId, { title, collapsed });
+        updatedGroups.push({ id: groupId, title, tabCount: tabsInGroup.length, collapsed });
+      }
+    } catch (error) {
+      failures.push({ groupId, error: safeErrorMessage(error) });
+    }
+  }
+
+  return { activeGroupId, updatedGroups, failures };
+}
+
 export function isBrowserEmptyTab(tab) {
   const url = tab?.pendingUrl || tab?.url || '';
   return !url
@@ -187,7 +294,7 @@ export async function sortGroupsFirstLooseTabsLast(chromeApi = globalThis.chrome
       const groupInfo = await api.tabGroups.get(groupId);
       groups.push({
         id: groupId,
-        title: String(groupInfo.title || '').trim(),
+        title: getGroupBaseTitle(groupInfo.title, tabsInGroup.length),
         tabIds: tabsInGroup.sort((a, b) => a.index - b.index).map(tab => tab.id)
       });
     } catch (_) {

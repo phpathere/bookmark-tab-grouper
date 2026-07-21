@@ -1,16 +1,20 @@
 import {
   GROUP_COLORS,
   IMPORT_LIMITS,
+  colorizeGroupsByOrder,
   findActiveTabSnapshot,
   formatImportResult,
+  formatGroupTitleWithCount,
   getDomainGroupName,
+  getGroupBaseTitle,
   isOpenableBookmarkUrl,
   isRestorableSessionUrl,
   isWebUrl,
   normalizeImportData,
   openTabInWindow,
   rememberReusableEmptyTab,
-  sortGroupsFirstLooseTabsLast
+  sortGroupsFirstLooseTabsLast,
+  updateGroupPresentation
 } from './session-utils.js';
 
 let currentLang = 'vi';
@@ -364,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (groupByDomainBtn) {
     updateGroupByDomainButton();
     groupByDomainBtn.addEventListener('click', async () => {
-      if (savedTabState?.newlyGroupedTabIds?.length) {
+      if (hasGroupingUndo()) {
         await handleUndoGroupByDomain();
       } else {
         await handleGroupByDomain();
@@ -555,7 +559,7 @@ async function handleOpenAndGroup() {
         const color = GROUP_COLORS[colorIndex % GROUP_COLORS.length];
         colorIndex++;
         await chrome.tabGroups.update(groupId, {
-          title: group.node.title || 'Group',
+          title: formatGroupTitleWithCount(group.node.title || 'Group', result.tabIds.length),
           color,
           collapsed: true
         });
@@ -611,14 +615,18 @@ function updateGroupByDomainButton() {
   const groupByDomainBtn = document.getElementById('groupByDomainBtn');
   if (!groupByDomainBtn) return;
 
-  const hasUndo = Boolean(
-    savedTabState?.newlyGroupedTabIds?.length || savedTabState?.originalGroups?.length
-  );
+  const hasUndo = hasGroupingUndo();
   groupByDomainBtn.textContent = hasUndo
     ? (getMessage('undoGroupByWebsite') || 'Undo Group by Domain')
     : (getMessage('groupByWebsite') || 'Group by Domain');
   groupByDomainBtn.classList.toggle('undo-mode', hasUndo);
   groupByDomainBtn.setAttribute('aria-pressed', String(hasUndo));
+}
+
+function hasGroupingUndo() {
+  return Boolean(
+    savedTabState?.newlyGroupedTabIds?.length || savedTabState?.originalGroups?.length
+  );
 }
 
 async function handleGroupByDomain() {
@@ -635,7 +643,8 @@ async function handleGroupByDomain() {
         seenGroupIds.add(tab.groupId);
         try {
           const groupInfo = await chrome.tabGroups.get(tab.groupId);
-          const title = normalizeGroupTitle(groupInfo.title);
+          const groupTabCount = allTabs.filter(tab => tab.groupId === tab.groupId).length;
+          const title = normalizeGroupTitle(groupInfo.title, groupTabCount);
           if (title) {
             if (!existingGroupsByTitle.has(title)) {
               existingGroupsByTitle.set(title, []);
@@ -678,9 +687,8 @@ async function handleGroupByDomain() {
       }
     }
 
-    const originalGroups = await captureAffectedGroupSnapshot(domainMap, allTabs);
+    const originalGroups = await captureCurrentGroupSnapshot(allTabs);
 
-    let colorIndex = 0;
     let changedGroups = 0;
     let newlyGroupedTabIds = [];
     for (const domainEntry of domainMap.values()) {
@@ -704,29 +712,38 @@ async function handleGroupByDomain() {
       const groupId = await chrome.tabs.group(groupOptions);
 
       if (!domainEntry.targetGroupId) {
-        const color = GROUP_COLORS[colorIndex % GROUP_COLORS.length];
-        colorIndex++;
         await chrome.tabGroups.update(groupId, {
           title: domainEntry.title,
-          color: color,
+          color: 'grey',
           collapsed: true
         });
       }
       changedGroups++;
     }
     
-    if (changedGroups === 0) {
+    const presentation = await updateGroupPresentation(chrome);
+
+    let sortFailed = false;
+    try {
       await organizeCurrentWindowGroupsAlphabetically();
+    } catch (_) {
+      sortFailed = true;
+    }
+    const colorResult = await colorizeGroupsByOrder(chrome);
+    const hasVisualChanges = presentation.updatedGroups.length > 0 || colorResult.updatedGroups.length > 0;
+    const hasChanges = changedGroups > 0 || hasVisualChanges;
+    if (hasChanges) {
+      savedTabState = { newlyGroupedTabIds, originalGroups };
+    }
+
+    if (!hasChanges) {
       showStatus(getMessage('noTabsToGroup') || 'Không có trang web nào có nhiều hơn 1 tab', 'success');
       updateGroupByDomainButton();
     } else {
-      // Save state for undo
-      savedTabState = { newlyGroupedTabIds, originalGroups };
-      try {
-        await organizeCurrentWindowGroupsAlphabetically();
+      if (!sortFailed && presentation.failures.length === 0 && colorResult.failures.length === 0) {
         showStatus(getMessage('groupByDomainSuccess') || 'Đã nhóm theo trang web', 'success');
-      } catch (sortError) {
-        showStatus(getMessage('groupSortWarning') || 'Grouped tabs, but could not sort groups.', 'warning');
+      } else {
+        showStatus(getMessage('groupSortWarning') || 'Grouped tabs, but could not finish arranging every group.', 'warning');
       }
       updateGroupByDomainButton();
       updateStatsBar();
@@ -741,18 +758,18 @@ async function organizeCurrentWindowGroupsAlphabetically() {
   return sortGroupsFirstLooseTabsLast(chrome);
 }
 
-function normalizeGroupTitle(title) {
-  return String(title || '').trim().toLowerCase();
+function normalizeGroupTitle(title, tabCount = null) {
+  return getGroupBaseTitle(title, tabCount).toLowerCase();
 }
 
-async function captureAffectedGroupSnapshot(domainMap, allTabs) {
+async function captureCurrentGroupSnapshot(allTabs) {
   if (typeof chrome.tabGroups === 'undefined') return [];
 
-  const affectedGroupIds = new Set();
-  for (const entry of domainMap.values()) {
-    entry.existingGroupIds.forEach(groupId => affectedGroupIds.add(groupId));
-    entry.groupedTabs.forEach(tab => affectedGroupIds.add(tab.groupId));
-  }
+  const affectedGroupIds = new Set(
+    allTabs
+      .filter(tab => tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE)
+      .map(tab => tab.groupId)
+  );
 
   const snapshot = [];
   for (const groupId of affectedGroupIds) {

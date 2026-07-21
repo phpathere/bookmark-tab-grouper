@@ -44,8 +44,33 @@ if ! unzip -l "$ZIP_PATH" | grep -q 'popup/session-utils\.js'; then
   exit 1
 fi
 
-if ! cmp -s "$ROOT_DIR/popup/popup.js" "$BUILD_DIR/popup/popup.js"; then
-  echo "Release package popup.js does not match source." >&2
+verify_packaged_file() {
+  relative_path="$1"
+  if ! cmp -s "$ROOT_DIR/$relative_path" "$BUILD_DIR/$relative_path"; then
+    echo "Release package $relative_path does not match source." >&2
+    exit 1
+  fi
+  if ! unzip -p "$ZIP_PATH" "$relative_path" | cmp -s "$ROOT_DIR/$relative_path" -; then
+    echo "ZIP entry $relative_path does not match source." >&2
+    exit 1
+  fi
+}
+
+for release_file in \
+  manifest.json \
+  background.js \
+  popup/index.html \
+  popup/styles.css \
+  popup/popup.js \
+  popup/session-utils.js \
+  _locales/en/messages.json \
+  _locales/vi/messages.json
+do
+  verify_packaged_file "$release_file"
+done
+
+if unzip -Z1 "$ZIP_PATH" | grep -Eq '(^|/)(tests|docs|dist|node_modules)(/|$)|(^|/)package(-lock)?\.json$'; then
+  echo "Development-only files found in release ZIP." >&2
   exit 1
 fi
 

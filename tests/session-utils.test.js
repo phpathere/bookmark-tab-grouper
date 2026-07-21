@@ -2,15 +2,20 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   IMPORT_LIMITS,
+  GROUP_TITLE_DISPLAY_MAX_LENGTH,
+  colorizeGroupsByOrder,
   findActiveTabSnapshot,
+  formatGroupTitleWithCount,
   formatImportResult,
   getDomainGroupName,
+  getGroupBaseTitle,
   isOpenableBookmarkUrl,
   isRestorableSessionUrl,
   normalizeImportData,
   openTabInWindow,
   restoreImportedSession,
-  sortGroupsFirstLooseTabsLast
+  sortGroupsFirstLooseTabsLast,
+  updateGroupPresentation
 } from '../popup/session-utils.js';
 
 function makeSession(overrides = {}) {
@@ -244,6 +249,108 @@ test('sortGroupsFirstLooseTabsLast produces A-to-Z groups before loose tabs when
 
   assert.deepEqual(titles, ['Alpha', 'Bravo']);
   assert.deepEqual(win.tabs.map(tab => tab.id), [1, 6, 7, 3, 4, 2, 5]);
+});
+
+test('group titles append a stable tab count without stacking generated suffixes', () => {
+  assert.equal(getGroupBaseTitle('Google | 4', 4), 'Google');
+  assert.equal(formatGroupTitleWithCount('Google | 4', 4), 'Google | 4');
+  assert.equal(formatGroupTitleWithCount('Google | 4', 3), 'Google | 3');
+  assert.equal(formatGroupTitleWithCount('Research', 2), 'Research | 2');
+  assert.equal(formatGroupTitleWithCount('POD Research', 3), 'POD Research | 3');
+  assert.equal(formatGroupTitleWithCount('Roadmap | 2026', 2).endsWith('… | 2'), true);
+});
+
+test('long group titles are shortened without hiding the tab count', () => {
+  const formatted = formatGroupTitleWithCount('Nghiên cứu thị trường POD quốc tế', 12);
+  const emojiFormatted = formatGroupTitleWithCount('😀'.repeat(40), 7);
+  const screenshotCase = formatGroupTitleWithCount('Keyword Research', 2);
+
+  assert.equal(formatted.endsWith('… | 12'), true);
+  assert.equal(Array.from(formatted).length <= GROUP_TITLE_DISPLAY_MAX_LENGTH, true);
+  assert.equal(emojiFormatted.endsWith('… | 7'), true);
+  assert.equal(Array.from(emojiFormatted).length <= GROUP_TITLE_DISPLAY_MAX_LENGTH, true);
+  assert.equal(emojiFormatted.includes('\uFFFD'), false);
+  assert.equal(screenshotCase, 'Keyword Res… | 2');
+});
+
+test('updateGroupPresentation expands only the active group and labels every group with its tab count', async () => {
+  const chromeApi = createChromeMock();
+  const win = chromeApi.state.windows.get(1);
+  win.tabs = [
+    { id: 1, windowId: 1, pinned: false, groupId: 20, index: 0, active: false },
+    { id: 2, windowId: 1, pinned: false, groupId: 10, index: 1, active: true },
+    { id: 3, windowId: 1, pinned: false, groupId: 10, index: 2, active: false },
+    { id: 4, windowId: 1, pinned: false, groupId: -1, index: 3, active: false }
+  ];
+  chromeApi.state.groups.set(20, { id: 20, title: 'Beta', collapsed: false, color: 'blue' });
+  chromeApi.state.groups.set(10, { id: 10, title: 'Google | 2', collapsed: true, color: 'red' });
+
+  const result = await updateGroupPresentation(chromeApi, { windowId: 1 });
+
+  assert.equal(result.activeGroupId, 10);
+  assert.equal(result.failures.length, 0);
+  assert.equal(chromeApi.state.groups.get(10).title, 'Google | 2');
+  assert.equal(chromeApi.state.groups.get(10).collapsed, false);
+  assert.equal(chromeApi.state.groups.get(20).title, 'Beta | 1');
+  assert.equal(chromeApi.state.groups.get(20).collapsed, true);
+});
+
+test('updateGroupPresentation collapses every group when the active tab is loose', async () => {
+  const chromeApi = createChromeMock();
+  const win = chromeApi.state.windows.get(1);
+  win.tabs = [
+    { id: 1, windowId: 1, pinned: false, groupId: 10, index: 0, active: false },
+    { id: 2, windowId: 1, pinned: false, groupId: -1, index: 1, active: true }
+  ];
+  chromeApi.state.groups.set(10, { id: 10, title: 'Google', collapsed: false, color: 'red' });
+
+  const result = await updateGroupPresentation(chromeApi, { windowId: 1 });
+
+  assert.equal(result.activeGroupId, null);
+  assert.equal(chromeApi.state.groups.get(10).title, 'Google | 1');
+  assert.equal(chromeApi.state.groups.get(10).collapsed, true);
+});
+
+test('colorizeGroupsByOrder applies a strict alternating palette to every visible group', async () => {
+  const chromeApi = createChromeMock();
+  const win = chromeApi.state.windows.get(1);
+  win.tabs = [
+    { id: 1, windowId: 1, pinned: false, groupId: 10, index: 0, active: false },
+    { id: 2, windowId: 1, pinned: false, groupId: 20, index: 1, active: true },
+    { id: 3, windowId: 1, pinned: false, groupId: 30, index: 2, active: false }
+  ];
+  chromeApi.state.groups.set(10, { id: 10, title: 'Alpha | 1', color: 'blue', collapsed: true });
+  chromeApi.state.groups.set(20, { id: 20, title: 'Google | 1', color: 'red', collapsed: false });
+  chromeApi.state.groups.set(30, { id: 30, title: 'Notion | 1', color: 'orange', collapsed: true });
+
+  const result = await colorizeGroupsByOrder(chromeApi, {
+    windowId: 1,
+    palette: ['blue', 'orange', 'green']
+  });
+
+  assert.equal(result.failures.length, 0);
+  assert.equal(chromeApi.state.groups.get(10).color, 'blue');
+  assert.equal(chromeApi.state.groups.get(20).color, 'orange');
+  assert.equal(chromeApi.state.groups.get(30).color, 'green');
+});
+
+test('colorizeGroupsByOrder is idempotent after the ordered palette is applied', async () => {
+  const chromeApi = createChromeMock();
+  const win = chromeApi.state.windows.get(1);
+  win.tabs = [
+    { id: 1, windowId: 1, pinned: false, groupId: 10, index: 0, active: true },
+    { id: 2, windowId: 1, pinned: false, groupId: 20, index: 1, active: false }
+  ];
+  chromeApi.state.groups.set(10, { id: 10, title: 'Alpha | 1', color: 'blue', collapsed: false });
+  chromeApi.state.groups.set(20, { id: 20, title: 'Beta | 1', color: 'orange', collapsed: true });
+
+  const result = await colorizeGroupsByOrder(chromeApi, {
+    windowId: 1,
+    palette: ['blue', 'orange']
+  });
+
+  assert.deepEqual(result.updatedGroups, []);
+  assert.equal(result.failures.length, 0);
 });
 
 test('URL policy blocks dangerous and app-launching schemes', () => {

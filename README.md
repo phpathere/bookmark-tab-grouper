@@ -5,9 +5,9 @@
   
   **Open bookmarks into clear, color-coded tab groups in one click.**
   <br><br>
-  <img src="docs/store/store-marquee-1400x560.png" alt="Tab Bookmark Grouper promotional banner" width="100%" style="border-radius: 8px;">
+  <img src="docs/store/real-marquee-1400x560.png" alt="Tab Bookmark Grouper shown in a real Chrome workspace" width="100%" style="border-radius: 8px;">
   
-  [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Pending-blue?style=for-the-badge&logo=googlechrome)](#)
+  [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Install-blue?style=for-the-badge&logo=googlechrome)](https://chromewebstore.google.com/detail/tab-bookmark-grouper/ngeehdjoganlmelcmjomdeollcopaglj)
   [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](#)
   [![Offline First](https://img.shields.io/badge/Privacy-Offline_First-success?style=for-the-badge)](#)
 </div>
@@ -24,7 +24,9 @@ If you do research, development, or shopping, you probably suffer from:
 ## 💡 The Solution (Giải Pháp)
 **Tab Bookmark Grouper** automates the tedious work. Just organize your links in Chrome Bookmarks (e.g., a folder named "Project Research"), open the extension, select the folder, and click **Open & Group**. 
 
-The extension opens those links and bundles them into a neat, color-coded Chrome Tab Group named after your bookmark folder.
+The extension opens those links and bundles them into a neat, color-coded Chrome Tab Group named after your bookmark folder, with the opened tab count appended (for example, `Project Research | 6`).
+
+<p align="center"><img src="docs/store/real-how-it-works-1280x800.png" alt="Three-step overview using the actual extension popup and grouped Chrome tabs" width="800"></p>
 
 ---
 
@@ -43,8 +45,8 @@ The extension opens those links and bundles them into a neat, color-coded Chrome
 
 ## 🚀 Installation (Cài Đặt)
 
-### Method 1: Chrome Web Store (Coming Soon)
-- Click [here](#) to download directly from the Chrome Web Store.
+### Method 1: Chrome Web Store
+- [Install Tab Bookmark Grouper from the Chrome Web Store](https://chromewebstore.google.com/detail/tab-bookmark-grouper/ngeehdjoganlmelcmjomdeollcopaglj).
 
 ### Method 2: Developer Mode (Local)
 1. Download or clone this repository.
@@ -61,14 +63,14 @@ The extension opens those links and bundles them into a neat, color-coded Chrome
 - Select a Bookmark folder from the **Select Folder** dropdown.
 - Click the **Open & Group** button. All links inside will open and bundle into a neat, color-coded Tab Group.
 
-<p align="center"><img src="https://raw.githubusercontent.com/phpathere/bookmark-tab-grouper/main/docs/store/store-screenshot-1-main-1280x800.png" alt="Main UI" width="600"></p>
+<p align="center"><img src="docs/store/real-popup-interface-1280x800.png" alt="Actual Tab Bookmark Grouper popup" width="700"></p>
 
 ### 2. Auto-Group Open Tabs (Tự Động Gộp Tab Đang Mở)
 - Click the **Filter icon (Sort/Group Tabs)** on the right side of the toolbar.
-- Click **Group by Website (Nhóm theo trang web)**. The extension will scan all ungrouped tabs and group them by root domain (e.g., all `github.com` tabs go into one group).
+- Click **Group by Website (Nhóm theo trang web)**. The extension groups matching tabs by root domain, labels each group with its tab count (for example, `Google | 4`), alternates colors across all groups, sorts groups alphabetically, and collapses every group except the one containing the active tab.
 - Made a mistake? Click **Undo Grouping (Hoàn tác nhóm)** to revert the changes.
 
-<p align="center"><img src="https://raw.githubusercontent.com/phpathere/bookmark-tab-grouper/main/docs/store/store-screenshot-2-domain-1280x800.png" alt="Group by Domain Feature" width="600"></p>
+<p align="center"><img src="docs/store/real-grouped-tabs-1280x800.png" alt="Actual Chrome tab groups sorted alphabetically with tab counts" width="700"></p>
 
 ### 3. Session Sync & Team Sharing (Đồng Bộ & Chia Sẻ Phiên)
 - **Export Session:** Click to download a `.btg` file (automatically saved to your browser's default `Downloads` folder). This saves supported windows, tabs, and groups locally.

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Bookmark Grouper real product assets</title>
+  <style>
+    :root {
+      --ink: #191716;
+      --paper: #fffdf7;
+      --mint: #c9f7df;
+      --cyan: #45c3f0;
+      --pink: #fb7185;
+      --yellow: #fef08a;
+      --violet: #a78bfa;
+      --blue: #bfdbfe;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+    }
+    .asset { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    body[data-slide="1"] .slide-1,
+    body[data-slide="2"] .slide-2,
+    body[data-slide="3"] .slide-3,
+    body[data-slide="small"] .slide-small,
+    body[data-slide="marquee"] .slide-marquee { display: block; }
+    .brand-row { display: flex; align-items: center; gap: 14px; }
+    .brand-row img { width: 52px; height: 52px; image-rendering: pixelated; }
+    .brand-row strong { font-size: 24px; }
+    .eyebrow {
+      margin: 0 0 9px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: 54px; line-height: 1; }
+    p { margin: 10px 0 0; font-size: 21px; line-height: 1.35; font-weight: 700; }
+    .frame {
+      overflow: hidden;
+      border: 5px solid var(--ink);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 10px 10px 0 var(--ink);
+    }
+    .frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .slide-1 {
+      padding: 36px 52px 42px;
+      background: linear-gradient(135deg, var(--mint), #67e8f9 62%, #a5b4fc);
+    }
+    .slide-1 .top { display: flex; justify-content: space-between; align-items: center; }
+    .slide-1 .copy { margin-top: 24px; max-width: 920px; }
+    .slide-1 .frame { position: absolute; left: 52px; right: 52px; bottom: 38px; height: 505px; }
+    .slide-1 .frame img { object-position: center top; }
+    .chips { display: flex; gap: 10px; }
+    .chip {
+      padding: 9px 13px;
+      border: 3px solid var(--ink);
+      border-radius: 5px;
+      background: var(--yellow);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 900;
+      font-size: 15px;
+    }
+    .chip:nth-child(2) { background: var(--blue); }
+    .chip:nth-child(3) { background: #fbcfe8; }
+    .slide-2 {
+      padding: 48px 62px;
+      background: var(--paper);
+    }
+    .slide-2::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 125px;
+      background: var(--mint);
+      border-top: 5px solid var(--ink);
+      z-index: 0;
+    }
+    .slide-2 .layout { height: 100%; display: grid; grid-template-columns: 1fr 500px; gap: 60px; align-items: center; position: relative; z-index: 1; }
+    .slide-2 h1 { font-size: 62px; max-width: 650px; }
+    .feature-list { display: grid; gap: 18px; margin-top: 34px; }
+    .feature-item { display: grid; grid-template-columns: 50px 1fr; gap: 14px; align-items: center; }
+    .feature-item span {
+      width: 50px; height: 50px; display: grid; place-items: center;
+      border: 4px solid var(--ink); border-radius: 5px; box-shadow: 4px 4px 0 var(--ink);
+      background: var(--pink); font: 900 20px ui-monospace, monospace;
+    }
+    .feature-item:nth-child(2) span { background: var(--cyan); }
+    .feature-item:nth-child(3) span { background: var(--violet); }
+    .feature-item strong { font-size: 23px; }
+    .slide-2 .frame { height: 680px; width: 500px; padding: 15px; background: var(--mint); }
+    .slide-2 .frame img { object-fit: contain; }
+    .slide-3 {
+      padding: 42px 52px;
+      background: #f8fafc;
+    }
+    .slide-3 .header { display: flex; align-items: end; justify-content: space-between; }
+    .slide-3 h1 { font-size: 48px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+    .step { min-width: 0; }
+    .step-title { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .step-title span { width: 42px; height: 42px; display: grid; place-items: center; border: 3px solid var(--ink); background: var(--yellow); font: 900 18px ui-monospace, monospace; }
+    .step:nth-child(2) .step-title span { background: var(--pink); }
+    .step:nth-child(3) .step-title span { background: var(--cyan); }
+    .step-title strong { font-size: 21px; }
+    .step .frame { height: 520px; box-shadow: 7px 7px 0 var(--ink); }
+    .step.action .frame { position: relative; }
+    .step.action .frame::after {
+      content: "";
+      position: absolute;
+      top: 158px;
+      left: 28px;
+      right: 28px;
+      height: 58px;
+      border: 5px solid var(--pink);
+      box-shadow: 0 0 0 3px var(--ink);
+      pointer-events: none;
+    }
+    .step.popup .frame { padding: 12px; background: var(--mint); }
+    .step.popup img { object-fit: contain; }
+    .step.grouped img { object-position: top center; }
+    .step.result img { object-position: 50% 15%; }
+    .slide-small {
+      padding: 22px 24px;
+      background: linear-gradient(135deg, var(--mint), #67e8f9);
+    }
+    .slide-small h1 { width: 178px; margin-top: 22px; font-size: 29px; }
+    .slide-small .mini-frame { position: absolute; width: 218px; height: 126px; right: 18px; bottom: 18px; border: 4px solid var(--ink); border-radius: 5px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); }
+    .slide-small .mini-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .slide-small .brand-row img { width: 38px; height: 38px; }
+    .slide-small .brand-row strong { font-size: 16px; }
+    .slide-marquee {
+      padding: 42px 54px;
+      background: linear-gradient(115deg, var(--mint) 0 48%, #67e8f9 48% 72%, #a78bfa 100%);
+    }
+    .slide-marquee .copy { width: 550px; margin-top: 50px; }
+    .slide-marquee h1 { font-size: 62px; }
+    .slide-marquee p { width: 520px; }
+    .slide-marquee .frame { position: absolute; right: 48px; top: 50px; width: 710px; height: 455px; transform: rotate(-1deg); }
+    .slide-marquee .frame img { object-position: center top; }
+  </style>
+</head>
+<body>
+  <section class="asset slide-1">
+    <div class="top">
+      <div class="brand-row"><img src="../favicon.png" alt=""><strong>Tab Bookmark Grouper</strong></div>
+      <div class="chips"><span class="chip">A–Z</span><span class="chip">TAB COUNTS</span><span class="chip">LOCAL-FIRST</span></div>
+    </div>
+    <div class="copy"><p class="eyebrow">Real Chrome workflow</p><h1>Groups first. Loose tabs last.</h1></div>
+    <div class="frame"><img src="source/real-grouped-browser.png" alt=""></div>
+  </section>
+
+  <section class="asset slide-2">
+    <div class="layout">
+      <div>
+        <p class="eyebrow">The actual extension popup</p>
+        <h1>Everything useful in one compact popup.</h1>
+        <div class="feature-list">
+          <div class="feature-item"><span>01</span><strong>Open a bookmark folder as a named group</strong></div>
+          <div class="feature-item"><span>02</span><strong>Group current tabs by domain</strong></div>
+          <div class="feature-item"><span>03</span><strong>Export or import supported sessions locally</strong></div>
+        </div>
+      </div>
+      <div class="frame"><img src="source/real-popup.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="asset slide-3">
+    <div class="header">
+      <div><p class="eyebrow">How it works</p><h1>From scattered tabs to a clean workspace.</h1></div>
+      <div class="brand-row"><img src="../favicon.png" alt=""><strong>Tab Bookmark Grouper</strong></div>
+    </div>
+    <div class="steps">
+      <div class="step popup"><div class="step-title"><span>1</span><strong>Open the popup</strong></div><div class="frame"><img src="source/real-popup.png" alt=""></div></div>
+      <div class="step popup action"><div class="step-title"><span>2</span><strong>Choose a folder or domain grouping</strong></div><div class="frame"><img src="source/real-popup.png" alt=""></div></div>
+      <div class="step result"><div class="step-title"><span>3</span><strong>Scan organized groups at a glance</strong></div><div class="frame"><img src="source/real-grouped-browser.png" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="asset slide-small">
+    <div class="brand-row"><img src="../favicon.png" alt=""><strong>Tab Bookmark Grouper</strong></div>
+    <h1>Organize tabs in one click.</h1>
+    <div class="mini-frame"><img src="source/real-grouped-browser.png" alt=""></div>
+  </section>
+
+  <section class="asset slide-marquee">
+    <div class="brand-row"><img src="../favicon.png" alt=""><strong>Tab Bookmark Grouper</strong></div>
+    <div class="copy"><p class="eyebrow">Chrome extension · MV3</p><h1>Turn tab overload into clear groups.</h1><p>Open bookmark folders, group tabs by domain, and keep supported sessions local.</p></div>
+    <div class="frame"><img src="source/real-grouped-browser.png" alt=""></div>
+  </section>
+
+  <script>
+    const slide = new URLSearchParams(location.search).get('slide') || '1';
+    document.body.dataset.slide = slide;
+  </script>
+</body>
+</html>
